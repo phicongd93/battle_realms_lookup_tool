@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Counter & 1v1 Comparison - Battle Realms (Zen Edition)</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1e1e24;
+            --accent-color: #e5a93b;
+            --text-main: #e0e0e0;
+            --text-sub: #a0a0a0;
+            --dragon-color: #d85427;
+            --serpent-color: #b32424;
+            --lotus-color: #9235a8;
+            --wolf-color: #279646;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .lang-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .lang-btn {
+            background-color: var(--card-bg);
+            color: var(--text-sub);
+            border: 1px solid #444;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        .lang-btn:hover {
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+        .lang-btn.active {
+            background-color: var(--accent-color);
+            color: #121214;
+            border-color: var(--accent-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-sub);
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        /* TAB NAVIGATION */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background-color: var(--card-bg);
+            color: var(--text-sub);
+            border: 1px solid #333;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: #121214;
+            border-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .control-panel {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.85em;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background-color: #2b2b36;
+            color: #fff;
+            font-size: 1em;
+            min-width: 240px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-color);
+        }
+
+        .rules-info {
+            background-color: #18181c;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px 15px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.88em;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .result-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .target-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .target-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .target-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .clan-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .clan-Dragon { background-color: var(--dragon-color); }
+        .clan-Serpent { background-color: var(--serpent-color); }
+        .clan-Lotus { background-color: var(--lotus-color); }
+        .clan-Wolf { background-color: var(--wolf-color); }
+
+        .tier-group {
+            margin-bottom: 20px;
+        }
+
+        .tier-title {
+            font-weight: bold;
+            font-size: 0.95em;
+            padding: 6px 12px;
+            border-radius: 5px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .tier-1 { background-color: rgba(92, 184, 92, 0.2); color: #5cb85c; border: 1px solid #5cb85c; }
+        .tier-2 { background-color: rgba(240, 173, 78, 0.2); color: #f0ad4e; border: 1px solid #f0ad4e; }
+        .tier-3 { background-color: rgba(217, 83, 79, 0.2); color: #ff6b6b; border: 1px solid #d9534f; }
+        .tier-neutral { background-color: rgba(229, 169, 59, 0.15); color: #e5a93b; border: 1px solid #e5a93b; }
+
+        .clan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .clan-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .clan-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .clan-column {
+            background-color: #17171d;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #2d2d38;
+        }
+
+        .clan-column-header {
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .counter-item {
+            background-color: #242430;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-left: 3px solid #555;
+        }
+
+        .counter-item.safe { border-left-color: #5cb85c; }
+        .counter-item.risky { border-left-color: #f0ad4e; }
+        .counter-item.mutual { border-left-color: #d9534f; }
+
+        .counter-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .counter-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .counter-unit-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: 0.88em;
+        }
+
+        .counter-detail {
+            font-size: 0.75em;
+            color: var(--text-sub);
+        }
+
+        .exchange-stats {
+            font-size: 0.72em;
+            display: flex;
+            justify-content: space-between;
+            background-color: #1a1a22;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #ccc;
+        }
+
+        .damage-badge {
+            font-size: 0.75em;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #333;
+            color: var(--accent-color);
+            white-space: nowrap;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .stats-table th, .stats-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .stats-table th {
+            background-color: #262630;
+            color: var(--accent-color);
+        }
+
+        .weakness { color: #ff6b6b; font-weight: bold; }
+        .resistance { color: #5cb85c; font-weight: bold; }
+        .neutral { color: #aaa; }
+
+        .no-attacker-msg {
+            font-size: 0.8em;
+            color: #777;
+            text-align: center;
+            padding: 10px 0;
+            font-style: italic;
+        }
+
+        /* COMPARISON STYLES */
+        .vs-badge {
+            background-color: var(--accent-color);
+            color: #121214;
+            font-weight: bold;
+            padding: 10px 18px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            margin: 0 10px;
+            align-self: center;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .unit-card-comp {
+            background-color: #1a1a22;
+            border-radius: 10px;
+            padding: 18px;
+            border: 2px solid #333;
+        }
+
+        .unit-card-comp.winner {
+            border-color: #5cb85c;
+            box-shadow: 0 0 15px rgba(92, 184, 92, 0.3);
+        }
+
+        .unit-card-comp.loser {
+            border-color: #d9534f;
+            box-shadow: 0 0 15px rgba(217, 83, 79, 0.2);
+        }
+
+        .unit-card-comp.tie {
+            border-color: #f0ad4e;
+        }
+
+        .verdict-banner {
+            background-color: #252532;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 6px solid var(--accent-color);
+            margin-top: 20px;
+        }
+
+        .verdict-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .verdict-detail {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .advantage-box {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .adv-strong { background-color: rgba(92, 184, 92, 0.2); color: #5cb85c; border: 1px solid #5cb85c; }
+        .adv-weak { background-color: rgba(217, 83, 79, 0.2); color: #ff6b6b; border: 1px solid #d9534f; }
+        .adv-equal { background-color: rgba(240, 173, 78, 0.2); color: #f0ad4e; border: 1px solid #f0ad4e; }
+    
+        /* INFO BUTTON & TOOLTIP STYLES */
+        .info-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #121214;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+            vertical-align: middle;
+            position: relative;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .info-btn:hover {
+            opacity: 0.85;
+        }
+
+        .info-tooltip {
+            visibility: hidden;
+            width: 360px;
+            background-color: #2b2b36;
+            color: #fff;
+            text-align: left;
+            border-radius: 10px;
+            padding: 14px 16px;
+            position: absolute;
+            z-index: 100;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+            border: 1px solid #555;
+            font-size: 0.95em;
+            font-weight: normal;
+            line-height: 1.6;
+            text-transform: none;
+        }
+
+        .info-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #2b2b36 transparent transparent transparent;
+        }
+
+        .info-btn:hover .info-tooltip, .info-btn:focus .info-tooltip {
+            visibility: visible;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="lang-container">
+        <button id="langEnBtn" class="lang-btn active" onclick="setLanguage('en')">🌐 English</button>
+        <button id="langViBtn" class="lang-btn" onclick="setLanguage('vi')">🇻🇳 Tiếng Việt</button>
+    </div>
+
+    <h1>Battle Realms Lookup & Comparison Tool</h1>
+    <p class="subtitle">Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)</p>
+
+    <!-- TAB NAVIGATION -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
+        <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Direct Comparison</button>
+    </div>
+
+    <!-- TAB 1: LOOKUP -->
+    <div id="tabLookup" class="tab-content active">
+        <div class="rules-info">
+            <strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>
+            • <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>
+            • <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>
+            • <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>
+            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) *but* take heavy counter-damage in return (Deals < Takes).
+        </div>
+
+        <div class="control-panel">
+            <div class="select-group">
+                <label for="clanSelect">1. Filter Target Clan:</label>
+                <select id="clanSelect">
+                    <option value="ALL">-- All Clans --</option>
+                    <option value="Dragon">Dragon Clan</option>
+                    <option value="Serpent">Serpent Clan</option>
+                    <option value="Lotus">Lotus Clan</option>
+                    <option value="Wolf">Wolf Clan</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="unitSelect">2. Select Target Unit:</label>
+                <select id="unitSelect">
+                    <!-- Javascript populates -->
+                </select>
+            </div>
+        </div>
+
+        <div id="resultOutput" class="result-container">
+            <!-- Results rendered here -->
+        </div>
+    </div>
+
+    <!-- TAB 2: COMPARISON -->
+    <div id="tabCompare" class="tab-content">
+        <div class="rules-info">
+            <strong>📖 How to Use 1v1 Comparison:</strong><br>
+            • <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>
+            • <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>
+            • <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.
+        </div>
+
+        <div class="control-panel">
+            <div class="select-group">
+                <label for="unitASelect">Unit A (Side 1):</label>
+                <select id="unitASelect"></select>
+            </div>
+
+            <div class="vs-badge">VS</div>
+
+            <div class="select-group">
+                <label for="unitBSelect">Unit B (Side 2):</label>
+                <select id="unitBSelect"></select>
+            </div>
+        </div>
+
+        <div id="compareOutput">
+            <!-- Comparison rendered here -->
+        </div>
+    </div>
+</div>
+
+<script>
+const TRANSLATIONS = {
+    en: {
+        title: "Battle Realms Lookup & Comparison Tool",
+        dragonBadge: "Dragon",
+        serpentBadge: "Serpent",
+        lotusBadge: "Lotus",
+        wolfBadge: "Wolf",
+        dragonHeader: "Dragon Clan",
+        serpentHeader: "Serpent Clan",
+        lotusHeader: "Lotus Clan",
+        wolfHeader: "Wolf Clan",
+        subtitle: "Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)",
+        tabLookup: "🔍 Unit Counter Lookup",
+        tabCompare: "⚔️ 1v1 Direct Comparison",
+        lookupRules: "<strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) *but* take heavy counter-damage in return (Deals < Takes).",
+        compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>• <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>• <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.",
+        filterClanLabel: "1. Filter Target Clan:",
+        selectUnitLabel: "2. Select Target Unit:",
+        unitALabel: "Unit A (Side 1):",
+        unitBLabel: "Unit B (Side 2):",
+        allClans: "-- All Clans --",
+        allUnits: "-- All Units --",
+        dragonClan: "Dragon Clan",
+        serpentClan: "Serpent Clan",
+        lotusClan: "Lotus Clan",
+        wolfClan: "Wolf Clan",
+        armorLegendTitle: "💡 Armor Multipliers Legend:",
+        highResDesc: "High Resistance (Reduced damage taken)",
+        neutralDesc: "Neutral (Standard damage taken)",
+        weaknessDesc: "Weakness (Extra damage taken)",
+        armorResTitle: "🛡️ Armor Multipliers & Weaknesses",
+        armorMultTitle: "🛡️ Armor Multipliers & Weaknesses",
+        combatExchangeTitle: "⚔️ Two-Way Combat Exchange & Counter Analysis:",
+        tier1Title: "🛡️ Tier 1: Safe & Dominant Counters (High Damage Dealt, Low Counter-Risk)",
+        tier2Title: "⚔️ Tier 2: Effective Counters (100% Neutral Damage Dealt)",
+        tier3Title: "⚠️ Tier 3: High-Risk Counters (High Counter Damage Received - Deals < Takes)",
+        noUnits: "No units available",
+        melee: "Melee",
+        missile: "Missile",
+        deals: "Deals:",
+        takes: "Takes:",
+        primaryAttack: "Primary Attack:",
+        meleeException: "(Melee Exception)",
+        cutting: "Cutting",
+        blunt: "Blunt",
+        piercing: "Piercing",
+        explosive: "Explosive",
+        magical: "Magical",
+        lastUpdate: "Last update:"
+    },
+    vi: {
+        title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
+        dragonBadge: "Rồng",
+        serpentBadge: "Rắn",
+        lotusBadge: "Sen",
+        wolfBadge: "Sói",
+        dragonHeader: "Tộc Rồng",
+        serpentHeader: "Tộc Rắn",
+        lotusHeader: "Tộc Sen",
+        wolfHeader: "Tộc Sói",
+        subtitle: "Tra cứu khắc chế đơn vị & So sánh 1v1 trực tiếp (Bản Zen)",
+        tabLookup: "🔍 Tra Cứu Khắc Chế",
+        tabCompare: "⚔️ So Sánh 1v1",
+        lookupRules: "<strong>📖 Hướng dẫn tra cứu khắc chế (Trao đổi sát thương 2 chiều):</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị cần xem để kiểm tra hệ số giáp và các đơn vị khắc chế.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp hoặc bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) <em>nhưng</em> chịu sát thương phản lại rất nặng (Gây < Nhận).",
+        compareRules: "<strong>📖 Hướng dẫn so sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn Đơn vị A và Đơn vị B từ bất kỳ tộc nào để đánh giá kèo đấu trực diện.<br>• <strong>Tính toán trao đổi giáp:</strong> Công cụ tự động tính sát thương đòn đánh chính của A lên giáp B và ngược lại.<br>• <strong>Kết quả kèo đấu:</strong> Hiển thị ngay đơn vị nào đang nắm ưu thế trao đổi giáp tốt hơn.",
+        filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
+        selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
+        unitALabel: "Đơn vị A (Bên 1):",
+        unitBLabel: "Đơn vị B (Bên 2):",
+        allClans: "-- Tất cả các Tộc --",
+        allUnits: "-- Tất cả các Đơn vị --",
+        dragonClan: "Tộc Rồng (Dragon)",
+        serpentClan: "Tộc Rắn (Serpent)",
+        lotusClan: "Tộc Sen (Lotus)",
+        wolfClan: "Tộc Sói (Wolf)",
+        armorLegendTitle: "💡 Chú thích hệ số giáp:",
+        highResDesc: "Kháng mạnh (Giảm sát thương nhận vào)",
+        neutralDesc: "Trung tính (Chịu sát thương chuẩn)",
+        weaknessDesc: "Yếu / Điểm yếu (Nhận thêm sát thương)",
+        armorResTitle: "🛡️ Hệ số giáp & Điểm yếu",
+        armorMultTitle: "🛡️ Hệ số giáp & Điểm yếu",
+        combatExchangeTitle: "⚔️ Phân tích trao đổi sát thương & khắc chế 2 chiều:",
+        tier1Title: "🛡️ Tier 1: Khắc chế an toàn & áp đảo (Gây sát thương cao, Rủi ro thấp)",
+        tier2Title: "⚔️ Tier 2: Khắc chế hiệu quả (Gây sát thương chuẩn 100%)",
+        tier3Title: "⚠️ Tier 3: Khắc chế rủi ro cao (Nhận sát thương phản lại lớn - Gây < Nhận)",
+        noUnits: "Không có đơn vị",
+        melee: "Cận chiến",
+        missile: "Tầm xa",
+        deals: "Gây:",
+        takes: "Nhận:",
+        primaryAttack: "Đòn đánh chính:",
+        meleeException: "(Ngoại lệ cận chiến)",
+        cutting: "Cắt",
+        blunt: "Cùn",
+        piercing: "Xuyên",
+        explosive: "Nổ",
+        magical: "Phép",
+        lastUpdate: "Cập nhật lần cuối:"
+    }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.getElementById('langEnBtn').classList.toggle('active', lang === 'en');
+    document.getElementById('langViBtn').classList.toggle('active', lang === 'vi');
+    
+    document.querySelector('h1').textContent = TRANSLATIONS[lang].title;
+    document.querySelector('p.subtitle').textContent = TRANSLATIONS[lang].subtitle;
+    
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns[0].textContent = TRANSLATIONS[lang].tabLookup;
+    tabBtns[1].textContent = TRANSLATIONS[lang].tabCompare;
+    
+    const rules = document.querySelectorAll('.rules-info');
+    if(rules[0]) rules[0].innerHTML = TRANSLATIONS[lang].lookupRules;
+    if(rules[1]) rules[1].innerHTML = TRANSLATIONS[lang].compareRules;
+    
+    const labels = document.querySelectorAll('label');
+    if(labels[0]) labels[0].textContent = TRANSLATIONS[lang].filterClanLabel;
+    if(labels[1]) labels[1].textContent = TRANSLATIONS[lang].selectUnitLabel;
+    if(labels[2]) labels[2].textContent = TRANSLATIONS[lang].unitALabel;
+    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].unitBLabel;
+    
+    const clanSel = document.getElementById('clanSelect');
+    if(clanSel && clanSel.options.length >= 5) {
+        clanSel.options[0].textContent = TRANSLATIONS[lang].allClans;
+        clanSel.options[1].textContent = TRANSLATIONS[lang].dragonClan;
+        clanSel.options[2].textContent = TRANSLATIONS[lang].serpentClan;
+        clanSel.options[3].textContent = TRANSLATIONS[lang].lotusClan;
+        clanSel.options[4].textContent = TRANSLATIONS[lang].wolfClan;
+    }
+    
+    const footerDiv = document.querySelector('footer div:first-child');
+    if (footerDiv) {
+        footerDiv.textContent = `${TRANSLATIONS[lang].lastUpdate} 11/11/2026`;
+    }
+    
+    populateLookupUnits();
+    renderResults();
+    renderComparison();
+}
+
+const RAW_UNITS = [{"id": "d_spearman", "name": "Spearman", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.25}, {"id": "d_archer", "name": "Archer", "clan": "Dragon", "melee": "Blunt", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "d_chemist", "name": "Chemist", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.25, "b": 1.25, "p": 0.88, "e": 0.5, "m": 0.5}, {"id": "d_geisha", "name": "Geisha", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "d_pk_cannoneer", "name": "PK Cannoneer", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.5}, {"id": "d_dragon_warrior", "name": "Dragon Warrior", "clan": "Dragon", "melee": "Cutting", "missile": "Magic", "c": 1.25, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.25}, {"id": "d_kabuki", "name": "Kabuki Warrior", "clan": "Dragon", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.75}, {"id": "d_samurai", "name": "Samurai", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 0.25, "b": 0.5, "p": 1.0, "e": 1.75, "m": 1.5}, {"id": "d_battle_maiden", "name": "Battle Maiden", "clan": "Dragon", "melee": "Cutting", "missile": "Cutting", "c": 1.25, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5}, {"id": "d_guardian", "name": "Guardian", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.25, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75}, {"id": "d_otomo", "name": "Otomo", "clan": "Dragon", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5}, {"id": "d_tao", "name": "Tao", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}, {"id": "d_arah", "name": "Arah", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "d_teppo", "name": "Teppo", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.0, "b": 1.25, "p": 0.88, "e": 0.5, "m": 1.25}, {"id": "d_kazan", "name": "Kazan", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25}, {"id": "d_garrin", "name": "Garrin", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "s_swordsman", "name": "Swordsman", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0}, {"id": "s_musketeer", "name": "Musketeer", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 0.5, "b": 0.75, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "s_crossbowman", "name": "Crossbowman", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "s_fan_geisha", "name": "Fan Geisha", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.75, "m": 0.5}, {"id": "s_cannoneer", "name": "Cannoneer", "clan": "Serpent", "melee": "Blunt", "missile": "Blunt", "c": 1.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "s_raider", "name": "Raider", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.25}, {"id": "s_bandit", "name": "Bandit", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.25, "m": 1.25}, {"id": "s_ronin", "name": "Ronin", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 1.13, "e": 1.75, "m": 0.5}, {"id": "s_necromancer", "name": "Necromancer", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "s_spirit_warrior", "name": "Spirit Warrior", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.25}, {"id": "s_zombie", "name": "Zombie", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75}, {"id": "s_enforcer", "name": "Enforcer", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.25}, {"id": "s_witch", "name": "Witch", "clan": "Serpent", "melee": "Magic", "missile": "Magic", "c": 1.5, "b": 0.75, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "s_demoness", "name": "Demoness", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "s_shinja", "name": "Shinja", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 0.25}, {"id": "s_utara", "name": "Utara", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25}, {"id": "s_taro", "name": "Taro", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.25, "b": 1.25, "p": 0.75, "e": 0.5, "m": 0.25}, {"id": "s_vetkin", "name": "Vetkin", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "s_budo", "name": "Budo", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5}, {"id": "w_hurler", "name": "Hurler", "clan": "Wolf", "melee": "Blunt", "missile": "Blunt", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5}, {"id": "w_brawler", "name": "Brawler", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "w_mauler", "name": "Mauler", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "w_pack_master", "name": "Pack Master", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.75, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5}, {"id": "w_druidess", "name": "Druidess", "clan": "Wolf", "melee": "Blunt", "missile": "Magic", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "w_ballistaman", "name": "Ballistaman", "clan": "Wolf", "melee": "Piercing", "missile": "Piercing", "c": 1.25, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5}, {"id": "w_pitch_slinger", "name": "Pitch Slinger", "clan": "Wolf", "melee": "Explosive", "missile": "Explosive", "c": 0.25, "b": 1.0, "p": 0.88, "e": 1.0, "m": 1.5}, {"id": "w_sledger", "name": "Sledger", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_berserker", "name": "Berserker", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_werewolf", "name": "Werewolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.0}, {"id": "w_digger", "name": "Digger", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5}, {"id": "w_dryad", "name": "Dryad", "clan": "Wolf", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.25}, {"id": "w_grayback", "name": "Grayback", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "w_longtooth", "name": "Longtooth", "clan": "Wolf", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}, {"id": "w_gaihla", "name": "Gaihla", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "w_the_shale_lord", "name": "The Shale Lord", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 0.25, "p": 1.0, "e": 1.75, "m": 1.5}, {"id": "w_wildeye", "name": "Wildeye", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_spirit_wolf", "name": "Spirit Wolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 1.25}, {"id": "l_staff_adept", "name": "Staff Adept", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.0, "m": 1.5}, {"id": "l_blade_acolyte", "name": "Blade Acolyte", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0}, {"id": "l_leaf_disciple", "name": "Leaf Disciple", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5}, {"id": "l_channeler", "name": "Channeler", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_sehk", "name": "Brother Sehk", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_lythis", "name": "Brother Lythis", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_tausil", "name": "Brother Tausil", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_unclean_one", "name": "Unclean One", "clan": "Lotus", "melee": "Blunt", "missile": "Magic", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "l_diseased_one", "name": "Diseased One", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "l_infested_one", "name": "Infested One", "clan": "Lotus", "melee": "Piercing", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.5}, {"id": "l_warlock", "name": "Warlock", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25}, {"id": "l_master_warlock", "name": "Master Warlock", "clan": "Lotus", "melee": "Cutting", "missile": "Explosive", "c": 0.25, "b": 0.75, "p": 0.88, "e": 1.5, "m": 1.0}, {"id": "l_overseer", "name": "Overseer", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 1.25, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "l_reaper", "name": "Reaper", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.75, "b": 0.75, "p": 0.88, "e": 1.5, "m": 0.25}, {"id": "l_shambler", "name": "Shambler", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.5}, {"id": "l_zymeth", "name": "Zymeth", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 0.5}, {"id": "l_yvaine", "name": "Yvaine", "clan": "Lotus", "melee": "Magic", "missile": "Piercing", "c": 1.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "l_koril", "name": "Koril", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25}, {"id": "l_issyl", "name": "Issyl", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.25}, {"id": "l_soban", "name": "Soban", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}];
+
+const MELEE_EXCEPTIONS = ['d_dragon_warrior', 'd_kabuki', 'd_samurai', 's_bandit'];
+
+function normalizeDmgType(typeStr) {
+    if (!typeStr || typeStr === '-') return null;
+    const s = typeStr.toLowerCase();
+    if (s.includes('pierc')) return 'piercing';
+    if (s.includes('cut')) return 'cutting';
+    if (s.includes('blunt')) return 'blunt';
+    if (s.includes('exp')) return 'explosive';
+    if (s.includes('mag')) return 'magical';
+    return null;
+}
+
+const DAMAGE_NAMES = {
+    cutting: 'cutting',
+    blunt: 'blunt',
+    piercing: 'piercing',
+    explosive: 'explosive',
+    magical: 'magical'
+};
+
+const CLANS = ['Dragon', 'Serpent', 'Lotus', 'Wolf'];
+
+const UNITS = RAW_UNITS.map(u => {
+    const missileDmg = normalizeDmgType(u.missile);
+    const meleeDmg = normalizeDmgType(u.melee);
+    
+    let primaryDmg;
+    if (MELEE_EXCEPTIONS.includes(u.id)) {
+        primaryDmg = meleeDmg;
+    } else {
+        primaryDmg = missileDmg ? missileDmg : meleeDmg;
+    }
+    
+    return {
+        id: u.id,
+        name: u.name,
+        clan: u.clan,
+        melee: u.melee,
+        missile: u.missile,
+        damageType: primaryDmg,
+        armor: {
+            cutting: u.c,
+            blunt: u.b,
+            piercing: u.p,
+            explosive: u.e,
+            magical: u.m
+        }
+    };
+});
+
+const clanSelect = document.getElementById('clanSelect');
+const unitSelect = document.getElementById('unitSelect');
+const resultOutput = document.getElementById('resultOutput');
+const unitASelect = document.getElementById('unitASelect');
+const unitBSelect = document.getElementById('unitBSelect');
+const compareOutput = document.getElementById('compareOutput');
+
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (tabId === 'tabLookup') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tabLookup').classList.add('active');
+    } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tabCompare').classList.add('active');
+        renderComparison();
+    }
+}
+
+function populateLookupUnits() {
+    const selectedClan = clanSelect.value;
+    unitSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].allUnits}</option>`;
+    
+    UNITS.forEach(u => {
+        if (selectedClan === 'ALL' || u.clan === selectedClan) {
+            const opt = document.createElement('option');
+            opt.value = u.id;
+            opt.textContent = `[${u.clan}] ${u.name}`;
+            unitSelect.appendChild(opt);
+        }
+    });
+}
+
+function populateCompareDropdowns() {
+    unitASelect.innerHTML = '';
+    unitBSelect.innerHTML = '';
+    
+    UNITS.forEach((u) => {
+        const optA = document.createElement('option');
+        optA.value = u.id;
+        optA.textContent = `[${u.clan}] ${u.name}`;
+        
+        const optB = document.createElement('option');
+        optB.value = u.id;
+        optB.textContent = `[${u.clan}] ${u.name}`;
+
+        unitASelect.appendChild(optA);
+        unitBSelect.appendChild(optB);
+    });
+
+    const spearman = UNITS.find(u => u.name === 'Spearman');
+    const bladeAcolyte = UNITS.find(u => u.name === 'Blade Acolyte');
+
+    if (spearman) unitASelect.value = spearman.id;
+    if (bladeAcolyte) unitBSelect.value = bladeAcolyte.id;
+}
+
+
+function getClanBadgeText(clan) {
+    const t = TRANSLATIONS[currentLang];
+    if (clan === 'Dragon') return t.dragonBadge;
+    if (clan === 'Serpent') return t.serpentBadge;
+    if (clan === 'Lotus') return t.lotusBadge;
+    return t.wolfBadge;
+}
+
+function getClanHeaderText(clan) {
+    const t = TRANSLATIONS[currentLang];
+    if (clan === 'Dragon') return t.dragonHeader;
+    if (clan === 'Serpent') return t.serpentHeader;
+    if (clan === 'Lotus') return t.lotusHeader;
+    return t.wolfHeader;
+}
+
+function isMissileAttacker(attacker) {
+    return attacker.missile !== '-' && !MELEE_EXCEPTIONS.includes(attacker.id);
+}
+
+function getDamageMultiplier(attacker, target) {
+    let mult = target.armor[attacker.damageType] || 1.0;
+    if (target.id === 'l_koril') {
+        if (attacker.id !== 's_musketeer' && isMissileAttacker(attacker)) {
+            return 0.0;
+        }
+    }
+    return mult;
+}
+
+function getTwoWayCountersForUnit(targetUnit) {
+    const HEALER_IDS = ['d_geisha', 's_fan_geisha'];
+
+    const evaluated = UNITS.map(attacker => {
+        if (attacker.id === targetUnit.id) return null;
+        if (HEALER_IDS.includes(attacker.id)) return null;
+
+        const dmgDealtMult = getDamageMultiplier(attacker, targetUnit);
+        const targetDmgType = targetUnit.damageType;
+        const dmgReceivedMult = targetDmgType ? (attacker.armor[targetDmgType] || 1.0) : 1.0;
+
+        const netScore = dmgDealtMult - dmgReceivedMult;
+
+        return {
+            attacker: attacker,
+            dmgDealt: dmgDealtMult,
+            dmgReceived: dmgReceivedMult,
+            netScore: netScore
+        };
+    }).filter(x => x !== null);
+
+    const sortCounterItems = (a, b) => {
+        if (a.dmgReceived !== b.dmgReceived) {
+            return a.dmgReceived - b.dmgReceived;
+        }
+        return b.dmgDealt - a.dmgDealt;
+    };
+
+    const tier1 = evaluated.filter(x => x.dmgDealt >= 1.25 && x.netScore >= 0.0);
+    tier1.sort(sortCounterItems);
+
+    const tier2 = evaluated.filter(x => x.dmgDealt === 1.0 && x.netScore >= 0.0);
+    tier2.sort(sortCounterItems);
+
+    const tier3 = evaluated.filter(x => x.dmgDealt >= 1.0 && x.netScore < 0.0);
+    tier3.sort(sortCounterItems);
+
+    const resultTiers = [];
+    const t = TRANSLATIONS[currentLang];
+    if (tier1.length > 0) resultTiers.push({ title: t.tier1Title, items: tier1, class: 'tier-1' });
+    if (tier2.length > 0) resultTiers.push({ title: t.tier2Title, items: tier2, class: 'tier-2' });
+    if (tier3.length > 0) resultTiers.push({ title: t.tier3Title, items: tier3, class: 'tier-3' });
+
+    return resultTiers;
+}
+
+function renderClanColumnsForTwoWay(evaluatedItems) {
+    let html = '<div class="clan-grid">';
+    const t = TRANSLATIONS[currentLang];
+    
+    CLANS.forEach(clanName => {
+        const clanItems = evaluatedItems.filter(x => x.attacker.clan === clanName);
+        
+        html += `
+            <div class="clan-column">
+                <div class="clan-column-header clan-${clanName}">${getClanHeaderText(clanName)}</div>
+        `;
+
+        if (clanItems.length === 0) {
+            html += `<div class="no-attacker-msg">${t.noUnits}</div>`;
+        } else {
+            clanItems.forEach(item => {
+                const atk = item.attacker;
+                const attackMode = isMissileAttacker(atk) ? t.missile : t.melee;
+                const dmgName = t[atk.damageType] || atk.damageType;
+                
+                let riskClass = 'safe';
+                if (item.netScore < -0.5) riskClass = 'mutual';
+                else if (item.netScore < 0.0) riskClass = 'risky';
+
+                html += `
+                    <div class="counter-item ${riskClass}">
+                        <div class="counter-header-row">
+                            <span class="counter-unit-name">${atk.name}</span>
+                            <span class="damage-badge" style="text-transform: capitalize;">${dmgName}</span>
+                        </div>
+                        <div class="counter-detail">${attackMode}</div>
+                        <div class="exchange-stats">
+                            <span>${t.deals} <strong style="color:#5cb85c;">${(item.dmgDealt * 100).toFixed(0)}%</strong></span>
+                            <span>${t.takes} <strong style="color:#ff6b6b;">${(item.dmgReceived * 100).toFixed(0)}%</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        html += `</div>`;
+    });
+
+    html += '</div>';
+    return html;
+}
+
+function renderResults() {
+    const selectedUnitId = unitSelect.value;
+    const selectedClan = clanSelect.value;
+    const t = TRANSLATIONS[currentLang];
+
+    resultOutput.innerHTML = '';
+
+    let targetUnits = UNITS;
+    if (selectedUnitId !== 'ALL') {
+        targetUnits = UNITS.filter(u => u.id === selectedUnitId);
+    } else if (selectedClan !== 'ALL') {
+        targetUnits = UNITS.filter(u => u.clan === selectedClan);
+    }
+
+    targetUnits.forEach(unit => {
+        const tiers = getTwoWayCountersForUnit(unit);
+        const card = document.createElement('div');
+        card.className = 'target-card';
+
+        const meleeText = unit.melee === '-' ? '-' : (currentLang === 'vi' ? (unit.melee === 'Piercing' ? 'Xuyên' : unit.melee === 'Blunt' ? 'Cùn' : unit.melee === 'Cutting' ? 'Cắt' : unit.melee === 'Magic' ? 'Phép' : unit.melee === 'Explosive' ? 'Nổ' : unit.melee) : unit.melee);
+        const missileText = unit.missile === '-' ? '-' : (currentLang === 'vi' ? (unit.missile === 'Piercing' ? 'Xuyên' : unit.missile === 'Blunt' ? 'Cùn' : unit.missile === 'Cutting' ? 'Cắt' : unit.missile === 'Magic' ? 'Phép' : unit.missile === 'Explosive' ? 'Nổ' : unit.missile) : unit.missile);
+        const primDmgName = unit.damageType ? (t[unit.damageType] || unit.damageType) : 'N/A';
+
+        let html = `
+            <div class="target-header">
+                <div>
+                    <span class="target-name">${unit.name}</span>
+                    <span class="clan-badge clan-${unit.clan}">${getClanBadgeText(unit.clan)}</span>
+                </div>
+                <div class="counter-detail" style="text-align: right;">
+                    ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong><br>
+                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}
+                </div>
+            </div>
+
+            <div style="margin-top: 10px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorMultTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
+    <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
+    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+</span></span></div>
+            <table class="stats-table" style="margin-top: 5px;">
+                <tr>
+                    <th>${currentLang === 'vi' ? 'Cắt (Cutting)' : 'Cutting'}</th>
+                    <th>${currentLang === 'vi' ? 'Cùn (Blunt)' : 'Blunt'}</th>
+                    <th>${currentLang === 'vi' ? 'Xuyên (Piercing)' : 'Piercing'}</th>
+                    <th>${currentLang === 'vi' ? 'Nổ (Explosive)' : 'Explosive'}</th>
+                    <th>${currentLang === 'vi' ? 'Phép (Magical)' : 'Magical'}</th>
+                </tr>
+                <tr>
+                    <td class="${unit.armor.cutting > 1 ? 'weakness' : unit.armor.cutting < 1 ? 'resistance' : 'neutral'}">${(unit.armor.cutting * 100).toFixed(0)}%</td>
+                    <td class="${unit.armor.blunt > 1 ? 'weakness' : unit.armor.blunt < 1 ? 'resistance' : 'neutral'}">${(unit.armor.blunt * 100).toFixed(0)}%</td>
+                    <td class="${unit.armor.piercing > 1 ? 'weakness' : unit.armor.piercing < 1 ? 'resistance' : 'neutral'}">${(unit.armor.piercing * 100).toFixed(0)}%</td>
+                    <td class="${unit.armor.explosive > 1 ? 'weakness' : unit.armor.explosive < 1 ? 'resistance' : 'neutral'}">${(unit.armor.explosive * 100).toFixed(0)}%</td>
+                    <td class="${unit.armor.magical > 1 ? 'weakness' : unit.armor.magical < 1 ? 'resistance' : 'neutral'}">${(unit.armor.magical * 100).toFixed(0)}%</td>
+                </tr>
+            </table>
+
+            <h4 style="margin: 15px 0 10px 0; color: var(--accent-color);">
+                ${t.combatExchangeTitle}
+            </h4>
+        `;
+
+        tiers.forEach((tier) => {
+            html += `
+                <div class="tier-group">
+                    <div class="tier-title ${tier.class}">
+                        ${tier.title}
+                    </div>
+                    ${renderClanColumnsForTwoWay(tier.items)}
+                </div>
+            `;
+        });
+
+        card.innerHTML = html;
+        resultOutput.appendChild(card);
+    });
+}
+
+function renderComparison() {
+    const unitA = UNITS.find(u => u.id === unitASelect.value);
+    const unitB = UNITS.find(u => u.id === unitBSelect.value);
+
+    if (!unitA || !unitB) return;
+    const t = TRANSLATIONS[currentLang];
+
+    const dmgAToBType = unitA.damageType;
+    const multAToB = getDamageMultiplier(unitA, unitB);
+    const dmgAToBPercent = (multAToB * 100).toFixed(0);
+
+    const dmgBToAType = unitB.damageType;
+    const multBToA = getDamageMultiplier(unitB, unitA);
+    const dmgBToAPercent = (multBToA * 100).toFixed(0);
+
+    let winner = null;
+    let advantageMsg = '';
+
+    const isATakingZeroFromB_Koril = (unitA.id === 'l_koril' && multBToA === 0 && isMissileAttacker(unitB) && unitB.id !== 's_musketeer');
+    const isBTakingZeroFromA_Koril = (unitB.id === 'l_koril' && multAToB === 0 && isMissileAttacker(unitA) && unitA.id !== 's_musketeer');
+
+    if (multAToB > multBToA) {
+        winner = 'A';
+        if (isATakingZeroFromB_Koril) {
+            advantageMsg = currentLang === 'vi' ? 
+                `<strong>${unitA.name}</strong> nắm ưu thế! (${unitA.name} gây <strong>${dmgAToBPercent}%</strong> sát thương lên ${unitB.name}, nhưng nhận lại <strong>0%</strong> sát thương do nội tại miễn nhiễm đòn đánh tầm xa).` :
+                `<strong>${unitA.name}</strong> holds the advantage! (${unitA.name} deals <strong>${dmgAToBPercent}%</strong> damage to ${unitB.name}, while taking <strong>0%</strong> damage in return due to his innate missile immunity).`;
+        } else {
+            advantageMsg = currentLang === 'vi' ?
+                `<strong>${unitA.name}</strong> nắm ưu thế rõ rệt về giáp! (${unitA.name} gây <strong>${dmgAToBPercent}%</strong> sát thương lên ${unitB.name}, trong khi chỉ nhận lại <strong>${dmgBToAPercent}%</strong>).` :
+                `<strong>${unitA.name}</strong> holds a clear armor advantage! (${unitA.name} deals <strong>${dmgAToBPercent}%</strong> damage to ${unitB.name}, while taking only <strong>${dmgBToAPercent}%</strong> damage in return).`;
+        }
+    } else if (multBToA > multAToB) {
+        winner = 'B';
+        if (isBTakingZeroFromA_Koril) {
+            advantageMsg = currentLang === 'vi' ? 
+                `<strong>${unitB.name}</strong> nắm ưu thế! (${unitB.name} gây <strong>${dmgBToAPercent}%</strong> sát thương lên ${unitA.name}, nhưng nhận lại <strong>0%</strong> sát thương do nội tại miễn nhiễm đòn đánh tầm xa).` :
+                `<strong>${unitB.name}</strong> holds the advantage! (${unitB.name} deals <strong>${dmgBToAPercent}%</strong> damage to ${unitA.name}, while taking <strong>0%</strong> damage in return due to his innate missile immunity).`;
+        } else {
+            advantageMsg = currentLang === 'vi' ?
+                `<strong>${unitB.name}</strong> nắm ưu thế rõ rệt về giáp! (${unitB.name} gây <strong>${dmgBToAPercent}%</strong> sát thương lên ${unitA.name}, trong khi chỉ nhận lại <strong>${dmgAToBPercent}%</strong>).` :
+                `<strong>${unitB.name}</strong> holds a clear armor advantage! (${unitB.name} deals <strong>${dmgBToAPercent}%</strong> damage to ${unitA.name}, while taking only <strong>${dmgAToBPercent}%</strong> damage in return).`;
+        }
+    } else {
+        winner = 'TIE';
+        advantageMsg = currentLang === 'vi' ?
+            `Hai đơn vị có tỷ lệ trao đổi sát thương tương đương nhau (Cùng gây <strong>${dmgAToBPercent}%</strong> sát thương cho nhau).` :
+            `Both units are evenly matched in effective damage exchange (Both deal <strong>${dmgAToBPercent}%</strong> relative damage to each other).`;
+    }
+
+    let cardAClass = winner === 'A' ? 'winner' : winner === 'B' ? 'loser' : 'tie';
+    let cardBClass = winner === 'B' ? 'winner' : winner === 'A' ? 'loser' : 'tie';
+
+    const unitAAtkMode = isMissileAttacker(unitA) ? t.missile : t.melee;
+    const unitBAtkMode = isMissileAttacker(unitB) ? t.missile : t.melee;
+    const unitADmgName = t[dmgAToBType] || dmgAToBType;
+    const unitBDmgName = t[dmgBToAType] || dmgBToAType;
+
+    let html = `
+        <div class="comparison-grid">
+            <!-- UNIT A CARD -->
+            <div class="unit-card-comp ${cardAClass}">
+                <div class="target-header">
+                    <div>
+                        <span class="target-name">${unitA.name}</span>
+                        <span class="clan-badge clan-${unitA.clan}">${getClanBadgeText(unitA.clan)}</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px; font-size: 0.9em;">
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong><br>
+                    • <strong>${unitAAtkMode}</strong>
+                </div>
+
+                <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
+    <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
+    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+</span></span></div>
+                <table class="stats-table" style="margin-bottom: 15px;">
+                    <tr><th>${currentLang === 'vi' ? 'Cắt' : 'Cutting'}</th><th>${currentLang === 'vi' ? 'Cùn' : 'Blunt'}</th><th>${currentLang === 'vi' ? 'Xuyên' : 'Piercing'}</th><th>${currentLang === 'vi' ? 'Nổ' : 'Explosive'}</th><th>${currentLang === 'vi' ? 'Phép' : 'Magical'}</th></tr>
+                    <tr>
+                        <td class="${unitA.armor.cutting > 1 ? 'weakness' : unitA.armor.cutting < 1 ? 'resistance' : 'neutral'}">${(unitA.armor.cutting * 100).toFixed(0)}%</td>
+                        <td class="${unitA.armor.blunt > 1 ? 'weakness' : unitA.armor.blunt < 1 ? 'resistance' : 'neutral'}">${(unitA.armor.blunt * 100).toFixed(0)}%</td>
+                        <td class="${unitA.armor.piercing > 1 ? 'weakness' : unitA.armor.piercing < 1 ? 'resistance' : 'neutral'}">${(unitA.armor.piercing * 100).toFixed(0)}%</td>
+                        <td class="${unitA.armor.explosive > 1 ? 'weakness' : unitA.armor.explosive < 1 ? 'resistance' : 'neutral'}">${(unitA.armor.explosive * 100).toFixed(0)}%</td>
+                        <td class="${unitA.armor.magical > 1 ? 'weakness' : unitA.armor.magical < 1 ? 'resistance' : 'neutral'}">${(unitA.armor.magical * 100).toFixed(0)}%</td>
+                    </tr>
+                </table>
+
+                <div class="advantage-box ${winner === 'A' ? 'adv-strong' : winner === 'B' ? 'adv-weak' : 'adv-equal'}">
+                    💥 ${currentLang === 'vi' ? `Gây lên ${unitB.name}: ${dmgAToBPercent}% sát thương (${unitADmgName.toLowerCase()})` : `Deals to ${unitB.name}: ${dmgAToBPercent}% Damage (${unitADmgName.toLowerCase()})`}
+                </div>
+            </div>
+
+            <!-- UNIT B CARD -->
+            <div class="unit-card-comp ${cardBClass}">
+                <div class="target-header">
+                    <div>
+                        <span class="target-name">${unitB.name}</span>
+                        <span class="clan-badge clan-${unitB.clan}">${getClanBadgeText(unitB.clan)}</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px; font-size: 0.9em;">
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong><br>
+                    • <strong>${unitBAtkMode}</strong>
+                </div>
+
+                <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
+    <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
+    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+</span></span></div>
+                <table class="stats-table" style="margin-bottom: 15px;">
+                    <tr><th>${currentLang === 'vi' ? 'Cắt' : 'Cutting'}</th><th>${currentLang === 'vi' ? 'Cùn' : 'Blunt'}</th><th>${currentLang === 'vi' ? 'Xuyên' : 'Piercing'}</th><th>${currentLang === 'vi' ? 'Nổ' : 'Explosive'}</th><th>${currentLang === 'vi' ? 'Phép' : 'Magical'}</th></tr>
+                    <tr>
+                        <td class="${unitB.armor.cutting > 1 ? 'weakness' : unitB.armor.cutting < 1 ? 'resistance' : 'neutral'}">${(unitB.armor.cutting * 100).toFixed(0)}%</td>
+                        <td class="${unitB.armor.blunt > 1 ? 'weakness' : unitB.armor.blunt < 1 ? 'resistance' : 'neutral'}">${(unitB.armor.blunt * 100).toFixed(0)}%</td>
+                        <td class="${unitB.armor.piercing > 1 ? 'weakness' : unitB.armor.piercing < 1 ? 'resistance' : 'neutral'}">${(unitB.armor.piercing * 100).toFixed(0)}%</td>
+                        <td class="${unitB.armor.explosive > 1 ? 'weakness' : unitB.armor.explosive < 1 ? 'resistance' : 'neutral'}">${(unitB.armor.explosive * 100).toFixed(0)}%</td>
+                        <td class="${unitB.armor.magical > 1 ? 'weakness' : unitB.armor.magical < 1 ? 'resistance' : 'neutral'}">${(unitB.armor.magical * 100).toFixed(0)}%</td>
+                    </tr>
+                </table>
+
+                <div class="advantage-box ${winner === 'B' ? 'adv-strong' : winner === 'A' ? 'adv-weak' : 'adv-equal'}">
+                    💥 ${currentLang === 'vi' ? `Gây lên ${unitA.name}: ${dmgBToAPercent}% sát thương (${unitBDmgName.toLowerCase()})` : `Deals to ${unitA.name}: ${dmgBToAPercent}% Damage (${unitBDmgName.toLowerCase()})`}
+                </div>
+            </div>
+        </div>
+
+        <!-- VERDICT BANNER -->
+        <div class="verdict-banner">
+            <div class="verdict-title">
+                ${winner === 'A' ? (currentLang === 'vi' ? `🏆 KẾT QUẢ: ${unitA.name.toUpperCase()} NẮM ƯU THẾ` : `🏆 VERDICT: ${unitA.name.toUpperCase()} HAS THE ADVANTAGE`) : winner === 'B' ? (currentLang === 'vi' ? `🏆 KẾT QUẢ: ${unitB.name.toUpperCase()} NẮM ƯU THẾ` : `🏆 VERDICT: ${unitB.name.toUpperCase()} HAS THE ADVANTAGE`) : (currentLang === 'vi' ? `⚖️ KẾT QUẢ: HAI BÊN NGANG SỨC` : `⚖️ VERDICT: EVENLY MATCHED`)}
+            </div>
+            <div class="verdict-detail">
+                ${advantageMsg}
+            </div>
+        </div>
+    `;
+
+    compareOutput.innerHTML = html;
+}
+
+clanSelect.addEventListener('change', () => {
+    populateLookupUnits();
+    renderResults();
+});
+
+unitSelect.addEventListener('change', () => {
+    renderResults();
+});
+
+unitASelect.addEventListener('change', renderComparison);
+unitBSelect.addEventListener('change', renderComparison);
+
+// Init
+populateLookupUnits();
+renderResults();
+populateCompareDropdowns();
+</script>
+
+<footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
+    <div>Update lần cuối: 11/11/2026</div>
+    <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
+</footer>
+
+</body>
+</html>
