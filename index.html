@@ -550,6 +550,15 @@
                     <!-- Javascript populates -->
                 </select>
             </div>
+
+            <div class="select-group">
+                <label for="counterTypeSelect">3. Filter Counter Attack Type:</label>
+                <select id="counterTypeSelect">
+                    <option value="ALL">-- All Attack Types --</option>
+                    <option value="MELEE">Melee Only</option>
+                    <option value="MISSILE">Missile Only</option>
+                </select>
+            </div>
         </div>
 
         <div id="resultOutput" class="result-container">
@@ -605,6 +614,10 @@ const TRANSLATIONS = {
         compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>• <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>• <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.",
         filterClanLabel: "1. Filter Target Clan:",
         selectUnitLabel: "2. Select Target Unit:",
+        filterCounterTypeLabel: "3. Filter Counter Attack Type:",
+        allAttackTypes: "-- All Attack Types --",
+        meleeOnly: "Melee Only",
+        missileOnly: "Missile Only",
         unitALabel: "Unit A (Side 1):",
         unitBLabel: "Unit B (Side 2):",
         allClans: "-- All Clans --",
@@ -654,6 +667,10 @@ const TRANSLATIONS = {
         compareRules: "<strong>📖 Hướng dẫn so sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn Đơn vị A và Đơn vị B từ bất kỳ tộc nào để đánh giá kèo đấu trực diện.<br>• <strong>Tính toán trao đổi giáp:</strong> Công cụ tự động tính sát thương đòn đánh chính của A lên giáp B và ngược lại.<br>• <strong>Kết quả kèo đấu:</strong> Hiển thị ngay đơn vị nào đang nắm ưu thế trao đổi giáp tốt hơn.",
         filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
         selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
+        filterCounterTypeLabel: "3. Lọc Kiểu Đánh Khắc Chế:",
+        allAttackTypes: "-- Tất cả kiểu đánh --",
+        meleeOnly: "Chỉ Cận chiến (Melee)",
+        missileOnly: "Chỉ Tầm xa (Missile)",
         unitALabel: "Đơn vị A (Bên 1):",
         unitBLabel: "Đơn vị B (Bên 2):",
         allClans: "-- Tất cả các Tộc --",
@@ -709,8 +726,16 @@ function setLanguage(lang) {
     const labels = document.querySelectorAll('label');
     if(labels[0]) labels[0].textContent = TRANSLATIONS[lang].filterClanLabel;
     if(labels[1]) labels[1].textContent = TRANSLATIONS[lang].selectUnitLabel;
-    if(labels[2]) labels[2].textContent = TRANSLATIONS[lang].unitALabel;
-    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].unitBLabel;
+    if(labels[2]) labels[2].textContent = TRANSLATIONS[lang].filterCounterTypeLabel;
+    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].unitALabel;
+    if(labels[4]) labels[4].textContent = TRANSLATIONS[lang].unitBLabel;
+    
+    const typeSel = document.getElementById('counterTypeSelect');
+    if(typeSel && typeSel.options.length >= 3) {
+        typeSel.options[0].textContent = TRANSLATIONS[lang].allAttackTypes;
+        typeSel.options[1].textContent = TRANSLATIONS[lang].meleeOnly;
+        typeSel.options[2].textContent = TRANSLATIONS[lang].missileOnly;
+    }
     
     const clanSel = document.getElementById('clanSelect');
     if(clanSel && clanSel.options.length >= 5) {
@@ -786,6 +811,7 @@ const UNITS = RAW_UNITS.map(u => {
 
 const clanSelect = document.getElementById('clanSelect');
 const unitSelect = document.getElementById('unitSelect');
+const counterTypeSelect = document.getElementById('counterTypeSelect');
 const resultOutput = document.getElementById('resultOutput');
 const unitASelect = document.getElementById('unitASelect');
 const unitBSelect = document.getElementById('unitBSelect');
@@ -877,9 +903,13 @@ function getDamageMultiplier(attacker, target) {
 function getTwoWayCountersForUnit(targetUnit) {
     const HEALER_IDS = ['d_geisha', 's_fan_geisha'];
 
+    const attackTypeFilter = counterTypeSelect ? counterTypeSelect.value : 'ALL';
+
     const evaluated = UNITS.map(attacker => {
         if (attacker.id === targetUnit.id) return null;
         if (HEALER_IDS.includes(attacker.id)) return null;
+        if (attackTypeFilter === 'MELEE' && isMissileAttacker(attacker)) return null;
+        if (attackTypeFilter === 'MISSILE' && !isMissileAttacker(attacker)) return null;
 
         const dmgDealtMult = getDamageMultiplier(attacker, targetUnit);
         const targetDmgType = targetUnit.damageType;
@@ -1197,6 +1227,10 @@ clanSelect.addEventListener('change', () => {
 });
 
 unitSelect.addEventListener('change', () => {
+    renderResults();
+});
+
+counterTypeSelect.addEventListener('change', () => {
     renderResults();
 });
 
