@@ -546,11 +546,23 @@
 
         .advantage-box {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 5px 10px;
             border-radius: 4px;
             font-weight: bold;
             font-size: 0.85em;
-            margin-top: 5px;
+            margin-top: 6px;
+        }
+
+        .advantage-box-skill {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-top: 6px;
+            background-color: rgba(146, 53, 168, 0.2);
+            color: #d18ce0;
+            border: 1px solid #9235a8;
         }
 
         .adv-strong { background-color: rgba(92, 184, 92, 0.2); color: #5cb85c; border: 1px solid #5cb85c; }
@@ -680,11 +692,11 @@
     <!-- TAB 1: LOOKUP -->
     <div id="tabLookup" class="tab-content active">
         <div class="rules-info" id="lookupRulesBox">
-            <strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>
-            • <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>
+            <strong>📖 How to Use Counter Lookup:</strong><br>
+            • <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and damage types. The analysis will display a list of counter units categorized into Tier tabs corresponding to effectiveness levels 1, 2, and 3. Click on each tab (if available) to view its detailed unit list.<br>
             • <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>
-            • <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>
-            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) <em>but</em> take heavy counter-damage in return (Deals < Takes).
+            • <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking low/equal counter-damage.<br>
+            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) but take heavy counter-damage in return (Deals < Takes).
         </div>
 
         <div class="control-panel">
@@ -726,7 +738,7 @@
     <div id="tabWeakness" class="tab-content">
         <div class="rules-info" id="weaknessRulesBox">
             <strong>📖 How to Use Resistance Filter:</strong><br>
-            • <strong>Resistance Category:</strong> Choose between <em>Weak Resistance</em> (units taking ≥ 100% damage, sorted high → low by default) or <em>Strong Resistance</em> (units taking < 100% damage, sorted low → high by default).<br>
+            • <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low by default) or Strong Resistance (units taking < 100% damage, sorted low → high by default).<br>
             • <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>
             • <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.
         </div>
@@ -775,21 +787,21 @@
     <div id="tabCompare" class="tab-content">
         <div class="rules-info" id="compareRulesBox">
             <strong>📖 How to Use 1v1 Comparison:</strong><br>
-            • <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>
-            • <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>
-            • <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.
+            • <strong>Select Units:</strong> Select any Unit A and Unit B to start the comparison.<br>
+            • <strong>Two-Way Comparison:</strong> The tool compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including Skills if available).<br>
+            • <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive/armor efficiency rather than the actual outcome of a 1v1 duel.
         </div>
 
         <div class="control-panel">
             <div class="select-group">
-                <label for="unitASelect" id="unitALabel">Unit A (Side 1):</label>
+                <label for="unitASelect" id="unitALabel">Unit A:</label>
                 <select id="unitASelect"></select>
             </div>
 
             <div class="vs-badge">VS</div>
 
             <div class="select-group">
-                <label for="unitBSelect" id="unitBLabel">Unit B (Side 2):</label>
+                <label for="unitBSelect" id="unitBLabel">Unit B:</label>
                 <select id="unitBSelect"></select>
             </div>
         </div>
@@ -816,11 +828,11 @@ const TRANSLATIONS = {
         tabLookup: "🔍 Unit Counter Lookup",
         tabWeakness: "🛡️ Resistance Filter",
         tabCompare: "⚔️ 1v1 Direct Comparison",
-        lookupRules: "<strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) <em>but</em> take heavy counter-damage in return (Deals < Takes).",
-        weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between <em>Weak Resistance</em> (units taking ≥ 100% damage, sorted high → low by default) or <em>Strong Resistance</em> (units taking < 100% damage, sorted low → high by default).<br>• <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>• <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.",
+        lookupRules: "<strong>📖 How to Use Counter Lookup:</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and damage types. The analysis will display a list of counter units categorized into Tier tabs corresponding to effectiveness levels 1, 2, and 3. Click on each tab (if available) to view its detailed unit list.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking low/equal counter-damage.<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) but take heavy counter-damage in return (Deals < Takes).",
+        weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low by default) or Strong Resistance (units taking < 100% damage, sorted low → high by default).<br>• <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>• <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.",
         resistanceCategoryLabel: "1. Resistance Category:",
         weaknessDmgLabel: "2. Select Damage Type:",
-        weaknessUnitTypeLabel: "3. Filter Unit Type:",
+        weaknessUnitTypeSelect: "3. Filter Unit Type:",
         weaknessSortLabel: "4. Sort Order:",
         weakOption: "Weak Resistance (≥ 100%)",
         strongOption: "Strong Resistance (< 100%)",
@@ -831,7 +843,7 @@ const TRANSLATIONS = {
         strongResultTitle: "🛡️ Units with Strong Resistance (< 100% Damage Taken) to",
         damageTakenLabel: "Takes:",
         weaknessTooltip: "{unit} takes {mult}% {dmg} damage (Primary attack: {atkMode} - {primDmg}).",
-        compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>• <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>• <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.",
+        compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Select any Unit A and Unit B to start the comparison.<br>• <strong>Two-Way Comparison:</strong> The tool compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including Skills if available).<br>• <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive/armor efficiency rather than the actual outcome of a 1v1 duel.",
         filterClanLabel: "1. Filter Target Clan:",
         selectUnitLabel: "2. Select Target Unit:",
         filterCounterTypeLabel: "3. Filter Counter Attack Type:",
@@ -839,8 +851,8 @@ const TRANSLATIONS = {
         meleeOnly: "Melee Only",
         missileOnly: "Missile Only",
         skillOnly: "Skill Only",
-        unitALabel: "Unit A (Side 1):",
-        unitBLabel: "Unit B (Side 2):",
+        unitALabel: "Unit A:",
+        unitBLabel: "Unit B:",
         allClans: "-- All Clans --",
         allUnits: "-- All Units --",
         dragonClan: "Dragon Clan",
@@ -867,14 +879,17 @@ const TRANSLATIONS = {
         deals: "Deals:",
         takes: "Takes:",
         primaryAttack: "Primary Attack:",
+        basicAttack: "Basic Attack:",
         meleeException: "(Melee Exception)",
         cutting: "Cutting",
         blunt: "Blunt",
         piercing: "Piercing",
         explosive: "Explosive",
         magical: "Magical",
-        counterTooltip: "{attacker} deals {deals}% {atkDmg} damage to {target}, while taking {takes}% {targetDmg} damage in return.",
-        lastUpdate: "Last update:"
+        counterTooltipTwoWay: "{attacker} ({atkMode}) deals {deals}% {atkDmg} damage to {target}. Target counters with: Primary ({primTakes}% {primDmg}) and Skill ({skillTakes}% {skillDmg}).",
+        counterTooltipOneWay: "{attacker} ({atkMode}) deals {deals}% {atkDmg} damage to {target}, while taking {takes}% {targetDmg} ({targetSource}) in return.",
+        lastUpdate: "Last update:",
+        korilImmunityNote: " (Passive immunity to ranged attacks, except Musketeer)"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -890,11 +905,11 @@ const TRANSLATIONS = {
         tabLookup: "🔍 Tra Cứu Khắc Chế",
         tabWeakness: "🛡️ Bộ Lọc Kháng",
         tabCompare: "⚔️ So Sánh 1v1",
-        lookupRules: "<strong>📖 Hướng dẫn tra cứu khắc chế (Trao đổi sát thương 2 chiều):</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị cần xem để kiểm tra hệ số giáp và các đơn vị khắc chế.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp hoặc bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) <em>nhưng</em> chịu sát thương phản lại rất nặng (Gây < Nhận).",
-        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc Kháng:</strong><br>• <strong>Tùy chọn Kháng:</strong> Chọn <em>Kháng yếu</em> (hiển thị đơn vị nhận ≥ 100% sát thương, mặc định xếp từ cao xuống thấp) hoặc <em>Kháng mạnh</em> (hiển thị đơn vị nhận < 100% sát thương, mặc định xếp từ thấp đến cao).<br>• <strong>Chọn loại sát thương & loại đơn vị:</strong> Lọc theo hệ sát thương (Cắt, Cùn, Xuyên, Nổ, Phép) và đơn vị cận chiến/tầm xa.<br>• <strong>Sắp xếp tùy chỉnh:</strong> Nhấn nút <em>Thứ Tự Sắp Xếp</em> để đảo chiều tăng/giảm bất cứ lúc nào.",
+        lookupRules: "<strong>📖 Hướng dẫn Tra cứu khắc chế:</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị mục tiêu để xem hệ số giáp và các loại sát thương. Kết quả phân tích sẽ hiển thị danh sách các đơn vị có thể dùng để counter mục tiêu đã chọn chia theo từng Tier tab tương ứng với mức độ hiệu quả lần lượt là 1, 2 và 3. Nhấp vào từng tab (nếu có) để hiển thị danh sách chi tiết của tab đó.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp/bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) nhưng chịu sát thương phản lại rất nặng (Gây < Nhận).",
+        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc kháng:</strong><br>• <strong>Tùy chọn Kháng:</strong> Chọn Kháng yếu (hiển thị đơn vị nhận ≥ 100% sát thương, mặc định xếp từ cao xuống thấp) hoặc Kháng mạnh (hiển thị đơn vị nhận < 100% sát thương, mặc định xếp từ thấp đến cao).<br>• <strong>Chọn loại sát thương & loại đơn vị:</strong> Lọc theo hệ sát thương (Cắt, Cùn, Xuyên, Nổ, Phép) và đơn vị cận chiến/tầm xa.<br>• <strong>Sắp xếp tùy chỉnh:</strong> Nhấn nút Thứ Tự Sắp Xếp để đảo chiều tăng/giảm bất cứ lúc nào.",
         resistanceCategoryLabel: "1. Tùy Chọn Kháng:",
         weaknessDmgLabel: "2. Chọn Loại Sát Thương:",
-        weaknessUnitTypeLabel: "3. Lọc Loại Đơn Vị:",
+        weaknessUnitTypeSelect: "3. Lọc Loại Đơn Vị:",
         weaknessSortLabel: "4. Thứ Tự Sắp Xếp:",
         weakOption: "Kháng yếu (≥ 100%)",
         strongOption: "Kháng mạnh (< 100%)",
@@ -905,7 +920,7 @@ const TRANSLATIONS = {
         strongResultTitle: "🛡️ Danh sách đơn vị Kháng mạnh (Nhận < 100% sát thương) trước sát thương",
         damageTakenLabel: "Nhận:",
         weaknessTooltip: "{unit} nhận {mult}% sát thương {dmg} (Đòn đánh chính: {atkMode} - {primDmg}).",
-        compareRules: "<strong>📖 Hướng dẫn so sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn Đơn vị A và Đơn vị B từ bất kỳ tộc nào để đánh giá kèo đấu trực diện.<br>• <strong>Tính toán trao đổi giáp:</strong> Công cụ tự động tính sát thương đòn đánh chính của A lên giáp B và ngược lại.<br>• <strong>Kết quả kèo đấu:</strong> Hiển thị ngay đơn vị nào đang nắm ưu thế trao đổi giáp tốt hơn.",
+        compareRules: "<strong>📖 Hướng dẫn So sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn đơn vị A và B tùy ý để bắt đầu so sánh.<br>• <strong>So sánh 2 chiều:</strong> Công cụ sẽ so sánh mức độ hiệu quả sát thương của A lên B và ngược lại dựa trên khả năng kháng và các loại sát thương mà cả hai có (bao gồm Skill nếu có).<br>• <strong>Kết luận:</strong> Đánh giá bên nào có lợi thế hơn về giáp (kháng sát thương của đối phương tốt hơn). Kết quả này phản ánh hiệu quả phòng thủ/giáp chứ không quyết định thắng thua của một trận solo 1v1 thực tế.",
         filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
         selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
         filterCounterTypeLabel: "3. Lọc Kiểu Đánh Khắc Chế:",
@@ -913,8 +928,8 @@ const TRANSLATIONS = {
         meleeOnly: "Chỉ Cận chiến (Melee)",
         missileOnly: "Chỉ Tầm xa (Missile)",
         skillOnly: "Chỉ Kỹ năng (Skill)",
-        unitALabel: "Đơn vị A (Bên 1):",
-        unitBLabel: "Đơn vị B (Bên 2):",
+        unitALabel: "Đơn vị A:",
+        unitBLabel: "Đơn vị B:",
         allClans: "-- Tất cả các Tộc --",
         allUnits: "-- Tất cả các Đơn vị --",
         dragonClan: "Tộc Rồng (Dragon)",
@@ -941,14 +956,17 @@ const TRANSLATIONS = {
         deals: "Gây:",
         takes: "Nhận:",
         primaryAttack: "Đòn đánh chính:",
+        basicAttack: "Đòn đánh thường:",
         meleeException: "(Ngoại lệ cận chiến)",
         cutting: "Cắt",
         blunt: "Cùn",
         piercing: "Xuyên",
         explosive: "Nổ",
         magical: "Phép",
-        counterTooltip: "{attacker} gây {deals}% sát thương {atkDmg} lên {target}, nhưng cũng nhận lại {takes}% sát thương {targetDmg}.",
-        lastUpdate: "Cập nhật lần cuối:"
+        counterTooltipTwoWay: "{attacker} ({atkMode}) gây {deals}% sát thương {atkDmg} lên {target}. Mục tiêu phản công bằng: Đòn chính ({primTakes}% {primDmg}) và Skill ({skillTakes}% {skillDmg}).",
+        counterTooltipOneWay: "{attacker} ({atkMode}) gây {deals}% sát thương {atkDmg} lên {target}, nhưng cũng nhận lại {takes}% sát thương {targetDmg} ({targetSource}) từ mục tiêu.",
+        lastUpdate: "Cập nhật lần cuối:",
+        korilImmunityNote: " (Nội tại miễn nhiễm đòn đánh xa, ngoại trừ Xạ thủ Musketeer)"
     }
 };
 
@@ -977,7 +995,7 @@ function setLanguage(lang) {
     document.getElementById('filterCounterTypeLabel').textContent = t.filterCounterTypeLabel;
     document.getElementById('resistanceCategoryLabel').textContent = t.resistanceCategoryLabel;
     document.getElementById('weaknessDmgLabel').textContent = t.weaknessDmgLabel;
-    document.getElementById('weaknessUnitTypeLabel').textContent = t.weaknessUnitTypeLabel;
+    document.getElementById('weaknessUnitTypeSelect').previousElementSibling.textContent = t.weaknessUnitTypeSelect;
     document.getElementById('weaknessSortLabel').textContent = t.weaknessSortLabel;
     document.getElementById('unitALabel').textContent = t.unitALabel;
     document.getElementById('unitBLabel').textContent = t.unitBLabel;
@@ -1025,7 +1043,7 @@ function setLanguage(lang) {
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
-        footerDiv.textContent = `${t.lastUpdate} 13/11/2026`;
+        footerDiv.textContent = `${t.lastUpdate} 14/11/2026`;
     }
     
     populateLookupUnits();
@@ -1198,6 +1216,29 @@ function getDamageMultiplier(attacker, target, useSkill = false) {
     return mult;
 }
 
+function getIncomingThreats(targetUnit, attacker) {
+    const primaryDmgType = targetUnit.damageType;
+    const primaryMult = primaryDmgType ? getDamageMultiplier(targetUnit, attacker, false) : 1.0;
+
+    let threats = [{
+        mult: primaryMult,
+        dmgType: primaryDmgType,
+        isSkill: false
+    }];
+
+    if (targetUnit.skillDamageType) {
+        const skillMult = getDamageMultiplier(targetUnit, attacker, true);
+        threats.push({
+            mult: skillMult,
+            dmgType: targetUnit.skillDamageType,
+            isSkill: true
+        });
+    }
+
+    threats.sort((a, b) => b.mult - a.mult);
+    return threats;
+}
+
 function getTwoWayCountersForUnit(targetUnit) {
     const HEALER_IDS = ['d_geisha', 's_fan_geisha'];
 
@@ -1208,10 +1249,10 @@ function getTwoWayCountersForUnit(targetUnit) {
         if (attacker.id === targetUnit.id) return;
         if (HEALER_IDS.includes(attacker.id)) return;
 
-        const targetDmgType = targetUnit.damageType;
-        const dmgReceivedMult = targetDmgType ? (attacker.armor[targetDmgType] || 1.0) : 1.0;
+        const incomingList = getIncomingThreats(targetUnit, attacker);
+        const worstIncoming = incomingList[0];
+        const dmgReceivedMult = worstIncoming.mult;
 
-        // Standard attack (Melee or Missile)
         const includeStandard =
             attackTypeFilter === 'ALL' ||
             (attackTypeFilter === 'MELEE' && !isMissileAttacker(attacker)) ||
@@ -1225,11 +1266,11 @@ function getTwoWayCountersForUnit(targetUnit) {
                 effectiveDmgType: attacker.damageType,
                 dmgDealt: dmgDealtMult,
                 dmgReceived: dmgReceivedMult,
+                incomingThreats: incomingList,
                 netScore: dmgDealtMult - dmgReceivedMult
             });
         }
 
-        // Skill attack (if unit has damage-dealing skill)
         if (attacker.skillDamageType && (attackTypeFilter === 'ALL' || attackTypeFilter === 'SKILL')) {
             const skillDealtMult = getDamageMultiplier(attacker, targetUnit, true);
             evaluated.push({
@@ -1238,6 +1279,7 @@ function getTwoWayCountersForUnit(targetUnit) {
                 effectiveDmgType: attacker.skillDamageType,
                 dmgDealt: skillDealtMult,
                 dmgReceived: dmgReceivedMult,
+                incomingThreats: incomingList,
                 netScore: skillDealtMult - dmgReceivedMult
             });
         }
@@ -1288,15 +1330,43 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                 const attackMode = item.attackMode === 'SKILL' ? t.skill : (item.attackMode === 'MISSILE' ? t.missile : t.melee);
                 const effDmg = item.effectiveDmgType || atk.damageType;
                 const dmgName = t[effDmg] || effDmg;
-                const targetDmgName = targetUnit.damageType ? (t[targetUnit.damageType] || targetUnit.damageType) : '';
                 
-                let tooltipText = t.counterTooltip
-                    .replace('{attacker}', atk.name)
-                    .replace('{deals}', (item.dmgDealt * 100).toFixed(0))
-                    .replace('{atkDmg}', dmgName)
-                    .replace('{target}', targetUnit.name)
-                    .replace('{takes}', (item.dmgReceived * 100).toFixed(0))
-                    .replace('{targetDmg}', targetDmgName);
+                const primaryThreat = item.incomingThreats.find(th => !th.isSkill) || item.incomingThreats[0];
+                const skillThreat = item.incomingThreats.find(th => th.isSkill);
+
+                const primTakesVal = (primaryThreat.mult * 100).toFixed(0);
+                const primDmgName = t[primaryThreat.dmgType] || primaryThreat.dmgType;
+
+                let takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(Prim)</span>`;
+                let tooltipText = "";
+
+                if (skillThreat) {
+                    const skillTakesVal = (skillThreat.mult * 100).toFixed(0);
+                    const skillDmgName = t[skillThreat.dmgType] || skillThreat.dmgType;
+                    takesDisplayHtml += ` | <strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(Skill)</span>`;
+                    
+                    tooltipText = t.counterTooltipTwoWay
+                        .replace('{attacker}', atk.name)
+                        .replace('{atkMode}', attackMode)
+                        .replace('{deals}', (item.dmgDealt * 100).toFixed(0))
+                        .replace('{atkDmg}', dmgName)
+                        .replace('{target}', targetUnit.name)
+                        .replace('{primTakes}', primTakesVal)
+                        .replace('{primDmg}', primDmgName)
+                        .replace('{skillTakes}', skillTakesVal)
+                        .replace('{skillDmg}', skillDmgName);
+                } else {
+                    const targetSourceLabel = isMissileAttacker(targetUnit) ? t.missile : t.melee;
+                    tooltipText = t.counterTooltipOneWay
+                        .replace('{attacker}', atk.name)
+                        .replace('{atkMode}', attackMode)
+                        .replace('{deals}', (item.dmgDealt * 100).toFixed(0))
+                        .replace('{atkDmg}', dmgName)
+                        .replace('{target}', targetUnit.name)
+                        .replace('{takes}', primTakesVal)
+                        .replace('{targetDmg}', primDmgName)
+                        .replace('{targetSource}', targetSourceLabel);
+                }
                 
                 let riskClass = 'safe';
                 if (item.netScore < -0.5) riskClass = 'mutual';
@@ -1311,7 +1381,7 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                         <div class="counter-detail">${attackMode}</div>
                         <div class="exchange-stats">
                             <span>${t.deals} <strong style="color:#5cb85c;">${(item.dmgDealt * 100).toFixed(0)}%</strong></span>
-                            <span>${t.takes} <strong style="color:#ff6b6b;">${(item.dmgReceived * 100).toFixed(0)}%</strong></span>
+                            <span>${t.takes} ${takesDisplayHtml}</span>
                         </div>
                         <span class="counter-item-tooltip">${tooltipText}</span>
                     </div>
@@ -1359,6 +1429,7 @@ function renderResults() {
         const missileText = formatRawDmg(unit.missile);
         const skillText = formatRawDmg(unit.skill);
         const primDmgName = unit.damageType ? (t[unit.damageType] || unit.damageType) : 'N/A';
+        const korilNote = (unit.id === 'l_koril') ? `<br><span style="color:#5cb85c; font-style:italic;">${t.korilImmunityNote}</span>` : '';
 
         let html = `
             <div class="target-header">
@@ -1368,7 +1439,7 @@ function renderResults() {
                 </div>
                 <div class="counter-detail" style="text-align: right;">
                     ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong> | Skill: <strong>${skillText}</strong><br>
-                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}
+                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}${korilNote}
                 </div>
             </div>
 
@@ -1430,6 +1501,22 @@ function renderResults() {
     });
 }
 
+
+function getAttackTerm(unit, capitalized = false) {
+    const hasBoth = unit.melee !== '-' && unit.missile !== '-';
+    const isException = MELEE_EXCEPTIONS.includes(unit.id);
+    let term = '';
+    if (hasBoth || isException) {
+        term = currentLang === 'vi' ? 'đòn đánh chính' : 'primary attack';
+    } else {
+        term = currentLang === 'vi' ? 'đòn đánh thường' : 'basic attack';
+    }
+    if (capitalized) {
+        return term.charAt(0).toUpperCase() + term.slice(1);
+    }
+    return term;
+}
+
 function renderComparison() {
     const unitA = UNITS.find(u => u.id === unitASelect.value);
     const unitB = UNITS.find(u => u.id === unitBSelect.value);
@@ -1438,12 +1525,25 @@ function renderComparison() {
     const t = TRANSLATIONS[currentLang];
 
     const dmgAToBType = unitA.damageType;
-    const multAToB = getDamageMultiplier(unitA, unitB);
+    const multAToB = getDamageMultiplier(unitA, unitB, false);
     const dmgAToBPercent = (multAToB * 100).toFixed(0);
 
     const dmgBToAType = unitB.damageType;
-    const multBToA = getDamageMultiplier(unitB, unitA);
+    const multBToA = getDamageMultiplier(unitB, unitA, false);
     const dmgBToAPercent = (multBToA * 100).toFixed(0);
+
+    const hasSkillA = Boolean(unitA.skillDamageType);
+    const multSkillAToB = hasSkillA ? getDamageMultiplier(unitA, unitB, true) : null;
+    const skillAToBPercent = hasSkillA ? (multSkillAToB * 100).toFixed(0) : null;
+    const skillADmgName = hasSkillA ? (t[unitA.skillDamageType] || unitA.skillDamageType) : '';
+
+    const hasSkillB = Boolean(unitB.skillDamageType);
+    const multSkillBToA = hasSkillB ? getDamageMultiplier(unitB, unitA, true) : null;
+    const skillBToAPercent = hasSkillB ? (multSkillBToA * 100).toFixed(0) : null;
+    const skillBDmgName = hasSkillB ? (t[unitB.skillDamageType] || unitB.skillDamageType) : '';
+
+    const maxAToB = Math.max(multAToB, hasSkillA ? multSkillAToB : 0);
+    const maxBToA = Math.max(multBToA, hasSkillB ? multSkillBToA : 0);
 
     let winner = null;
     let advantageMsg = '';
@@ -1451,34 +1551,65 @@ function renderComparison() {
     const isATakingZeroFromB_Koril = (unitA.id === 'l_koril' && multBToA === 0 && isMissileAttacker(unitB) && unitB.id !== 's_musketeer');
     const isBTakingZeroFromA_Koril = (unitB.id === 'l_koril' && multAToB === 0 && isMissileAttacker(unitA) && unitA.id !== 's_musketeer');
 
+    const unitADmgLower = (t[dmgAToBType] || dmgAToBType).toLowerCase();
+    const unitBDmgLower = (t[dmgBToAType] || dmgBToAType).toLowerCase();
+
     if (multAToB > multBToA) {
         winner = 'A';
         if (isATakingZeroFromB_Koril) {
             advantageMsg = currentLang === 'vi' ? 
-                `<strong>${unitA.name}</strong> nắm ưu thế! (${unitA.name} gây <strong>${dmgAToBPercent}%</strong> sát thương lên ${unitB.name}, nhưng nhận lại <strong>0%</strong> sát thương do nội tại miễn nhiễm đòn đánh tầm xa).` :
-                `<strong>${unitA.name}</strong> holds the advantage! (${unitA.name} deals <strong>${dmgAToBPercent}%</strong> damage to ${unitB.name}, while taking <strong>0%</strong> damage in return due to his innate missile immunity).`;
+                `<strong>${unitA.name}</strong> nắm lợi thế nhờ nội tại miễn nhiễm đòn đánh tầm xa (không phải do lợi thế về giáp)! (${unitA.name} nhận <strong>0%</strong> sát thương từ đòn đánh xa của ${unitB.name}, trong khi ${unitB.name} phải nhận <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower}).` :
+                `<strong>${unitA.name}</strong> holds the advantage due to passive immunity to ranged attacks (not an armor advantage)! (${unitA.name} takes <strong>0%</strong> damage from ${unitB.name}'s ranged attack, while ${unitB.name} takes <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage).`;
         } else {
             advantageMsg = currentLang === 'vi' ?
-                `<strong>${unitA.name}</strong> nắm ưu thế rõ rệt về giáp! (${unitA.name} gây <strong>${dmgAToBPercent}%</strong> sát thương lên ${unitB.name}, trong khi chỉ nhận lại <strong>${dmgBToAPercent}%</strong>).` :
-                `<strong>${unitA.name}</strong> holds a clear armor advantage! (${unitA.name} deals <strong>${dmgAToBPercent}%</strong> damage to ${unitB.name}, while taking only <strong>${dmgBToAPercent}%</strong> damage in return).`;
+                `<strong>${unitA.name}</strong> có lợi thế hơn về giáp (kháng sát thương tốt hơn)! (${unitA.name} chỉ nhận <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower} từ ${unitB.name}, trong khi ${unitB.name} phải nhận tới <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower}).` :
+                `<strong>${unitA.name}</strong> has the armor advantage (better damage resistance)! (${unitA.name} takes only <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage from ${unitB.name}, whereas ${unitB.name} takes <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage).`;
         }
     } else if (multBToA > multAToB) {
         winner = 'B';
         if (isBTakingZeroFromA_Koril) {
             advantageMsg = currentLang === 'vi' ? 
-                `<strong>${unitB.name}</strong> nắm ưu thế! (${unitB.name} gây <strong>${dmgBToAPercent}%</strong> sát thương lên ${unitA.name}, nhưng nhận lại <strong>0%</strong> sát thương do nội tại miễn nhiễm đòn đánh tầm xa).` :
-                `<strong>${unitB.name}</strong> holds the advantage! (${unitB.name} deals <strong>${dmgBToAPercent}%</strong> damage to ${unitA.name}, while taking <strong>0%</strong> damage in return due to his innate missile immunity).`;
+                `<strong>${unitB.name}</strong> nắm lợi thế nhờ nội tại miễn nhiễm đòn đánh tầm xa (không phải do lợi thế về giáp)! (${unitB.name} nhận <strong>0%</strong> sát thương từ đòn đánh xa của ${unitA.name}, trong khi ${unitA.name} phải nhận <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower}).` :
+                `<strong>${unitB.name}</strong> holds the advantage due to passive immunity to ranged attacks (not an armor advantage)! (${unitB.name} takes <strong>0%</strong> damage from ${unitA.name}'s ranged attack, while ${unitA.name} takes <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage).`;
         } else {
             advantageMsg = currentLang === 'vi' ?
-                `<strong>${unitB.name}</strong> nắm ưu thế rõ rệt về giáp! (${unitB.name} gây <strong>${dmgBToAPercent}%</strong> sát thương lên ${unitA.name}, trong khi chỉ nhận lại <strong>${dmgAToBPercent}%</strong>).` :
-                `<strong>${unitB.name}</strong> holds a clear armor advantage! (${unitB.name} deals <strong>${dmgBToAPercent}%</strong> damage to ${unitA.name}, while taking only <strong>${dmgAToBPercent}%</strong> damage in return).`;
+                `<strong>${unitB.name}</strong> có lợi thế hơn về giáp (kháng sát thương tốt hơn)! (${unitB.name} chỉ nhận <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower} từ ${unitA.name}, trong khi ${unitA.name} phải nhận tới <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower}).` :
+                `<strong>${unitB.name}</strong> has the armor advantage (better damage resistance)! (${unitB.name} takes only <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage from ${unitA.name}, whereas ${unitA.name} takes <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage).`;
         }
     } else {
         winner = 'TIE';
         advantageMsg = currentLang === 'vi' ?
-            `Hai đơn vị có tỷ lệ trao đổi sát thương tương đương nhau (Cùng gây <strong>${dmgAToBPercent}%</strong> sát thương cho nhau).` :
-            `Both units are evenly matched in effective damage exchange (Both deal <strong>${dmgAToBPercent}%</strong> relative damage to each other).`;
+            `Hai đơn vị có khả năng kháng sát thương của nhau ngang bằng (Cả hai bên đều nhận <strong>${dmgAToBPercent}%</strong> sát thương từ đòn đánh chính của đối phương).` :
+            `Both units have equal armor resistance against each other (Both sides take <strong>${dmgAToBPercent}%</strong> damage from the opponent's primary attack).`;
     }
+
+    let skillComparisonLines = [];
+    if (hasSkillA) {
+        skillComparisonLines.push(currentLang === 'vi'
+            ? `⚡ <strong>Skill của ${unitA.name}</strong> (${skillADmgName}) gây <strong>${skillAToBPercent}%</strong> sát thương lên ${unitB.name}.`
+            : `⚡ <strong>${unitA.name}'s Skill</strong> (${skillADmgName}) deals <strong>${skillAToBPercent}%</strong> damage to ${unitB.name}.`);
+    }
+    if (hasSkillB) {
+        skillComparisonLines.push(currentLang === 'vi'
+            ? `⚡ <strong>Skill của ${unitB.name}</strong> (${skillBDmgName}) gây <strong>${skillBToAPercent}%</strong> sát thương lên ${unitA.name}.`
+            : `⚡ <strong>${unitB.name}'s Skill</strong> (${skillBDmgName}) deals <strong>${skillBToAPercent}%</strong> damage to ${unitA.name}.`);
+    }
+
+    if (hasSkillA || hasSkillB) {
+        if (maxAToB > maxBToA && winner !== 'A') {
+            skillComparisonLines.push(currentLang === 'vi'
+                ? `🔄 Đảo chiều nhờ Skill: Khi tính cả Kỹ năng, <strong>${unitA.name}</strong> có khả năng dồn sát thương tối đa cao hơn (<strong>${(maxAToB * 100).toFixed(0)}%</strong> so với <strong>${(maxBToA * 100).toFixed(0)}%</strong>).`
+                : `🔄 Skill Swing: Including Skills, <strong>${unitA.name}</strong> reaches a higher peak damage multiplier (<strong>${(maxAToB * 100).toFixed(0)}%</strong> vs <strong>${(maxBToA * 100).toFixed(0)}%</strong>).`);
+        } else if (maxBToA > maxAToB && winner !== 'B') {
+            skillComparisonLines.push(currentLang === 'vi'
+                ? `🔄 Đảo chiều nhờ Skill: Khi tính cả Kỹ năng, <strong>${unitB.name}</strong> có khả năng dồn sát thương tối đa cao hơn (<strong>${(maxBToA * 100).toFixed(0)}%</strong> so với <strong>${(maxAToB * 100).toFixed(0)}%</strong>).`
+                : `🔄 Skill Swing: Including Skills, <strong>${unitB.name}</strong> reaches a higher peak damage multiplier (<strong>${(maxBToA * 100).toFixed(0)}%</strong> vs <strong>${(maxAToB * 100).toFixed(0)}%</strong>).`);
+        }
+    }
+
+    const skillVerdictHtml = skillComparisonLines.length > 0
+        ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444;">${skillComparisonLines.join('<br>')}</div>`
+        : '';
 
     let cardAClass = winner === 'A' ? 'winner' : winner === 'B' ? 'loser' : 'tie';
     let cardBClass = winner === 'B' ? 'winner' : winner === 'A' ? 'loser' : 'tie';
@@ -1499,7 +1630,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong> (<strong>${unitAAtkMode}</strong>)${unitA.skillDamageType ? `<br>• Skill: <strong style="text-transform: capitalize;">${t[unitA.skillDamageType] || unitA.skillDamageType}</strong> (${(getDamageMultiplier(unitA, unitB, true) * 100).toFixed(0)}%)` : ''}
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong> (<strong>${unitAAtkMode}</strong>)${hasSkillA ? `<br>• Skill: <strong style="text-transform: capitalize;">${skillADmgName}</strong>` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1519,8 +1650,14 @@ function renderComparison() {
                     </tr>
                 </table>
 
-                <div class="advantage-box ${winner === 'A' ? 'adv-strong' : winner === 'B' ? 'adv-weak' : 'adv-equal'}">
-                    💥 ${currentLang === 'vi' ? `Gây lên ${unitB.name}: ${dmgAToBPercent}% sát thương (${unitADmgName.toLowerCase()})` : `Deals to ${unitB.name}: ${dmgAToBPercent}% damage (${unitADmgName.toLowerCase()})`}
+                <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                    <div class="advantage-box ${winner === 'A' ? 'adv-strong' : winner === 'B' ? 'adv-weak' : 'adv-equal'}">
+                        💥 ${currentLang === 'vi' ? `${getAttackTerm(unitA, true)} lên ${unitB.name}: ${dmgAToBPercent}% (${unitADmgName.toLowerCase()})` : `${getAttackTerm(unitA, true)} to ${unitB.name}: ${dmgAToBPercent}% (${unitADmgName.toLowerCase()})`}
+                    </div>
+                    ${hasSkillA ? `
+                    <div class="advantage-box-skill">
+                        ⚡ ${currentLang === 'vi' ? `Skill lên ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})` : `Skill to ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})`}
+                    </div>` : ''}
                 </div>
             </div>
 
@@ -1533,7 +1670,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong> (<strong>${unitBAtkMode}</strong>)${unitB.skillDamageType ? `<br>• Skill: <strong style="text-transform: capitalize;">${t[unitB.skillDamageType] || unitB.skillDamageType}</strong> (${(getDamageMultiplier(unitB, unitA, true) * 100).toFixed(0)}%)` : ''}
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong> (<strong>${unitBAtkMode}</strong>)${hasSkillB ? `<br>• Skill: <strong style="text-transform: capitalize;">${skillBDmgName}</strong>` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1553,8 +1690,14 @@ function renderComparison() {
                     </tr>
                 </table>
 
-                <div class="advantage-box ${winner === 'B' ? 'adv-strong' : winner === 'A' ? 'adv-weak' : 'adv-equal'}">
-                    💥 ${currentLang === 'vi' ? `Gây lên ${unitA.name}: ${dmgBToAPercent}% sát thương (${unitBDmgName.toLowerCase()})` : `Deals to ${unitA.name}: ${dmgBToAPercent}% damage (${unitBDmgName.toLowerCase()})`}
+                <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                    <div class="advantage-box ${winner === 'B' ? 'adv-strong' : winner === 'A' ? 'adv-weak' : 'adv-equal'}">
+                        💥 ${currentLang === 'vi' ? `${getAttackTerm(unitB, true)} lên ${unitA.name}: ${dmgBToAPercent}% (${unitBDmgName.toLowerCase()})` : `${getAttackTerm(unitB, true)} to ${unitA.name}: ${dmgBToAPercent}% (${unitBDmgName.toLowerCase()})`}
+                    </div>
+                    ${hasSkillB ? `
+                    <div class="advantage-box-skill">
+                        ⚡ ${currentLang === 'vi' ? `Skill lên ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})` : `Skill to ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})`}
+                    </div>` : ''}
                 </div>
             </div>
         </div>
@@ -1562,10 +1705,11 @@ function renderComparison() {
         <!-- VERDICT BANNER -->
         <div class="verdict-banner">
             <div class="verdict-title">
-                ${winner === 'A' ? (currentLang === 'vi' ? `🏆 KẾT QUẢ: ${unitA.name.toUpperCase()} NẮM ƯU THẾ` : `🏆 VERDICT: ${unitA.name.toUpperCase()} HAS THE ADVANTAGE`) : winner === 'B' ? (currentLang === 'vi' ? `🏆 KẾT QUẢ: ${unitB.name.toUpperCase()} NẮM ƯU THẾ` : `🏆 VERDICT: ${unitB.name.toUpperCase()} HAS THE ADVANTAGE`) : (currentLang === 'vi' ? `⚖️ KẾT QUẢ: HAI BÊN NGANG SỨC` : `⚖️ VERDICT: EVENLY MATCHED`)}
+                ${winner === 'A' ? (currentLang === 'vi' ? `🛡️ KẾT QUẢ: ${unitA.name.toUpperCase()} NẮM ƯU THẾ` : `🛡️ VERDICT: ${unitA.name.toUpperCase()} HAS THE ADVANTAGE`) : winner === 'B' ? (currentLang === 'vi' ? `🛡️ KẾT QUẢ: ${unitB.name.toUpperCase()} NẮM ƯU THẾ` : `🛡️ VERDICT: ${unitB.name.toUpperCase()} HAS THE ADVANTAGE`) : (currentLang === 'vi' ? `⚖️ KẾT QUẢ: KHẢ NĂNG KHÁNG SÁT THƯƠNG NGANG BẰNG` : `⚖️ VERDICT: EQUAL ARMOR RESISTANCE`)}
             </div>
             <div class="verdict-detail">
                 ${advantageMsg}
+                ${skillVerdictHtml}
             </div>
         </div>
     `;
@@ -1587,7 +1731,7 @@ counterTypeSelect.addEventListener('change', () => {
 });
 
 
-let weaknessSortAsc = false; // Mặc định Kháng yếu là Giảm dần (Cao -> Thấp)
+let weaknessSortAsc = false;
 
 function updateWeaknessSortBtnLabel() {
     const btn = document.getElementById('weaknessSortBtn');
@@ -1605,9 +1749,9 @@ function toggleWeaknessSort() {
 resistanceCategorySelect.addEventListener('change', () => {
     const cat = resistanceCategorySelect.value;
     if (cat === 'strong') {
-        weaknessSortAsc = true; // Kháng mạnh: mặc định Tăng dần (Thấp -> Cao)
+        weaknessSortAsc = true;
     } else {
-        weaknessSortAsc = false; // Kháng yếu: mặc định Giảm dần (Cao -> Thấp)
+        weaknessSortAsc = false;
     }
     updateWeaknessSortBtnLabel();
     renderWeaknessFilter();
@@ -1617,9 +1761,9 @@ function renderWeaknessFilter() {
     if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput || !resistanceCategorySelect) return;
     updateWeaknessSortBtnLabel();
     
-    const cat = resistanceCategorySelect.value; // 'weak' | 'strong'
-    const dmgKey = weaknessDmgSelect.value; // 'cutting' | 'blunt' | 'piercing' | 'explosive' | 'magical'
-    const unitTypeFilter = weaknessUnitTypeSelect.value; // 'ALL' | 'MELEE' | 'MISSILE'
+    const cat = resistanceCategorySelect.value;
+    const dmgKey = weaknessDmgSelect.value;
+    const unitTypeFilter = weaknessUnitTypeSelect.value;
     const t = TRANSLATIONS[currentLang];
     const dmgLabel = t[dmgKey] || dmgKey;
 
@@ -1628,9 +1772,9 @@ function renderWeaknessFilter() {
         if (mult === undefined) return false;
         
         if (cat === 'weak') {
-            if (mult < 1.0) return false; // Kháng yếu (>= 100%)
+            if (mult < 1.0) return false;
         } else {
-            if (mult >= 1.0) return false; // Kháng mạnh (< 100%)
+            if (mult >= 1.0) return false;
         }
 
         if (unitTypeFilter === 'MELEE' && isMissileAttacker(u)) return false;
@@ -1738,7 +1882,7 @@ populateCompareDropdowns();
 </script>
 
 <footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
-    <div>Last update: 13/11/2026</div>
+    <div>Last update: 14/11/2026</div>
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
 
