@@ -633,6 +633,25 @@
             display: inline-block;
             flex-shrink: 0;
         }
+
+        .sort-toggle-btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--accent-color);
+            background-color: #2b2b36;
+            color: var(--accent-color);
+            font-size: 0.95em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 210px;
+            text-align: center;
+        }
+
+        .sort-toggle-btn:hover {
+            background-color: var(--accent-color);
+            color: #121214;
+        }
     </style>
 </head>
 <body>
@@ -649,6 +668,7 @@
     <!-- TAB NAVIGATION -->
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
+        <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Weak Resistance Filter</button>
         <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Direct Comparison</button>
     </div>
 
@@ -687,6 +707,7 @@
                     <option value="ALL">-- All Attack Types --</option>
                     <option value="MELEE">Melee Only</option>
                     <option value="MISSILE">Missile Only</option>
+                    <option value="SKILL">Skill Only</option>
                 </select>
             </div>
         </div>
@@ -696,7 +717,48 @@
         </div>
     </div>
 
-    <!-- TAB 2: COMPARISON -->
+    <!-- TAB 2: WEAKNESS FILTER -->
+    <div id="tabWeakness" class="tab-content">
+        <div class="rules-info" id="weaknessRulesBox">
+            <strong>📖 How to Use Weak Resistance Filter:</strong><br>
+            • <strong>Select Damage Type:</strong> Choose a damage type (Cutting, Blunt, Piercing, Explosive, or Magical) to list all units that take <strong>≥ 100%</strong> damage from that attack type.<br>
+            • <strong>Filter Unit Type:</strong> Narrow results by <em>All Units</em>, <em>Melee Only</em>, or <em>Missile Only</em>.<br>
+            • <strong>Sorted by Multiplier:</strong> Units are grouped by clan and sorted in <strong>ascending order</strong> of armor multiplier (from 100% neutral up to highest vulnerability).
+        </div>
+
+        <div class="control-panel">
+            <div class="select-group">
+                <label for="weaknessDmgSelect" id="weaknessDmgLabel">1. Select Damage Type:</label>
+                <select id="weaknessDmgSelect">
+                    <option value="cutting">Cutting</option>
+                    <option value="blunt">Blunt</option>
+                    <option value="piercing">Piercing</option>
+                    <option value="explosive">Explosive</option>
+                    <option value="magical">Magical</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="weaknessUnitTypeSelect" id="weaknessUnitTypeLabel">2. Filter Unit Type:</label>
+                <select id="weaknessUnitTypeSelect">
+                    <option value="ALL">-- All Unit Types --</option>
+                    <option value="MELEE">Melee Only</option>
+                    <option value="MISSILE">Missile Only</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="weaknessSortBtn" id="weaknessSortLabel">3. Sort Order:</label>
+                <button type="button" id="weaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()">⬆️ Ascending (% Low → High)</button>
+            </div>
+        </div>
+
+        <div id="weaknessOutput" class="result-container">
+            <!-- Weakness results rendered here -->
+        </div>
+    </div>
+
+    <!-- TAB 3: COMPARISON -->
     <div id="tabCompare" class="tab-content">
         <div class="rules-info">
             <strong>📖 How to Use 1v1 Comparison:</strong><br>
@@ -739,8 +801,19 @@ const TRANSLATIONS = {
         wolfHeader: "Wolf Clan",
         subtitle: "Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)",
         tabLookup: "🔍 Unit Counter Lookup",
+        tabWeakness: "🛡️ Weak Resistance Filter",
         tabCompare: "⚔️ 1v1 Direct Comparison",
         lookupRules: "<strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) *but* take heavy counter-damage in return (Deals < Takes).",
+        weaknessRules: "<strong>📖 How to Use Weak Resistance Filter:</strong><br>• <strong>Select Damage Type:</strong> Choose a damage type (Cutting, Blunt, Piercing, Explosive, or Magical) to list all units that take <strong>≥ 100%</strong> damage from that attack type.<br>• <strong>Filter Unit Type:</strong> Narrow results by <em>All Units</em>, <em>Melee Only</em>, or <em>Missile Only</em>.<br>• <strong>2-Way Sort Order:</strong> Units are grouped by clan and sorted by armor multiplier. Click the sort toggle button to switch between <strong>Ascending</strong> (100% → highest) and <strong>Descending</strong> (highest → 100%).",
+        weaknessDmgLabel: "1. Select Damage Type:",
+        weaknessUnitTypeLabel: "2. Filter Unit Type:",
+        weaknessSortLabel: "3. Sort Order:",
+        sortAscBtn: "⬆️ Ascending (% Low → High)",
+        sortDescBtn: "⬇️ Descending (% High → Low)",
+        allUnitTypes: "-- All Unit Types --",
+        weaknessResultTitle: "🛡️ Units with Weak Resistance (≥ 100% Damage Taken) to",
+        damageTakenLabel: "Takes:",
+        weaknessTooltip: "{unit} takes {mult}% {dmg} damage (Primary attack: {atkMode} - {primDmg}).",
         compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>• <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>• <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.",
         filterClanLabel: "1. Filter Target Clan:",
         selectUnitLabel: "2. Select Target Unit:",
@@ -748,6 +821,7 @@ const TRANSLATIONS = {
         allAttackTypes: "-- All Attack Types --",
         meleeOnly: "Melee Only",
         missileOnly: "Missile Only",
+        skillOnly: "Skill Only",
         unitALabel: "Unit A (Side 1):",
         unitBLabel: "Unit B (Side 2):",
         allClans: "-- All Clans --",
@@ -772,6 +846,7 @@ const TRANSLATIONS = {
         noUnits: "No units available",
         melee: "Melee",
         missile: "Missile",
+        skill: "Skill",
         deals: "Deals:",
         takes: "Takes:",
         primaryAttack: "Primary Attack:",
@@ -796,8 +871,19 @@ const TRANSLATIONS = {
         wolfHeader: "Tộc Sói",
         subtitle: "Tra cứu khắc chế đơn vị & So sánh 1v1 trực tiếp (Bản Zen)",
         tabLookup: "🔍 Tra Cứu Khắc Chế",
+        tabWeakness: "🛡️ Bộ Lọc Kháng Yếu",
         tabCompare: "⚔️ So Sánh 1v1",
         lookupRules: "<strong>📖 Hướng dẫn tra cứu khắc chế (Trao đổi sát thương 2 chiều):</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị cần xem để kiểm tra hệ số giáp và các đơn vị khắc chế.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp hoặc bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) <em>nhưng</em> chịu sát thương phản lại rất nặng (Gây < Nhận).",
+        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc kháng yếu:</strong><br>• <strong>Chọn loại sát thương:</strong> Chọn loại sát thương (Cắt, Cùn, Xuyên, Nổ hoặc Phép) để liệt kê tất cả đơn vị có chỉ số kháng yếu (nhận <strong>≥ 100%</strong> sát thương) trước đòn đánh đó.<br>• <strong>Lọc loại đơn vị:</strong> Lọc nhanh theo <em>Tất cả đơn vị</em>, <em>Chỉ Cận chiến</em> hoặc <em>Chỉ Tầm xa</em>.<br>• <strong>Sắp xếp 2 chiều:</strong> Danh sách được chia theo từng tộc. Nhấn nút <em>Thứ tự sắp xếp</em> để chuyển đổi linh hoạt giữa <strong>Tăng dần</strong> (100% → yếu nhất) hoặc <strong>Giảm dần</strong> (yếu nhất → 100%).",
+        weaknessDmgLabel: "1. Chọn Loại Sát Thương:",
+        weaknessUnitTypeLabel: "2. Lọc Loại Đơn Vị:",
+        weaknessSortLabel: "3. Thứ Tự Sắp Xếp:",
+        sortAscBtn: "⬆️ Tăng dần (% Thấp → Cao)",
+        sortDescBtn: "⬇️ Giảm dần (% Cao → Thấp)",
+        allUnitTypes: "-- Tất cả loại đơn vị --",
+        weaknessResultTitle: "🛡️ Danh sách đơn vị kháng yếu (Nhận ≥ 100% sát thương) trước sát thương",
+        damageTakenLabel: "Nhận:",
+        weaknessTooltip: "{unit} nhận {mult}% sát thương {dmg} (Đòn đánh chính: {atkMode} - {primDmg}).",
         compareRules: "<strong>📖 Hướng dẫn so sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn Đơn vị A và Đơn vị B từ bất kỳ tộc nào để đánh giá kèo đấu trực diện.<br>• <strong>Tính toán trao đổi giáp:</strong> Công cụ tự động tính sát thương đòn đánh chính của A lên giáp B và ngược lại.<br>• <strong>Kết quả kèo đấu:</strong> Hiển thị ngay đơn vị nào đang nắm ưu thế trao đổi giáp tốt hơn.",
         filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
         selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
@@ -805,6 +891,7 @@ const TRANSLATIONS = {
         allAttackTypes: "-- Tất cả kiểu đánh --",
         meleeOnly: "Chỉ Cận chiến (Melee)",
         missileOnly: "Chỉ Tầm xa (Missile)",
+        skillOnly: "Chỉ Kỹ năng (Skill)",
         unitALabel: "Đơn vị A (Bên 1):",
         unitBLabel: "Đơn vị B (Bên 2):",
         allClans: "-- Tất cả các Tộc --",
@@ -829,6 +916,7 @@ const TRANSLATIONS = {
         noUnits: "Không có đơn vị",
         melee: "Cận chiến",
         missile: "Tầm xa",
+        skill: "Kỹ năng (Skill)",
         deals: "Gây:",
         takes: "Nhận:",
         primaryAttack: "Đòn đánh chính:",
@@ -855,24 +943,47 @@ function setLanguage(lang) {
     
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns[0].textContent = TRANSLATIONS[lang].tabLookup;
-    tabBtns[1].textContent = TRANSLATIONS[lang].tabCompare;
+    tabBtns[1].textContent = TRANSLATIONS[lang].tabWeakness;
+    tabBtns[2].textContent = TRANSLATIONS[lang].tabCompare;
     
     const rules = document.querySelectorAll('.rules-info');
     if(rules[0]) rules[0].innerHTML = TRANSLATIONS[lang].lookupRules;
-    if(rules[1]) rules[1].innerHTML = TRANSLATIONS[lang].compareRules;
+    if(rules[1]) rules[1].innerHTML = TRANSLATIONS[lang].weaknessRules;
+    if(rules[2]) rules[2].innerHTML = TRANSLATIONS[lang].compareRules;
     
     const labels = document.querySelectorAll('label');
     if(labels[0]) labels[0].textContent = TRANSLATIONS[lang].filterClanLabel;
     if(labels[1]) labels[1].textContent = TRANSLATIONS[lang].selectUnitLabel;
     if(labels[2]) labels[2].textContent = TRANSLATIONS[lang].filterCounterTypeLabel;
-    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].unitALabel;
-    if(labels[4]) labels[4].textContent = TRANSLATIONS[lang].unitBLabel;
+    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].weaknessDmgLabel;
+    if(labels[4]) labels[4].textContent = TRANSLATIONS[lang].weaknessUnitTypeLabel;
+    if(labels[5]) labels[5].textContent = TRANSLATIONS[lang].weaknessSortLabel;
+    if(labels[6]) labels[6].textContent = TRANSLATIONS[lang].unitALabel;
+    if(labels[7]) labels[7].textContent = TRANSLATIONS[lang].unitBLabel;
+    updateWeaknessSortBtnLabel();
+    
+    const weakDmgSel = document.getElementById('weaknessDmgSelect');
+    if (weakDmgSel && weakDmgSel.options.length >= 5) {
+        weakDmgSel.options[0].textContent = TRANSLATIONS[lang].cutting;
+        weakDmgSel.options[1].textContent = TRANSLATIONS[lang].blunt;
+        weakDmgSel.options[2].textContent = TRANSLATIONS[lang].piercing;
+        weakDmgSel.options[3].textContent = TRANSLATIONS[lang].explosive;
+        weakDmgSel.options[4].textContent = TRANSLATIONS[lang].magical;
+    }
+
+    const weakUnitSel = document.getElementById('weaknessUnitTypeSelect');
+    if (weakUnitSel && weakUnitSel.options.length >= 3) {
+        weakUnitSel.options[0].textContent = TRANSLATIONS[lang].allUnitTypes;
+        weakUnitSel.options[1].textContent = TRANSLATIONS[lang].meleeOnly;
+        weakUnitSel.options[2].textContent = TRANSLATIONS[lang].missileOnly;
+    }
     
     const typeSel = document.getElementById('counterTypeSelect');
-    if(typeSel && typeSel.options.length >= 3) {
+    if(typeSel && typeSel.options.length >= 4) {
         typeSel.options[0].textContent = TRANSLATIONS[lang].allAttackTypes;
         typeSel.options[1].textContent = TRANSLATIONS[lang].meleeOnly;
         typeSel.options[2].textContent = TRANSLATIONS[lang].missileOnly;
+        typeSel.options[3].textContent = TRANSLATIONS[lang].skillOnly;
     }
     
     const clanSel = document.getElementById('clanSelect');
@@ -891,10 +1002,11 @@ function setLanguage(lang) {
     
     populateLookupUnits();
     renderResults();
+    renderWeaknessFilter();
     renderComparison();
 }
 
-const RAW_UNITS = [{"id": "d_spearman", "name": "Spearman", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.25}, {"id": "d_archer", "name": "Archer", "clan": "Dragon", "melee": "Blunt", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "d_chemist", "name": "Chemist", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.25, "b": 1.25, "p": 0.88, "e": 0.5, "m": 0.5}, {"id": "d_geisha", "name": "Geisha", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "d_pk_cannoneer", "name": "PK Cannoneer", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.5}, {"id": "d_dragon_warrior", "name": "Dragon Warrior", "clan": "Dragon", "melee": "Cutting", "missile": "Magic", "c": 1.25, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.25}, {"id": "d_kabuki", "name": "Kabuki Warrior", "clan": "Dragon", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.75}, {"id": "d_samurai", "name": "Samurai", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 0.25, "b": 0.5, "p": 1.0, "e": 1.75, "m": 1.5}, {"id": "d_battle_maiden", "name": "Battle Maiden", "clan": "Dragon", "melee": "Cutting", "missile": "Cutting", "c": 1.25, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5}, {"id": "d_guardian", "name": "Guardian", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.25, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75}, {"id": "d_otomo", "name": "Otomo", "clan": "Dragon", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5}, {"id": "d_tao", "name": "Tao", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}, {"id": "d_arah", "name": "Arah", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "d_teppo", "name": "Teppo", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.0, "b": 1.25, "p": 0.88, "e": 0.5, "m": 1.25}, {"id": "d_kazan", "name": "Kazan", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25}, {"id": "d_garrin", "name": "Garrin", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "s_swordsman", "name": "Swordsman", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0}, {"id": "s_musketeer", "name": "Musketeer", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 0.5, "b": 0.75, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "s_crossbowman", "name": "Crossbowman", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "s_fan_geisha", "name": "Fan Geisha", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.75, "m": 0.5}, {"id": "s_cannoneer", "name": "Cannoneer", "clan": "Serpent", "melee": "Blunt", "missile": "Blunt", "c": 1.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "s_raider", "name": "Raider", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.25}, {"id": "s_bandit", "name": "Bandit", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.25, "m": 1.25}, {"id": "s_ronin", "name": "Ronin", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 1.13, "e": 1.75, "m": 0.5}, {"id": "s_necromancer", "name": "Necromancer", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "s_spirit_warrior", "name": "Spirit Warrior", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.25}, {"id": "s_zombie", "name": "Zombie", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75}, {"id": "s_enforcer", "name": "Enforcer", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.25}, {"id": "s_witch", "name": "Witch", "clan": "Serpent", "melee": "Magic", "missile": "Magic", "c": 1.5, "b": 0.75, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "s_demoness", "name": "Demoness", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "s_shinja", "name": "Shinja", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 0.25}, {"id": "s_utara", "name": "Utara", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25}, {"id": "s_taro", "name": "Taro", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.25, "b": 1.25, "p": 0.75, "e": 0.5, "m": 0.25}, {"id": "s_vetkin", "name": "Vetkin", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "s_budo", "name": "Budo", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5}, {"id": "w_hurler", "name": "Hurler", "clan": "Wolf", "melee": "Blunt", "missile": "Blunt", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5}, {"id": "w_brawler", "name": "Brawler", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "w_mauler", "name": "Mauler", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5}, {"id": "w_pack_master", "name": "Pack Master", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.75, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5}, {"id": "w_druidess", "name": "Druidess", "clan": "Wolf", "melee": "Blunt", "missile": "Magic", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "w_ballistaman", "name": "Ballistaman", "clan": "Wolf", "melee": "Piercing", "missile": "Piercing", "c": 1.25, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5}, {"id": "w_pitch_slinger", "name": "Pitch Slinger", "clan": "Wolf", "melee": "Explosive", "missile": "Explosive", "c": 0.25, "b": 1.0, "p": 0.88, "e": 1.0, "m": 1.5}, {"id": "w_sledger", "name": "Sledger", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_berserker", "name": "Berserker", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_werewolf", "name": "Werewolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.0}, {"id": "w_digger", "name": "Digger", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5}, {"id": "w_dryad", "name": "Dryad", "clan": "Wolf", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.25}, {"id": "w_grayback", "name": "Grayback", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "w_longtooth", "name": "Longtooth", "clan": "Wolf", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}, {"id": "w_gaihla", "name": "Gaihla", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "w_the_shale_lord", "name": "The Shale Lord", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 0.25, "p": 1.0, "e": 1.75, "m": 1.5}, {"id": "w_wildeye", "name": "Wildeye", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5}, {"id": "w_spirit_wolf", "name": "Spirit Wolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 1.25}, {"id": "l_staff_adept", "name": "Staff Adept", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.0, "m": 1.5}, {"id": "l_blade_acolyte", "name": "Blade Acolyte", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0}, {"id": "l_leaf_disciple", "name": "Leaf Disciple", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5}, {"id": "l_channeler", "name": "Channeler", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_sehk", "name": "Brother Sehk", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_lythis", "name": "Brother Lythis", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_brother_tausil", "name": "Brother Tausil", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0}, {"id": "l_unclean_one", "name": "Unclean One", "clan": "Lotus", "melee": "Blunt", "missile": "Magic", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5}, {"id": "l_diseased_one", "name": "Diseased One", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5}, {"id": "l_infested_one", "name": "Infested One", "clan": "Lotus", "melee": "Piercing", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.5}, {"id": "l_warlock", "name": "Warlock", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25}, {"id": "l_master_warlock", "name": "Master Warlock", "clan": "Lotus", "melee": "Cutting", "missile": "Explosive", "c": 0.25, "b": 0.75, "p": 0.88, "e": 1.5, "m": 1.0}, {"id": "l_overseer", "name": "Overseer", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 1.25, "p": 0.75, "e": 1.0, "m": 1.0}, {"id": "l_reaper", "name": "Reaper", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.75, "b": 0.75, "p": 0.88, "e": 1.5, "m": 0.25}, {"id": "l_shambler", "name": "Shambler", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.5}, {"id": "l_zymeth", "name": "Zymeth", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 0.5}, {"id": "l_yvaine", "name": "Yvaine", "clan": "Lotus", "melee": "Magic", "missile": "Piercing", "c": 1.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.25}, {"id": "l_koril", "name": "Koril", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25}, {"id": "l_issyl", "name": "Issyl", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.25}, {"id": "l_soban", "name": "Soban", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5}];
+const RAW_UNITS = [{"id": "d_spearman", "name": "Spearman", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.25, "skill": "Magical"}, {"id": "d_archer", "name": "Archer", "clan": "Dragon", "melee": "Blunt", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5, "skill": "-"}, {"id": "d_chemist", "name": "Chemist", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.25, "b": 1.25, "p": 0.88, "e": 0.5, "m": 0.5, "skill": "-"}, {"id": "d_geisha", "name": "Geisha", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "d_pk_cannoneer", "name": "PK Cannoneer", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.5, "skill": "Piercing"}, {"id": "d_dragon_warrior", "name": "Dragon Warrior", "clan": "Dragon", "melee": "Cutting", "missile": "Magic", "c": 1.25, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.25, "skill": "-"}, {"id": "d_kabuki", "name": "Kabuki Warrior", "clan": "Dragon", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.75, "skill": "-"}, {"id": "d_samurai", "name": "Samurai", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 0.25, "b": 0.5, "p": 1.0, "e": 1.75, "m": 1.5, "skill": "Explosive"}, {"id": "d_battle_maiden", "name": "Battle Maiden", "clan": "Dragon", "melee": "Cutting", "missile": "Cutting", "c": 1.25, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5, "skill": "-"}, {"id": "d_guardian", "name": "Guardian", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 1.25, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75, "skill": "Explosive"}, {"id": "d_otomo", "name": "Otomo", "clan": "Dragon", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5, "skill": "-"}, {"id": "d_tao", "name": "Tao", "clan": "Dragon", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5, "skill": "-"}, {"id": "d_arah", "name": "Arah", "clan": "Dragon", "melee": "Cutting", "missile": "Piercing", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5, "skill": "-"}, {"id": "d_teppo", "name": "Teppo", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.0, "b": 1.25, "p": 0.88, "e": 0.5, "m": 1.25, "skill": "-"}, {"id": "d_kazan", "name": "Kazan", "clan": "Dragon", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25, "skill": "-"}, {"id": "d_garrin", "name": "Garrin", "clan": "Dragon", "melee": "Piercing", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5, "skill": "-"}, {"id": "s_swordsman", "name": "Swordsman", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0, "skill": "-"}, {"id": "s_musketeer", "name": "Musketeer", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 0.5, "b": 0.75, "p": 0.75, "e": 1.0, "m": 1.0, "skill": "Piercing"}, {"id": "s_crossbowman", "name": "Crossbowman", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5, "skill": "-"}, {"id": "s_fan_geisha", "name": "Fan Geisha", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.75, "m": 0.5, "skill": "-"}, {"id": "s_cannoneer", "name": "Cannoneer", "clan": "Serpent", "melee": "Blunt", "missile": "Blunt", "c": 1.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5, "skill": "Explosive"}, {"id": "s_raider", "name": "Raider", "clan": "Serpent", "melee": "Blunt", "missile": "Explosive", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.25, "skill": "Piercing"}, {"id": "s_bandit", "name": "Bandit", "clan": "Serpent", "melee": "Piercing", "missile": "Piercing", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.25, "m": 1.25, "skill": "-"}, {"id": "s_ronin", "name": "Ronin", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 1.13, "e": 1.75, "m": 0.5, "skill": "Magical"}, {"id": "s_necromancer", "name": "Necromancer", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.88, "e": 0.25, "m": 1.5, "skill": "-"}, {"id": "s_spirit_warrior", "name": "Spirit Warrior", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.25, "skill": "-"}, {"id": "s_zombie", "name": "Zombie", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.75, "skill": "-"}, {"id": "s_enforcer", "name": "Enforcer", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.25, "skill": "-"}, {"id": "s_witch", "name": "Witch", "clan": "Serpent", "melee": "Magic", "missile": "Magic", "c": 1.5, "b": 0.75, "p": 0.88, "e": 1.25, "m": 0.25, "skill": "-"}, {"id": "s_demoness", "name": "Demoness", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "s_shinja", "name": "Shinja", "clan": "Serpent", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 0.25, "skill": "-"}, {"id": "s_utara", "name": "Utara", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25, "skill": "-"}, {"id": "s_taro", "name": "Taro", "clan": "Serpent", "melee": "Magic", "missile": "-", "c": 1.25, "b": 1.25, "p": 0.75, "e": 0.5, "m": 0.25, "skill": "-"}, {"id": "s_vetkin", "name": "Vetkin", "clan": "Serpent", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5, "skill": "-"}, {"id": "s_budo", "name": "Budo", "clan": "Serpent", "melee": "Blunt", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5, "skill": "-"}, {"id": "w_hurler", "name": "Hurler", "clan": "Wolf", "melee": "Blunt", "missile": "Blunt", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5, "skill": "Explosive"}, {"id": "w_brawler", "name": "Brawler", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.75, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "w_mauler", "name": "Mauler", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 0.5, "p": 0.75, "e": 1.0, "m": 0.5, "skill": "-"}, {"id": "w_pack_master", "name": "Pack Master", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.75, "b": 0.25, "p": 0.88, "e": 0.75, "m": 1.5, "skill": "-"}, {"id": "w_druidess", "name": "Druidess", "clan": "Wolf", "melee": "Blunt", "missile": "Magic", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "w_ballistaman", "name": "Ballistaman", "clan": "Wolf", "melee": "Piercing", "missile": "Piercing", "c": 1.25, "b": 0.25, "p": 0.88, "e": 1.5, "m": 0.5, "skill": "-"}, {"id": "w_pitch_slinger", "name": "Pitch Slinger", "clan": "Wolf", "melee": "Explosive", "missile": "Explosive", "c": 0.25, "b": 1.0, "p": 0.88, "e": 1.0, "m": 1.5, "skill": "-"}, {"id": "w_sledger", "name": "Sledger", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5, "skill": "-"}, {"id": "w_berserker", "name": "Berserker", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 0.25, "b": 1.5, "p": 0.88, "e": 0.25, "m": 1.5, "skill": "-"}, {"id": "w_werewolf", "name": "Werewolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.25, "p": 0.75, "e": 1.25, "m": 1.0, "skill": "-"}, {"id": "w_digger", "name": "Digger", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 0.5, "skill": "-"}, {"id": "w_dryad", "name": "Dryad", "clan": "Wolf", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.25, "skill": "-"}, {"id": "w_grayback", "name": "Grayback", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5, "skill": "-"}, {"id": "w_longtooth", "name": "Longtooth", "clan": "Wolf", "melee": "Magic", "missile": "Magic", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5, "skill": "Piercing"}, {"id": "w_gaihla", "name": "Gaihla", "clan": "Wolf", "melee": "Cutting", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 1.25, "m": 0.25, "skill": "-"}, {"id": "w_the_shale_lord", "name": "The Shale Lord", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 0.25, "p": 1.0, "e": 1.75, "m": 1.5, "skill": "-"}, {"id": "w_wildeye", "name": "Wildeye", "clan": "Wolf", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.25, "p": 0.88, "e": 0.25, "m": 1.5, "skill": "-"}, {"id": "w_spirit_wolf", "name": "Spirit Wolf", "clan": "Wolf", "melee": "Piercing", "missile": "-", "c": 0.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 1.25, "skill": "-"}, {"id": "l_staff_adept", "name": "Staff Adept", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.0, "m": 1.5, "skill": "-"}, {"id": "l_blade_acolyte", "name": "Blade Acolyte", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.5, "b": 1.0, "p": 0.75, "e": 0.5, "m": 1.0, "skill": "-"}, {"id": "l_leaf_disciple", "name": "Leaf Disciple", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 0.75, "e": 0.5, "m": 0.5, "skill": "Magical"}, {"id": "l_channeler", "name": "Channeler", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "l_brother_sehk", "name": "Brother Sehk", "clan": "Lotus", "melee": "Piercing", "missile": "Piercing", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "l_brother_lythis", "name": "Brother Lythis", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "l_brother_tausil", "name": "Brother Tausil", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "l_unclean_one", "name": "Unclean One", "clan": "Lotus", "melee": "Blunt", "missile": "Magic", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.5, "skill": "-"}, {"id": "l_diseased_one", "name": "Diseased One", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.25, "b": 0.5, "p": 0.88, "e": 1.5, "m": 1.5, "skill": "-"}, {"id": "l_infested_one", "name": "Infested One", "clan": "Lotus", "melee": "Piercing", "missile": "-", "c": 1.5, "b": 0.25, "p": 0.88, "e": 0.75, "m": 0.5, "skill": "-"}, {"id": "l_warlock", "name": "Warlock", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.5, "m": 0.25, "skill": "Magical"}, {"id": "l_master_warlock", "name": "Master Warlock", "clan": "Lotus", "melee": "Cutting", "missile": "Explosive", "c": 0.25, "b": 0.75, "p": 0.88, "e": 1.5, "m": 1.0, "skill": "Magical"}, {"id": "l_overseer", "name": "Overseer", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.25, "b": 1.25, "p": 0.75, "e": 1.0, "m": 1.0, "skill": "-"}, {"id": "l_reaper", "name": "Reaper", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 0.75, "b": 0.75, "p": 0.88, "e": 1.5, "m": 0.25, "skill": "-"}, {"id": "l_shambler", "name": "Shambler", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 0.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 1.5, "skill": "-"}, {"id": "l_zymeth", "name": "Zymeth", "clan": "Lotus", "melee": "Magic", "missile": "Explosive", "c": 1.5, "b": 0.5, "p": 1.0, "e": 1.5, "m": 0.5, "skill": "-"}, {"id": "l_yvaine", "name": "Yvaine", "clan": "Lotus", "melee": "Magic", "missile": "Piercing", "c": 1.5, "b": 0.5, "p": 0.88, "e": 1.25, "m": 0.25, "skill": "-"}, {"id": "l_koril", "name": "Koril", "clan": "Lotus", "melee": "Cutting", "missile": "-", "c": 1.0, "b": 1.0, "p": 1.0, "e": 1.0, "m": 0.25, "skill": "-"}, {"id": "l_issyl", "name": "Issyl", "clan": "Lotus", "melee": "Magic", "missile": "-", "c": 1.5, "b": 1.5, "p": 0.88, "e": 0.25, "m": 0.25, "skill": "-"}, {"id": "l_soban", "name": "Soban", "clan": "Lotus", "melee": "Blunt", "missile": "-", "c": 0.5, "b": 1.5, "p": 1.0, "e": 0.5, "m": 1.5, "skill": "-"}];
 
 const MELEE_EXCEPTIONS = ['d_dragon_warrior', 'd_kabuki', 'd_samurai', 's_bandit'];
 
@@ -922,6 +1034,7 @@ const CLANS = ['Dragon', 'Serpent', 'Lotus', 'Wolf'];
 const UNITS = RAW_UNITS.map(u => {
     const missileDmg = normalizeDmgType(u.missile);
     const meleeDmg = normalizeDmgType(u.melee);
+    const skillDmg = normalizeDmgType(u.skill);
     
     let primaryDmg;
     if (MELEE_EXCEPTIONS.includes(u.id)) {
@@ -936,6 +1049,8 @@ const UNITS = RAW_UNITS.map(u => {
         clan: u.clan,
         melee: u.melee,
         missile: u.missile,
+        skill: u.skill || '-',
+        skillDamageType: skillDmg,
         damageType: primaryDmg,
         armor: {
             cutting: u.c,
@@ -951,6 +1066,9 @@ const clanSelect = document.getElementById('clanSelect');
 const unitSelect = document.getElementById('unitSelect');
 const counterTypeSelect = document.getElementById('counterTypeSelect');
 const resultOutput = document.getElementById('resultOutput');
+const weaknessDmgSelect = document.getElementById('weaknessDmgSelect');
+const weaknessUnitTypeSelect = document.getElementById('weaknessUnitTypeSelect');
+const weaknessOutput = document.getElementById('weaknessOutput');
 const unitASelect = document.getElementById('unitASelect');
 const unitBSelect = document.getElementById('unitBSelect');
 const compareOutput = document.getElementById('compareOutput');
@@ -973,8 +1091,12 @@ function switchTab(tabId) {
     if (tabId === 'tabLookup') {
         document.querySelectorAll('.tab-btn')[0].classList.add('active');
         document.getElementById('tabLookup').classList.add('active');
-    } else {
+    } else if (tabId === 'tabWeakness') {
         document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tabWeakness').classList.add('active');
+        renderWeaknessFilter();
+    } else {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
         document.getElementById('tabCompare').classList.add('active');
         renderComparison();
     }
@@ -1039,9 +1161,10 @@ function isMissileAttacker(attacker) {
     return attacker.missile !== '-' && !MELEE_EXCEPTIONS.includes(attacker.id);
 }
 
-function getDamageMultiplier(attacker, target) {
-    let mult = target.armor[attacker.damageType] || 1.0;
-    if (target.id === 'l_koril') {
+function getDamageMultiplier(attacker, target, useSkill = false) {
+    const dmgType = (useSkill && attacker.skillDamageType) ? attacker.skillDamageType : attacker.damageType;
+    let mult = target.armor[dmgType] || 1.0;
+    if (target.id === 'l_koril' && !useSkill) {
         if (attacker.id !== 's_musketeer' && isMissileAttacker(attacker)) {
             return 0.0;
         }
@@ -1054,25 +1177,45 @@ function getTwoWayCountersForUnit(targetUnit) {
 
     const attackTypeFilter = counterTypeSelect ? counterTypeSelect.value : 'ALL';
 
-    const evaluated = UNITS.map(attacker => {
-        if (attacker.id === targetUnit.id) return null;
-        if (HEALER_IDS.includes(attacker.id)) return null;
-        if (attackTypeFilter === 'MELEE' && isMissileAttacker(attacker)) return null;
-        if (attackTypeFilter === 'MISSILE' && !isMissileAttacker(attacker)) return null;
+    const evaluated = [];
+    UNITS.forEach(attacker => {
+        if (attacker.id === targetUnit.id) return;
+        if (HEALER_IDS.includes(attacker.id)) return;
 
-        const dmgDealtMult = getDamageMultiplier(attacker, targetUnit);
         const targetDmgType = targetUnit.damageType;
         const dmgReceivedMult = targetDmgType ? (attacker.armor[targetDmgType] || 1.0) : 1.0;
 
-        const netScore = dmgDealtMult - dmgReceivedMult;
+        // Standard attack (Melee or Missile)
+        const includeStandard =
+            attackTypeFilter === 'ALL' ||
+            (attackTypeFilter === 'MELEE' && !isMissileAttacker(attacker)) ||
+            (attackTypeFilter === 'MISSILE' && isMissileAttacker(attacker));
 
-        return {
-            attacker: attacker,
-            dmgDealt: dmgDealtMult,
-            dmgReceived: dmgReceivedMult,
-            netScore: netScore
-        };
-    }).filter(x => x !== null);
+        if (includeStandard) {
+            const dmgDealtMult = getDamageMultiplier(attacker, targetUnit, false);
+            evaluated.push({
+                attacker: attacker,
+                attackMode: isMissileAttacker(attacker) ? 'MISSILE' : 'MELEE',
+                effectiveDmgType: attacker.damageType,
+                dmgDealt: dmgDealtMult,
+                dmgReceived: dmgReceivedMult,
+                netScore: dmgDealtMult - dmgReceivedMult
+            });
+        }
+
+        // Skill attack (if unit has damage-dealing skill)
+        if (attacker.skillDamageType && (attackTypeFilter === 'ALL' || attackTypeFilter === 'SKILL')) {
+            const skillDealtMult = getDamageMultiplier(attacker, targetUnit, true);
+            evaluated.push({
+                attacker: attacker,
+                attackMode: 'SKILL',
+                effectiveDmgType: attacker.skillDamageType,
+                dmgDealt: skillDealtMult,
+                dmgReceived: dmgReceivedMult,
+                netScore: skillDealtMult - dmgReceivedMult
+            });
+        }
+    });
 
     const sortCounterItems = (a, b) => {
         if (a.dmgReceived !== b.dmgReceived) {
@@ -1116,8 +1259,9 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
         } else {
             clanItems.forEach(item => {
                 const atk = item.attacker;
-                const attackMode = isMissileAttacker(atk) ? t.missile : t.melee;
-                const dmgName = t[atk.damageType] || atk.damageType;
+                const attackMode = item.attackMode === 'SKILL' ? t.skill : (item.attackMode === 'MISSILE' ? t.missile : t.melee);
+                const effDmg = item.effectiveDmgType || atk.damageType;
+                const dmgName = t[effDmg] || effDmg;
                 const targetDmgName = targetUnit.damageType ? (t[targetUnit.damageType] || targetUnit.damageType) : '';
                 
                 let tooltipText = t.counterTooltip
@@ -1175,8 +1319,19 @@ function renderResults() {
         const card = document.createElement('div');
         card.className = 'target-card';
 
-        const meleeText = unit.melee === '-' ? '-' : (currentLang === 'vi' ? (unit.melee === 'Piercing' ? 'Xuyên' : unit.melee === 'Blunt' ? 'Cùn' : unit.melee === 'Cutting' ? 'Cắt' : unit.melee === 'Magic' ? 'Phép' : unit.melee === 'Explosive' ? 'Nổ' : unit.melee) : unit.melee);
-        const missileText = unit.missile === '-' ? '-' : (currentLang === 'vi' ? (unit.missile === 'Piercing' ? 'Xuyên' : unit.missile === 'Blunt' ? 'Cùn' : unit.missile === 'Cutting' ? 'Cắt' : unit.missile === 'Magic' ? 'Phép' : unit.missile === 'Explosive' ? 'Nổ' : unit.missile) : unit.missile);
+        const formatRawDmg = (val) => {
+            if (!val || val === '-') return '-';
+            if (currentLang !== 'vi') return val;
+            if (val === 'Piercing') return 'Xuyên';
+            if (val === 'Blunt') return 'Cùn';
+            if (val === 'Cutting') return 'Cắt';
+            if (val === 'Magic' || val === 'Magical') return 'Phép';
+            if (val === 'Explosive') return 'Nổ';
+            return val;
+        };
+        const meleeText = formatRawDmg(unit.melee);
+        const missileText = formatRawDmg(unit.missile);
+        const skillText = formatRawDmg(unit.skill);
         const primDmgName = unit.damageType ? (t[unit.damageType] || unit.damageType) : 'N/A';
 
         let html = `
@@ -1186,7 +1341,7 @@ function renderResults() {
                     <span class="clan-badge clan-${unit.clan}">${getClanBadgeText(unit.clan)}</span>
                 </div>
                 <div class="counter-detail" style="text-align: right;">
-                    ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong><br>
+                    ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong> | Skill: <strong>${skillText}</strong><br>
                     ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}
                 </div>
             </div>
@@ -1318,8 +1473,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong><br>
-                    • <strong>${unitAAtkMode}</strong>
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong> (<strong>${unitAAtkMode}</strong>)${unitA.skillDamageType ? `<br>• Skill: <strong style="text-transform: capitalize;">${t[unitA.skillDamageType] || unitA.skillDamageType}</strong> (${(getDamageMultiplier(unitA, unitB, true) * 100).toFixed(0)}%)` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1353,8 +1507,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong><br>
-                    • <strong>${unitBAtkMode}</strong>
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong> (<strong>${unitBAtkMode}</strong>)${unitB.skillDamageType ? `<br>• Skill: <strong style="text-transform: capitalize;">${t[unitB.skillDamageType] || unitB.skillDamageType}</strong> (${(getDamageMultiplier(unitB, unitA, true) * 100).toFixed(0)}%)` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1407,12 +1560,132 @@ counterTypeSelect.addEventListener('change', () => {
     renderResults();
 });
 
+
+let weaknessSortAsc = true;
+
+function updateWeaknessSortBtnLabel() {
+    const btn = document.getElementById('weaknessSortBtn');
+    if (!btn) return;
+    const t = TRANSLATIONS[currentLang];
+    btn.textContent = weaknessSortAsc ? t.sortAscBtn : t.sortDescBtn;
+}
+
+function toggleWeaknessSort() {
+    weaknessSortAsc = !weaknessSortAsc;
+    updateWeaknessSortBtnLabel();
+    renderWeaknessFilter();
+}
+
+function renderWeaknessFilter() {
+    if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput) return;
+    updateWeaknessSortBtnLabel();
+    const dmgKey = weaknessDmgSelect.value; // 'cutting' | 'blunt' | 'piercing' | 'explosive' | 'magical'
+    const unitTypeFilter = weaknessUnitTypeSelect.value; // 'ALL' | 'MELEE' | 'MISSILE'
+    const t = TRANSLATIONS[currentLang];
+    const dmgLabel = t[dmgKey] || dmgKey;
+
+    const matchingUnits = UNITS.filter(u => {
+        const mult = u.armor[dmgKey];
+        if (mult === undefined || mult < 1.0) return false;
+        if (unitTypeFilter === 'MELEE' && isMissileAttacker(u)) return false;
+        if (unitTypeFilter === 'MISSILE' && !isMissileAttacker(u)) return false;
+        return true;
+    });
+
+    let html = `
+        <div class="target-card">
+            <div class="target-header">
+                <div>
+                    <span class="target-name">${t.weaknessResultTitle}: <span style="color: var(--accent-color); text-transform: capitalize;">${dmgLabel}</span></span>
+                </div>
+                <div class="counter-detail">
+                    <strong>${matchingUnits.length}</strong> ${currentLang === 'vi' ? 'đơn vị' : 'units'}
+                </div>
+            </div>
+            <div class="clan-grid">
+    `;
+
+    CLANS.forEach(clanName => {
+        const clanUnits = matchingUnits
+            .filter(u => u.clan === clanName)
+            .sort((a, b) => {
+                if (a.armor[dmgKey] !== b.armor[dmgKey]) {
+                    return weaknessSortAsc
+                        ? (a.armor[dmgKey] - b.armor[dmgKey])
+                        : (b.armor[dmgKey] - a.armor[dmgKey]);
+                }
+                return a.name.localeCompare(b.name);
+            });
+
+        html += `
+            <div class="clan-column">
+                <div class="clan-column-header clan-${clanName}">${getClanHeaderText(clanName)} (${clanUnits.length})</div>
+        `;
+
+        if (clanUnits.length === 0) {
+            html += `<div class="no-attacker-msg">${t.noUnits}</div>`;
+        } else {
+            clanUnits.forEach(u => {
+                const mult = u.armor[dmgKey];
+                const multPercent = (mult * 100).toFixed(0);
+                const atkMode = isMissileAttacker(u) ? t.missile : t.melee;
+                const primDmgName = u.damageType ? (t[u.damageType] || u.damageType) : 'N/A';
+
+                let riskClass = 'risky';
+                let multColor = '#f0ad4e';
+                if (mult >= 1.5) {
+                    riskClass = 'mutual';
+                    multColor = '#ff6b6b';
+                } else if (mult > 1.0) {
+                    riskClass = 'mutual';
+                    multColor = '#ff6b6b';
+                }
+
+                const tooltipText = t.weaknessTooltip
+                    .replace('{unit}', u.name)
+                    .replace('{mult}', multPercent)
+                    .replace('{dmg}', dmgLabel)
+                    .replace('{atkMode}', atkMode)
+                    .replace('{primDmg}', primDmgName);
+
+                html += `
+                    <div class="counter-item ${riskClass}">
+                        <div class="counter-header-row">
+                            <span class="counter-unit-name">${u.name}</span>
+                            <span class="damage-badge" style="color: ${multColor};">${multPercent}%</span>
+                        </div>
+                        <div class="counter-detail">${atkMode} • <span style="text-transform: capitalize;">${primDmgName}</span></div>
+                        <div class="exchange-stats">
+                            <span>${t.damageTakenLabel} <strong style="color: ${multColor};">${multPercent}%</strong></span>
+                            <span style="text-transform: capitalize; color: #aaa;">${dmgLabel}</span>
+                        </div>
+                        <span class="counter-item-tooltip">${tooltipText}</span>
+                    </div>
+                `;
+            });
+        }
+
+        html += `</div>`;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    weaknessOutput.innerHTML = html;
+}
+
+weaknessDmgSelect.addEventListener('change', renderWeaknessFilter);
+weaknessUnitTypeSelect.addEventListener('change', renderWeaknessFilter);
+
 unitASelect.addEventListener('change', renderComparison);
 unitBSelect.addEventListener('change', renderComparison);
 
 // Init
 populateLookupUnits();
 renderResults();
+renderWeaknessFilter();
 populateCompareDropdowns();
 </script>
 
