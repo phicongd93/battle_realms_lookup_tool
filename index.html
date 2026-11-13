@@ -644,8 +644,13 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            min-width: 210px;
+            min-width: 240px;
+            height: 41px;
+            box-sizing: border-box;
             text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .sort-toggle-btn:hover {
@@ -668,23 +673,23 @@
     <!-- TAB NAVIGATION -->
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
-        <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Weak Resistance Filter</button>
+        <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Resistance Filter</button>
         <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Direct Comparison</button>
     </div>
 
     <!-- TAB 1: LOOKUP -->
     <div id="tabLookup" class="tab-content active">
-        <div class="rules-info">
+        <div class="rules-info" id="lookupRulesBox">
             <strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>
             • <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>
             • <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>
             • <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>
-            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) *but* take heavy counter-damage in return (Deals < Takes).
+            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) <em>but</em> take heavy counter-damage in return (Deals < Takes).
         </div>
 
         <div class="control-panel">
             <div class="select-group">
-                <label for="clanSelect">1. Filter Target Clan:</label>
+                <label for="clanSelect" id="filterClanLabel">1. Filter Target Clan:</label>
                 <select id="clanSelect">
                     <option value="ALL">-- All Clans --</option>
                     <option value="Dragon">Dragon Clan</option>
@@ -695,14 +700,14 @@
             </div>
 
             <div class="select-group">
-                <label for="unitSelect">2. Select Target Unit:</label>
+                <label for="unitSelect" id="selectUnitLabel">2. Select Target Unit:</label>
                 <select id="unitSelect">
                     <!-- Javascript populates -->
                 </select>
             </div>
 
             <div class="select-group">
-                <label for="counterTypeSelect">3. Filter Counter Attack Type:</label>
+                <label for="counterTypeSelect" id="filterCounterTypeLabel">3. Filter Counter Attack Type:</label>
                 <select id="counterTypeSelect">
                     <option value="ALL">-- All Attack Types --</option>
                     <option value="MELEE">Melee Only</option>
@@ -717,18 +722,26 @@
         </div>
     </div>
 
-    <!-- TAB 2: WEAKNESS FILTER -->
+    <!-- TAB 2: RESISTANCE FILTER -->
     <div id="tabWeakness" class="tab-content">
         <div class="rules-info" id="weaknessRulesBox">
-            <strong>📖 How to Use Weak Resistance Filter:</strong><br>
-            • <strong>Select Damage Type:</strong> Choose a damage type (Cutting, Blunt, Piercing, Explosive, or Magical) to list all units that take <strong>≥ 100%</strong> damage from that attack type.<br>
-            • <strong>Filter Unit Type:</strong> Narrow results by <em>All Units</em>, <em>Melee Only</em>, or <em>Missile Only</em>.<br>
-            • <strong>Sorted by Multiplier:</strong> Units are grouped by clan and sorted in <strong>ascending order</strong> of armor multiplier (from 100% neutral up to highest vulnerability).
+            <strong>📖 How to Use Resistance Filter:</strong><br>
+            • <strong>Resistance Category:</strong> Choose between <em>Weak Resistance</em> (units taking ≥ 100% damage, sorted high → low by default) or <em>Strong Resistance</em> (units taking < 100% damage, sorted low → high by default).<br>
+            • <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>
+            • <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.
         </div>
 
         <div class="control-panel">
             <div class="select-group">
-                <label for="weaknessDmgSelect" id="weaknessDmgLabel">1. Select Damage Type:</label>
+                <label for="resistanceCategorySelect" id="resistanceCategoryLabel">1. Resistance Category:</label>
+                <select id="resistanceCategorySelect">
+                    <option value="weak">Weak Resistance (≥ 100%)</option>
+                    <option value="strong">Strong Resistance (< 100%)</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="weaknessDmgSelect" id="weaknessDmgLabel">2. Select Damage Type:</label>
                 <select id="weaknessDmgSelect">
                     <option value="cutting">Cutting</option>
                     <option value="blunt">Blunt</option>
@@ -739,7 +752,7 @@
             </div>
 
             <div class="select-group">
-                <label for="weaknessUnitTypeSelect" id="weaknessUnitTypeLabel">2. Filter Unit Type:</label>
+                <label for="weaknessUnitTypeSelect" id="weaknessUnitTypeLabel">3. Filter Unit Type:</label>
                 <select id="weaknessUnitTypeSelect">
                     <option value="ALL">-- All Unit Types --</option>
                     <option value="MELEE">Melee Only</option>
@@ -748,19 +761,19 @@
             </div>
 
             <div class="select-group">
-                <label for="weaknessSortBtn" id="weaknessSortLabel">3. Sort Order:</label>
-                <button type="button" id="weaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()">⬆️ Ascending (% Low → High)</button>
+                <label for="weaknessSortBtn" id="weaknessSortLabel">4. Sort Order:</label>
+                <button type="button" id="weaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()">⬇️ Descending (% High → Low)</button>
             </div>
         </div>
 
         <div id="weaknessOutput" class="result-container">
-            <!-- Weakness results rendered here -->
+            <!-- Resistance results rendered here -->
         </div>
     </div>
 
     <!-- TAB 3: COMPARISON -->
     <div id="tabCompare" class="tab-content">
-        <div class="rules-info">
+        <div class="rules-info" id="compareRulesBox">
             <strong>📖 How to Use 1v1 Comparison:</strong><br>
             • <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>
             • <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>
@@ -769,14 +782,14 @@
 
         <div class="control-panel">
             <div class="select-group">
-                <label for="unitASelect">Unit A (Side 1):</label>
+                <label for="unitASelect" id="unitALabel">Unit A (Side 1):</label>
                 <select id="unitASelect"></select>
             </div>
 
             <div class="vs-badge">VS</div>
 
             <div class="select-group">
-                <label for="unitBSelect">Unit B (Side 2):</label>
+                <label for="unitBSelect" id="unitBLabel">Unit B (Side 2):</label>
                 <select id="unitBSelect"></select>
             </div>
         </div>
@@ -801,17 +814,21 @@ const TRANSLATIONS = {
         wolfHeader: "Wolf Clan",
         subtitle: "Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)",
         tabLookup: "🔍 Unit Counter Lookup",
-        tabWeakness: "🛡️ Weak Resistance Filter",
+        tabWeakness: "🛡️ Resistance Filter",
         tabCompare: "⚔️ 1v1 Direct Comparison",
-        lookupRules: "<strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) *but* take heavy counter-damage in return (Deals < Takes).",
-        weaknessRules: "<strong>📖 How to Use Weak Resistance Filter:</strong><br>• <strong>Select Damage Type:</strong> Choose a damage type (Cutting, Blunt, Piercing, Explosive, or Magical) to list all units that take <strong>≥ 100%</strong> damage from that attack type.<br>• <strong>Filter Unit Type:</strong> Narrow results by <em>All Units</em>, <em>Melee Only</em>, or <em>Missile Only</em>.<br>• <strong>2-Way Sort Order:</strong> Units are grouped by clan and sorted by armor multiplier. Click the sort toggle button to switch between <strong>Ascending</strong> (100% → highest) and <strong>Descending</strong> (highest → 100%).",
-        weaknessDmgLabel: "1. Select Damage Type:",
-        weaknessUnitTypeLabel: "2. Filter Unit Type:",
-        weaknessSortLabel: "3. Sort Order:",
+        lookupRules: "<strong>📖 How to Use Counter Lookup (Two-Way Combat Exchange):</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and combat exchanges.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking equal or lower counter-damage (Deals ≥ Takes).<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) <em>but</em> take heavy counter-damage in return (Deals < Takes).",
+        weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between <em>Weak Resistance</em> (units taking ≥ 100% damage, sorted high → low by default) or <em>Strong Resistance</em> (units taking < 100% damage, sorted low → high by default).<br>• <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>• <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.",
+        resistanceCategoryLabel: "1. Resistance Category:",
+        weaknessDmgLabel: "2. Select Damage Type:",
+        weaknessUnitTypeLabel: "3. Filter Unit Type:",
+        weaknessSortLabel: "4. Sort Order:",
+        weakOption: "Weak Resistance (≥ 100%)",
+        strongOption: "Strong Resistance (< 100%)",
         sortAscBtn: "⬆️ Ascending (% Low → High)",
         sortDescBtn: "⬇️ Descending (% High → Low)",
         allUnitTypes: "-- All Unit Types --",
         weaknessResultTitle: "🛡️ Units with Weak Resistance (≥ 100% Damage Taken) to",
+        strongResultTitle: "🛡️ Units with Strong Resistance (< 100% Damage Taken) to",
         damageTakenLabel: "Takes:",
         weaknessTooltip: "{unit} takes {mult}% {dmg} damage (Primary attack: {atkMode} - {primDmg}).",
         compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Pick Unit A and Unit B from any clan to evaluate a direct head-to-head matchup.<br>• <strong>Armor Exchange Calculation:</strong> The tool computes Unit A's primary attack damage against Unit B's armor, and vice versa.<br>• <strong>Matchup Verdict:</strong> Instantly displays which unit holds the statistical armor exchange advantage.",
@@ -871,17 +888,21 @@ const TRANSLATIONS = {
         wolfHeader: "Tộc Sói",
         subtitle: "Tra cứu khắc chế đơn vị & So sánh 1v1 trực tiếp (Bản Zen)",
         tabLookup: "🔍 Tra Cứu Khắc Chế",
-        tabWeakness: "🛡️ Bộ Lọc Kháng Yếu",
+        tabWeakness: "🛡️ Bộ Lọc Kháng",
         tabCompare: "⚔️ So Sánh 1v1",
         lookupRules: "<strong>📖 Hướng dẫn tra cứu khắc chế (Trao đổi sát thương 2 chiều):</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị cần xem để kiểm tra hệ số giáp và các đơn vị khắc chế.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp hoặc bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) <em>nhưng</em> chịu sát thương phản lại rất nặng (Gây < Nhận).",
-        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc kháng yếu:</strong><br>• <strong>Chọn loại sát thương:</strong> Chọn loại sát thương (Cắt, Cùn, Xuyên, Nổ hoặc Phép) để liệt kê tất cả đơn vị có chỉ số kháng yếu (nhận <strong>≥ 100%</strong> sát thương) trước đòn đánh đó.<br>• <strong>Lọc loại đơn vị:</strong> Lọc nhanh theo <em>Tất cả đơn vị</em>, <em>Chỉ Cận chiến</em> hoặc <em>Chỉ Tầm xa</em>.<br>• <strong>Sắp xếp 2 chiều:</strong> Danh sách được chia theo từng tộc. Nhấn nút <em>Thứ tự sắp xếp</em> để chuyển đổi linh hoạt giữa <strong>Tăng dần</strong> (100% → yếu nhất) hoặc <strong>Giảm dần</strong> (yếu nhất → 100%).",
-        weaknessDmgLabel: "1. Chọn Loại Sát Thương:",
-        weaknessUnitTypeLabel: "2. Lọc Loại Đơn Vị:",
-        weaknessSortLabel: "3. Thứ Tự Sắp Xếp:",
+        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc Kháng:</strong><br>• <strong>Tùy chọn Kháng:</strong> Chọn <em>Kháng yếu</em> (hiển thị đơn vị nhận ≥ 100% sát thương, mặc định xếp từ cao xuống thấp) hoặc <em>Kháng mạnh</em> (hiển thị đơn vị nhận < 100% sát thương, mặc định xếp từ thấp đến cao).<br>• <strong>Chọn loại sát thương & loại đơn vị:</strong> Lọc theo hệ sát thương (Cắt, Cùn, Xuyên, Nổ, Phép) và đơn vị cận chiến/tầm xa.<br>• <strong>Sắp xếp tùy chỉnh:</strong> Nhấn nút <em>Thứ Tự Sắp Xếp</em> để đảo chiều tăng/giảm bất cứ lúc nào.",
+        resistanceCategoryLabel: "1. Tùy Chọn Kháng:",
+        weaknessDmgLabel: "2. Chọn Loại Sát Thương:",
+        weaknessUnitTypeLabel: "3. Lọc Loại Đơn Vị:",
+        weaknessSortLabel: "4. Thứ Tự Sắp Xếp:",
+        weakOption: "Kháng yếu (≥ 100%)",
+        strongOption: "Kháng mạnh (< 100%)",
         sortAscBtn: "⬆️ Tăng dần (% Thấp → Cao)",
         sortDescBtn: "⬇️ Giảm dần (% Cao → Thấp)",
         allUnitTypes: "-- Tất cả loại đơn vị --",
-        weaknessResultTitle: "🛡️ Danh sách đơn vị kháng yếu (Nhận ≥ 100% sát thương) trước sát thương",
+        weaknessResultTitle: "🛡️ Danh sách đơn vị Kháng yếu (Nhận ≥ 100% sát thương) trước sát thương",
+        strongResultTitle: "🛡️ Danh sách đơn vị Kháng mạnh (Nhận < 100% sát thương) trước sát thương",
         damageTakenLabel: "Nhận:",
         weaknessTooltip: "{unit} nhận {mult}% sát thương {dmg} (Đòn đánh chính: {atkMode} - {primDmg}).",
         compareRules: "<strong>📖 Hướng dẫn so sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn Đơn vị A và Đơn vị B từ bất kỳ tộc nào để đánh giá kèo đấu trực diện.<br>• <strong>Tính toán trao đổi giáp:</strong> Công cụ tự động tính sát thương đòn đánh chính của A lên giáp B và ngược lại.<br>• <strong>Kết quả kèo đấu:</strong> Hiển thị ngay đơn vị nào đang nắm ưu thế trao đổi giáp tốt hơn.",
@@ -935,69 +956,76 @@ let currentLang = 'en';
 
 function setLanguage(lang) {
     currentLang = lang;
+    const t = TRANSLATIONS[lang];
     document.getElementById('langEnBtn').classList.toggle('active', lang === 'en');
     document.getElementById('langViBtn').classList.toggle('active', lang === 'vi');
     
-    document.querySelector('h1').textContent = TRANSLATIONS[lang].title;
-    document.querySelector('p.subtitle').textContent = TRANSLATIONS[lang].subtitle;
+    document.querySelector('h1').textContent = t.title;
+    document.querySelector('p.subtitle').textContent = t.subtitle;
     
     const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns[0].textContent = TRANSLATIONS[lang].tabLookup;
-    tabBtns[1].textContent = TRANSLATIONS[lang].tabWeakness;
-    tabBtns[2].textContent = TRANSLATIONS[lang].tabCompare;
+    tabBtns[0].textContent = t.tabLookup;
+    tabBtns[1].textContent = t.tabWeakness;
+    tabBtns[2].textContent = t.tabCompare;
     
-    const rules = document.querySelectorAll('.rules-info');
-    if(rules[0]) rules[0].innerHTML = TRANSLATIONS[lang].lookupRules;
-    if(rules[1]) rules[1].innerHTML = TRANSLATIONS[lang].weaknessRules;
-    if(rules[2]) rules[2].innerHTML = TRANSLATIONS[lang].compareRules;
+    document.getElementById('lookupRulesBox').innerHTML = t.lookupRules;
+    document.getElementById('weaknessRulesBox').innerHTML = t.weaknessRules;
+    document.getElementById('compareRulesBox').innerHTML = t.compareRules;
     
-    const labels = document.querySelectorAll('label');
-    if(labels[0]) labels[0].textContent = TRANSLATIONS[lang].filterClanLabel;
-    if(labels[1]) labels[1].textContent = TRANSLATIONS[lang].selectUnitLabel;
-    if(labels[2]) labels[2].textContent = TRANSLATIONS[lang].filterCounterTypeLabel;
-    if(labels[3]) labels[3].textContent = TRANSLATIONS[lang].weaknessDmgLabel;
-    if(labels[4]) labels[4].textContent = TRANSLATIONS[lang].weaknessUnitTypeLabel;
-    if(labels[5]) labels[5].textContent = TRANSLATIONS[lang].weaknessSortLabel;
-    if(labels[6]) labels[6].textContent = TRANSLATIONS[lang].unitALabel;
-    if(labels[7]) labels[7].textContent = TRANSLATIONS[lang].unitBLabel;
+    document.getElementById('filterClanLabel').textContent = t.filterClanLabel;
+    document.getElementById('selectUnitLabel').textContent = t.selectUnitLabel;
+    document.getElementById('filterCounterTypeLabel').textContent = t.filterCounterTypeLabel;
+    document.getElementById('resistanceCategoryLabel').textContent = t.resistanceCategoryLabel;
+    document.getElementById('weaknessDmgLabel').textContent = t.weaknessDmgLabel;
+    document.getElementById('weaknessUnitTypeLabel').textContent = t.weaknessUnitTypeLabel;
+    document.getElementById('weaknessSortLabel').textContent = t.weaknessSortLabel;
+    document.getElementById('unitALabel').textContent = t.unitALabel;
+    document.getElementById('unitBLabel').textContent = t.unitBLabel;
+    
+    const resCatSel = document.getElementById('resistanceCategorySelect');
+    if (resCatSel && resCatSel.options.length >= 2) {
+        resCatSel.options[0].textContent = t.weakOption;
+        resCatSel.options[1].textContent = t.strongOption;
+    }
+
     updateWeaknessSortBtnLabel();
     
     const weakDmgSel = document.getElementById('weaknessDmgSelect');
     if (weakDmgSel && weakDmgSel.options.length >= 5) {
-        weakDmgSel.options[0].textContent = TRANSLATIONS[lang].cutting;
-        weakDmgSel.options[1].textContent = TRANSLATIONS[lang].blunt;
-        weakDmgSel.options[2].textContent = TRANSLATIONS[lang].piercing;
-        weakDmgSel.options[3].textContent = TRANSLATIONS[lang].explosive;
-        weakDmgSel.options[4].textContent = TRANSLATIONS[lang].magical;
+        weakDmgSel.options[0].textContent = t.cutting;
+        weakDmgSel.options[1].textContent = t.blunt;
+        weakDmgSel.options[2].textContent = t.piercing;
+        weakDmgSel.options[3].textContent = t.explosive;
+        weakDmgSel.options[4].textContent = t.magical;
     }
 
     const weakUnitSel = document.getElementById('weaknessUnitTypeSelect');
     if (weakUnitSel && weakUnitSel.options.length >= 3) {
-        weakUnitSel.options[0].textContent = TRANSLATIONS[lang].allUnitTypes;
-        weakUnitSel.options[1].textContent = TRANSLATIONS[lang].meleeOnly;
-        weakUnitSel.options[2].textContent = TRANSLATIONS[lang].missileOnly;
+        weakUnitSel.options[0].textContent = t.allUnitTypes;
+        weakUnitSel.options[1].textContent = t.meleeOnly;
+        weakUnitSel.options[2].textContent = t.missileOnly;
     }
     
     const typeSel = document.getElementById('counterTypeSelect');
-    if(typeSel && typeSel.options.length >= 4) {
-        typeSel.options[0].textContent = TRANSLATIONS[lang].allAttackTypes;
-        typeSel.options[1].textContent = TRANSLATIONS[lang].meleeOnly;
-        typeSel.options[2].textContent = TRANSLATIONS[lang].missileOnly;
-        typeSel.options[3].textContent = TRANSLATIONS[lang].skillOnly;
+    if (typeSel && typeSel.options.length >= 4) {
+        typeSel.options[0].textContent = t.allAttackTypes;
+        typeSel.options[1].textContent = t.meleeOnly;
+        typeSel.options[2].textContent = t.missileOnly;
+        typeSel.options[3].textContent = t.skillOnly;
     }
     
     const clanSel = document.getElementById('clanSelect');
-    if(clanSel && clanSel.options.length >= 5) {
-        clanSel.options[0].textContent = TRANSLATIONS[lang].allClans;
-        clanSel.options[1].textContent = TRANSLATIONS[lang].dragonClan;
-        clanSel.options[2].textContent = TRANSLATIONS[lang].serpentClan;
-        clanSel.options[3].textContent = TRANSLATIONS[lang].lotusClan;
-        clanSel.options[4].textContent = TRANSLATIONS[lang].wolfClan;
+    if (clanSel && clanSel.options.length >= 5) {
+        clanSel.options[0].textContent = t.allClans;
+        clanSel.options[1].textContent = t.dragonClan;
+        clanSel.options[2].textContent = t.serpentClan;
+        clanSel.options[3].textContent = t.lotusClan;
+        clanSel.options[4].textContent = t.wolfClan;
     }
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
-        footerDiv.textContent = `${TRANSLATIONS[lang].lastUpdate} 11/11/2026`;
+        footerDiv.textContent = `${t.lastUpdate} 13/11/2026`;
     }
     
     populateLookupUnits();
@@ -1020,14 +1048,6 @@ function normalizeDmgType(typeStr) {
     if (s.includes('mag')) return 'magical';
     return null;
 }
-
-const DAMAGE_NAMES = {
-    cutting: 'cutting',
-    blunt: 'blunt',
-    piercing: 'piercing',
-    explosive: 'explosive',
-    magical: 'magical'
-};
 
 const CLANS = ['Dragon', 'Serpent', 'Lotus', 'Wolf'];
 
@@ -1066,6 +1086,7 @@ const clanSelect = document.getElementById('clanSelect');
 const unitSelect = document.getElementById('unitSelect');
 const counterTypeSelect = document.getElementById('counterTypeSelect');
 const resultOutput = document.getElementById('resultOutput');
+const resistanceCategorySelect = document.getElementById('resistanceCategorySelect');
 const weaknessDmgSelect = document.getElementById('weaknessDmgSelect');
 const weaknessUnitTypeSelect = document.getElementById('weaknessUnitTypeSelect');
 const weaknessOutput = document.getElementById('weaknessOutput');
@@ -1104,6 +1125,7 @@ function switchTab(tabId) {
 
 function populateLookupUnits() {
     const selectedClan = clanSelect.value;
+    const prevVal = unitSelect.value;
     unitSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].allUnits}</option>`;
     
     UNITS.forEach(u => {
@@ -1114,6 +1136,10 @@ function populateLookupUnits() {
             unitSelect.appendChild(opt);
         }
     });
+
+    if (prevVal && Array.from(unitSelect.options).some(o => o.value === prevVal)) {
+        unitSelect.value = prevVal;
+    }
 }
 
 function populateCompareDropdowns() {
@@ -1561,7 +1587,7 @@ counterTypeSelect.addEventListener('change', () => {
 });
 
 
-let weaknessSortAsc = true;
+let weaknessSortAsc = false; // Mặc định Kháng yếu là Giảm dần (Cao -> Thấp)
 
 function updateWeaknessSortBtnLabel() {
     const btn = document.getElementById('weaknessSortBtn');
@@ -1576,9 +1602,22 @@ function toggleWeaknessSort() {
     renderWeaknessFilter();
 }
 
-function renderWeaknessFilter() {
-    if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput) return;
+resistanceCategorySelect.addEventListener('change', () => {
+    const cat = resistanceCategorySelect.value;
+    if (cat === 'strong') {
+        weaknessSortAsc = true; // Kháng mạnh: mặc định Tăng dần (Thấp -> Cao)
+    } else {
+        weaknessSortAsc = false; // Kháng yếu: mặc định Giảm dần (Cao -> Thấp)
+    }
     updateWeaknessSortBtnLabel();
+    renderWeaknessFilter();
+});
+
+function renderWeaknessFilter() {
+    if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput || !resistanceCategorySelect) return;
+    updateWeaknessSortBtnLabel();
+    
+    const cat = resistanceCategorySelect.value; // 'weak' | 'strong'
     const dmgKey = weaknessDmgSelect.value; // 'cutting' | 'blunt' | 'piercing' | 'explosive' | 'magical'
     const unitTypeFilter = weaknessUnitTypeSelect.value; // 'ALL' | 'MELEE' | 'MISSILE'
     const t = TRANSLATIONS[currentLang];
@@ -1586,17 +1625,26 @@ function renderWeaknessFilter() {
 
     const matchingUnits = UNITS.filter(u => {
         const mult = u.armor[dmgKey];
-        if (mult === undefined || mult < 1.0) return false;
+        if (mult === undefined) return false;
+        
+        if (cat === 'weak') {
+            if (mult < 1.0) return false; // Kháng yếu (>= 100%)
+        } else {
+            if (mult >= 1.0) return false; // Kháng mạnh (< 100%)
+        }
+
         if (unitTypeFilter === 'MELEE' && isMissileAttacker(u)) return false;
         if (unitTypeFilter === 'MISSILE' && !isMissileAttacker(u)) return false;
         return true;
     });
 
+    const titleText = (cat === 'weak') ? t.weaknessResultTitle : t.strongResultTitle;
+
     let html = `
         <div class="target-card">
             <div class="target-header">
                 <div>
-                    <span class="target-name">${t.weaknessResultTitle}: <span style="color: var(--accent-color); text-transform: capitalize;">${dmgLabel}</span></span>
+                    <span class="target-name">${titleText}: <span style="color: var(--accent-color); text-transform: capitalize;">${dmgLabel}</span></span>
                 </div>
                 <div class="counter-detail">
                     <strong>${matchingUnits.length}</strong> ${currentLang === 'vi' ? 'đơn vị' : 'units'}
@@ -1633,12 +1681,12 @@ function renderWeaknessFilter() {
 
                 let riskClass = 'risky';
                 let multColor = '#f0ad4e';
-                if (mult >= 1.5) {
+                if (mult > 1.0) {
                     riskClass = 'mutual';
                     multColor = '#ff6b6b';
-                } else if (mult > 1.0) {
-                    riskClass = 'mutual';
-                    multColor = '#ff6b6b';
+                } else if (mult < 1.0) {
+                    riskClass = 'safe';
+                    multColor = '#5cb85c';
                 }
 
                 const tooltipText = t.weaknessTooltip
@@ -1690,7 +1738,7 @@ populateCompareDropdowns();
 </script>
 
 <footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
-    <div>Last update: 11/11/2026</div>
+    <div>Last update: 13/11/2026</div>
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
 
