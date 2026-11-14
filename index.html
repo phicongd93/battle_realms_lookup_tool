@@ -889,7 +889,10 @@ const TRANSLATIONS = {
         counterTooltipTwoWay: "{attacker} ({atkMode}) deals {deals}% {atkDmg} damage to {target}. Target counters with: Primary ({primTakes}% {primDmg}) and Skill ({skillTakes}% {skillDmg}).",
         counterTooltipOneWay: "{attacker} ({atkMode}) deals {deals}% {atkDmg} damage to {target}, while taking {takes}% {targetDmg} ({targetSource}) in return.",
         lastUpdate: "Last update:",
-        korilImmunityNote: " (Passive immunity to ranged attacks, except Musketeer)"
+        korilImmunityNote: " (Passive immunity to ranged attacks, except Musketeer)",
+        primShort: "Prim",
+        skillShort: "Skill",
+        leafDiscipleSkillNote: " (Skill only affects melee units; ineffective against ranged units)"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -952,7 +955,7 @@ const TRANSLATIONS = {
         noUnits: "Không có đơn vị",
         melee: "Cận chiến",
         missile: "Tầm xa",
-        skill: "Kỹ năng (Skill)",
+        skill: "Kỹ năng",
         deals: "Gây:",
         takes: "Nhận:",
         primaryAttack: "Đòn đánh chính:",
@@ -963,10 +966,13 @@ const TRANSLATIONS = {
         piercing: "Xuyên",
         explosive: "Nổ",
         magical: "Phép",
-        counterTooltipTwoWay: "{attacker} ({atkMode}) gây {deals}% sát thương {atkDmg} lên {target}. Mục tiêu phản công bằng: Đòn chính ({primTakes}% {primDmg}) và Skill ({skillTakes}% {skillDmg}).",
+        counterTooltipTwoWay: "{attacker} ({atkMode}) gây {deals}% sát thương {atkDmg} lên {target}. Mục tiêu phản công bằng: Đòn chính ({primTakes}% {primDmg}) và Kỹ năng ({skillTakes}% {skillDmg}).",
         counterTooltipOneWay: "{attacker} ({atkMode}) gây {deals}% sát thương {atkDmg} lên {target}, nhưng cũng nhận lại {takes}% sát thương {targetDmg} ({targetSource}) từ mục tiêu.",
         lastUpdate: "Cập nhật lần cuối:",
-        korilImmunityNote: " (Nội tại miễn nhiễm đòn đánh xa, ngoại trừ Xạ thủ Musketeer)"
+        korilImmunityNote: " (Nội tại miễn nhiễm đòn đánh xa, ngoại trừ Xạ thủ Musketeer)",
+        primShort: "Chính",
+        skillShort: "Kỹ",
+        leafDiscipleSkillNote: " (Kỹ năng chỉ có tác dụng lên đơn vị cận chiến, vô hiệu với đơn vị tầm xa)"
     }
 };
 
@@ -1213,6 +1219,9 @@ function getDamageMultiplier(attacker, target, useSkill = false) {
             return 0.0;
         }
     }
+    if (attacker.id === 'l_leaf_disciple' && useSkill && isMissileAttacker(target)) {
+        return 0.0;
+    }
     return mult;
 }
 
@@ -1273,6 +1282,9 @@ function getTwoWayCountersForUnit(targetUnit) {
 
         if (attacker.skillDamageType && (attackTypeFilter === 'ALL' || attackTypeFilter === 'SKILL')) {
             const skillDealtMult = getDamageMultiplier(attacker, targetUnit, true);
+            if (attacker.id === 'l_leaf_disciple' && isMissileAttacker(targetUnit)) {
+                return;
+            }
             evaluated.push({
                 attacker: attacker,
                 attackMode: 'SKILL',
@@ -1337,13 +1349,13 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                 const primTakesVal = (primaryThreat.mult * 100).toFixed(0);
                 const primDmgName = t[primaryThreat.dmgType] || primaryThreat.dmgType;
 
-                let takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(Prim)</span>`;
+                let takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
                 let tooltipText = "";
 
                 if (skillThreat) {
                     const skillTakesVal = (skillThreat.mult * 100).toFixed(0);
                     const skillDmgName = t[skillThreat.dmgType] || skillThreat.dmgType;
-                    takesDisplayHtml += ` | <strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(Skill)</span>`;
+                    takesDisplayHtml += ` | <strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(${t.skillShort})</span>`;
                     
                     tooltipText = t.counterTooltipTwoWay
                         .replace('{attacker}', atk.name)
@@ -1430,6 +1442,7 @@ function renderResults() {
         const skillText = formatRawDmg(unit.skill);
         const primDmgName = unit.damageType ? (t[unit.damageType] || unit.damageType) : 'N/A';
         const korilNote = (unit.id === 'l_koril') ? `<br><span style="color:#5cb85c; font-style:italic;">${t.korilImmunityNote}</span>` : '';
+        const leafNote = (unit.id === 'l_leaf_disciple') ? `<br><span style="color:#f0ad4e; font-style:italic;">${t.leafDiscipleSkillNote}</span>` : '';
 
         let html = `
             <div class="target-header">
@@ -1438,8 +1451,8 @@ function renderResults() {
                     <span class="clan-badge clan-${unit.clan}">${getClanBadgeText(unit.clan)}</span>
                 </div>
                 <div class="counter-detail" style="text-align: right;">
-                    ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong> | Skill: <strong>${skillText}</strong><br>
-                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}${korilNote}
+                    ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong> | ${currentLang === 'vi' ? 'Kỹ' : 'Skill'}: <strong>${skillText}</strong><br>
+                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}${korilNote}${leafNote}
                 </div>
             </div>
 
@@ -1517,6 +1530,19 @@ function getAttackTerm(unit, capitalized = false) {
     return term;
 }
 
+function unitIsMelee(u) {
+    return u.missile === '-' || MELEE_EXCEPTIONS.includes(u.id);
+}
+
+function getOpponentAttackTerm(opponent, lang = 'vi') {
+    const isMelee = unitIsMelee(opponent);
+    if (lang === 'vi') {
+        return isMelee ? 'đòn đánh thường' : 'đòn đánh chính';
+    } else {
+        return isMelee ? 'basic attack' : 'primary attack';
+    }
+}
+
 function renderComparison() {
     const unitA = UNITS.find(u => u.id === unitASelect.value);
     const unitB = UNITS.find(u => u.id === unitBSelect.value);
@@ -1542,74 +1568,125 @@ function renderComparison() {
     const skillBToAPercent = hasSkillB ? (multSkillBToA * 100).toFixed(0) : null;
     const skillBDmgName = hasSkillB ? (t[unitB.skillDamageType] || unitB.skillDamageType) : '';
 
-    const maxAToB = Math.max(multAToB, hasSkillA ? multSkillAToB : 0);
-    const maxBToA = Math.max(multBToA, hasSkillB ? multSkillBToA : 0);
-
+    // Determine winner based on primary resistance (lower incoming damage = better resistance)
     let winner = null;
-    let advantageMsg = '';
-
-    const isATakingZeroFromB_Koril = (unitA.id === 'l_koril' && multBToA === 0 && isMissileAttacker(unitB) && unitB.id !== 's_musketeer');
-    const isBTakingZeroFromA_Koril = (unitB.id === 'l_koril' && multAToB === 0 && isMissileAttacker(unitA) && unitA.id !== 's_musketeer');
-
-    const unitADmgLower = (t[dmgAToBType] || dmgAToBType).toLowerCase();
-    const unitBDmgLower = (t[dmgBToAType] || dmgBToAType).toLowerCase();
-
-    if (multAToB > multBToA) {
+    if (multBToA < multAToB) {
         winner = 'A';
-        if (isATakingZeroFromB_Koril) {
-            advantageMsg = currentLang === 'vi' ? 
-                `<strong>${unitA.name}</strong> nắm lợi thế nhờ nội tại miễn nhiễm đòn đánh tầm xa (không phải do lợi thế về giáp)! (${unitA.name} nhận <strong>0%</strong> sát thương từ đòn đánh xa của ${unitB.name}, trong khi ${unitB.name} phải nhận <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower}).` :
-                `<strong>${unitA.name}</strong> holds the advantage due to passive immunity to ranged attacks (not an armor advantage)! (${unitA.name} takes <strong>0%</strong> damage from ${unitB.name}'s ranged attack, while ${unitB.name} takes <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage).`;
-        } else {
-            advantageMsg = currentLang === 'vi' ?
-                `<strong>${unitA.name}</strong> có lợi thế hơn về giáp (kháng sát thương tốt hơn)! (${unitA.name} chỉ nhận <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower} từ ${unitB.name}, trong khi ${unitB.name} phải nhận tới <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower}).` :
-                `<strong>${unitA.name}</strong> has the armor advantage (better damage resistance)! (${unitA.name} takes only <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage from ${unitB.name}, whereas ${unitB.name} takes <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage).`;
-        }
-    } else if (multBToA > multAToB) {
+    } else if (multAToB < multBToA) {
         winner = 'B';
-        if (isBTakingZeroFromA_Koril) {
-            advantageMsg = currentLang === 'vi' ? 
-                `<strong>${unitB.name}</strong> nắm lợi thế nhờ nội tại miễn nhiễm đòn đánh tầm xa (không phải do lợi thế về giáp)! (${unitB.name} nhận <strong>0%</strong> sát thương từ đòn đánh xa của ${unitA.name}, trong khi ${unitA.name} phải nhận <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower}).` :
-                `<strong>${unitB.name}</strong> holds the advantage due to passive immunity to ranged attacks (not an armor advantage)! (${unitB.name} takes <strong>0%</strong> damage from ${unitA.name}'s ranged attack, while ${unitA.name} takes <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage).`;
-        } else {
-            advantageMsg = currentLang === 'vi' ?
-                `<strong>${unitB.name}</strong> có lợi thế hơn về giáp (kháng sát thương tốt hơn)! (${unitB.name} chỉ nhận <strong>${dmgAToBPercent}%</strong> sát thương ${unitADmgLower} từ ${unitA.name}, trong khi ${unitA.name} phải nhận tới <strong>${dmgBToAPercent}%</strong> sát thương ${unitBDmgLower}).` :
-                `<strong>${unitB.name}</strong> has the armor advantage (better damage resistance)! (${unitB.name} takes only <strong>${dmgAToBPercent}%</strong> ${unitADmgLower} damage from ${unitA.name}, whereas ${unitA.name} takes <strong>${dmgBToAPercent}%</strong> ${unitBDmgLower} damage).`;
-        }
     } else {
         winner = 'TIE';
-        advantageMsg = currentLang === 'vi' ?
-            `Hai đơn vị có khả năng kháng sát thương của nhau ngang bằng (Cả hai bên đều nhận <strong>${dmgAToBPercent}%</strong> sát thương từ đòn đánh chính của đối phương).` :
-            `Both units have equal armor resistance against each other (Both sides take <strong>${dmgAToBPercent}%</strong> damage from the opponent's primary attack).`;
     }
 
-    let skillComparisonLines = [];
-    if (hasSkillA) {
-        skillComparisonLines.push(currentLang === 'vi'
-            ? `⚡ <strong>Skill của ${unitA.name}</strong> (${skillADmgName}) gây <strong>${skillAToBPercent}%</strong> sát thương lên ${unitB.name}.`
-            : `⚡ <strong>${unitA.name}'s Skill</strong> (${skillADmgName}) deals <strong>${skillAToBPercent}%</strong> damage to ${unitB.name}.`);
+    let verdictTitleText = '';
+    if (winner === 'A') {
+        verdictTitleText = currentLang === 'vi' ? `🛡️ KẾT LUẬN: ${unitA.name.toUpperCase()} CÓ ƯU THẾ HƠN` : `🛡️ VERDICT: ${unitA.name.toUpperCase()} HAS THE ADVANTAGE`;
+    } else if (winner === 'B') {
+        verdictTitleText = currentLang === 'vi' ? `🛡️ KẾT LUẬN: ${unitB.name.toUpperCase()} CÓ ƯU THẾ HƠN` : `🛡️ VERDICT: ${unitB.name.toUpperCase()} HAS THE ADVANTAGE`;
+    } else {
+        verdictTitleText = currentLang === 'vi' ? `⚖️ KẾT LUẬN: NGANG BẰNG` : `⚖️ VERDICT: EQUAL`;
     }
-    if (hasSkillB) {
-        skillComparisonLines.push(currentLang === 'vi'
-            ? `⚡ <strong>Skill của ${unitB.name}</strong> (${skillBDmgName}) gây <strong>${skillBToAPercent}%</strong> sát thương lên ${unitA.name}.`
-            : `⚡ <strong>${unitB.name}'s Skill</strong> (${skillBDmgName}) deals <strong>${skillBToAPercent}%</strong> damage to ${unitA.name}.`);
-    }
+    setTimeout(() => {
+        const vTitle = document.getElementById('verdictTitleElem');
+        if (vTitle) vTitle.textContent = verdictTitleText;
+    }, 0);
 
-    if (hasSkillA || hasSkillB) {
-        if (maxAToB > maxBToA && winner !== 'A') {
-            skillComparisonLines.push(currentLang === 'vi'
-                ? `🔄 Đảo chiều nhờ Skill: Khi tính cả Kỹ năng, <strong>${unitA.name}</strong> có khả năng dồn sát thương tối đa cao hơn (<strong>${(maxAToB * 100).toFixed(0)}%</strong> so với <strong>${(maxBToA * 100).toFixed(0)}%</strong>).`
-                : `🔄 Skill Swing: Including Skills, <strong>${unitA.name}</strong> reaches a higher peak damage multiplier (<strong>${(maxAToB * 100).toFixed(0)}%</strong> vs <strong>${(maxBToA * 100).toFixed(0)}%</strong>).`);
-        } else if (maxBToA > maxAToB && winner !== 'B') {
-            skillComparisonLines.push(currentLang === 'vi'
-                ? `🔄 Đảo chiều nhờ Skill: Khi tính cả Kỹ năng, <strong>${unitB.name}</strong> có khả năng dồn sát thương tối đa cao hơn (<strong>${(maxBToA * 100).toFixed(0)}%</strong> so với <strong>${(maxAToB * 100).toFixed(0)}%</strong>).`
-                : `🔄 Skill Swing: Including Skills, <strong>${unitB.name}</strong> reaches a higher peak damage multiplier (<strong>${(maxBToA * 100).toFixed(0)}%</strong> vs <strong>${(maxAToB * 100).toFixed(0)}%</strong>).`);
+    // Build conclusion according to the 3 rules
+    let conclusionHtml = '';
+    const attackTermB = getOpponentAttackTerm(unitB, currentLang);
+    const attackTermA = getOpponentAttackTerm(unitA, currentLang);
+
+    // X is the unit with better primary resistance (or A if tied)
+    const isATieOrBetter = multBToA <= multAToB;
+    const X = isATieOrBetter ? unitA : unitB;
+    const Y = isATieOrBetter ? unitB : unitA;
+    const xTakesPrim = isATieOrBetter ? dmgBToAPercent : dmgAToBPercent;
+    const yTakesPrim = isATieOrBetter ? dmgAToBPercent : dmgBToAPercent;
+    const xMultPrim = isATieOrBetter ? multBToA : multAToB;
+    const yMultPrim = isATieOrBetter ? multAToB : multBToA;
+    const yAttackTerm = isATieOrBetter ? attackTermB : attackTermA;
+    const xHasSkill = isATieOrBetter ? hasSkillA : hasSkillB;
+    const yHasSkill = isATieOrBetter ? hasSkillB : hasSkillA;
+    const xTakesSkill = isATieOrBetter ? skillBToAPercent : skillAToBPercent;
+    const yTakesSkill = isATieOrBetter ? skillAToBPercent : skillBToAPercent;
+    const xMultSkill = isATieOrBetter ? multSkillBToA : multSkillAToB;
+    const yMultSkill = isATieOrBetter ? multSkillAToB : multSkillBToA;
+
+    const korilImmuneVsB = (unitA.id === 'l_koril' && isMissileAttacker(unitB) && unitB.id !== 's_musketeer');
+    const korilImmuneVsA = (unitB.id === 'l_koril' && isMissileAttacker(unitA) && unitA.id !== 's_musketeer');
+
+    if (korilImmuneVsB || korilImmuneVsA) {
+        const opp = korilImmuneVsB ? unitB : unitA;
+        const oppHasSkill = korilImmuneVsB ? hasSkillB : hasSkillA;
+        const korilTakesSkill = korilImmuneVsB ? skillBToAPercent : skillAToBPercent;
+        const oppTakesKoril = korilImmuneVsB ? dmgAToBPercent : dmgBToAPercent;
+
+        if (oppHasSkill) {
+            conclusionHtml = currentLang === 'vi' ?
+                `<strong>Koril</strong> miễn nhiễm hoàn toàn với đòn đánh xa của ${opp.name} (nhận <strong>0%</strong> so với <strong>${oppTakesKoril}%</strong>) nhờ nội tại, nhưng vẫn nhận <strong>${korilTakesSkill}%</strong> sát thương từ kỹ năng của ${opp.name}.` :
+                `<strong>Koril</strong> is completely immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to passive immunity, but still takes <strong>${korilTakesSkill}%</strong> damage from ${opp.name}'s skill.`;
+        } else {
+            conclusionHtml = currentLang === 'vi' ?
+                `<strong>Koril</strong> miễn nhiễm với đòn đánh xa của ${opp.name} (nhận <strong>0%</strong> so với <strong>${oppTakesKoril}%</strong>) nhờ nội tại.` :
+                `<strong>Koril</strong> is completely immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to passive immunity, holding a decisive defensive advantage.`;
         }
-    }
+    } else if (!hasSkillA && !hasSkillB) {
+        // Rule 1: Cả 2 không có skill
+        if (xMultPrim === yMultPrim) {
+            conclusionHtml = currentLang === 'vi' ?
+                `Hai đơn vị kháng sát thương ngang bằng (cùng nhận <strong>${xTakesPrim}%</strong>).` :
+                `Both units have equal damage resistance (both take <strong>${xTakesPrim}%</strong>).`;
+        } else {
+            conclusionHtml = currentLang === 'vi' ?
+                `<strong>${X.name}</strong> kháng sát thương tốt hơn (nhận <strong>${xTakesPrim}%</strong> so với <strong>${yTakesPrim}%</strong>).` :
+                `<strong>${X.name}</strong> has better damage resistance (takes <strong>${xTakesPrim}%</strong> vs <strong>${yTakesPrim}%</strong>).`;
+        }
+    } else if ((hasSkillA && !hasSkillB) || (!hasSkillA && hasSkillB)) {
+        // Rule 2: Chỉ 1 bên có skill
+        const primStatusVi = xMultPrim === yMultPrim
+            ? `kháng ngang bằng với ${yAttackTerm} (cùng nhận ${xTakesPrim}%)`
+            : `kháng tốt hơn với ${yAttackTerm} (${xTakesPrim}% so với ${yTakesPrim}%)`;
+        const primStatusEn = xMultPrim === yMultPrim
+            ? `has equal resistance against the ${yAttackTerm} (both take ${xTakesPrim}%)`
+            : `has better resistance against the ${yAttackTerm} (${xTakesPrim}% vs ${yTakesPrim}%)`;
 
-    const skillVerdictHtml = skillComparisonLines.length > 0
-        ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444;">${skillComparisonLines.join('<br>')}</div>`
-        : '';
+        if (yHasSkill) {
+            // Đối phương Y có skill -> X nhận thêm sát thương từ skill của Y
+            conclusionHtml = currentLang === 'vi' ?
+                `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận thêm <strong>${xTakesSkill}%</strong> sát thương từ skill của ${Y.name}.` :
+                `<strong>${X.name}</strong> ${primStatusEn}, but takes an additional <strong>${xTakesSkill}%</strong> damage from ${Y.name}'s skill.`;
+        } else {
+            // Chính X có skill -> X còn có thêm kỹ năng gây sát thương lên Y
+            conclusionHtml = currentLang === 'vi' ?
+                `<strong>${X.name}</strong> ${primStatusVi}, đồng thời còn có thêm kỹ năng gây <strong>${yTakesSkill}%</strong> sát thương lên ${Y.name}.` :
+                `<strong>${X.name}</strong> ${primStatusEn}, while also having a skill that deals <strong>${yTakesSkill}%</strong> damage to ${Y.name}.`;
+        }
+    } else {
+        // Rule 3: Cả 2 đều có skill
+        const primPartVi = xMultPrim === yMultPrim
+            ? `<strong>${X.name}</strong> kháng ngang bằng với ${yAttackTerm} (cùng nhận ${xTakesPrim}%)`
+            : `<strong>${X.name}</strong> kháng tốt hơn với ${yAttackTerm} (${xTakesPrim}% so với ${yTakesPrim}%)`;
+        const primPartEn = xMultPrim === yMultPrim
+            ? `<strong>${X.name}</strong> has equal resistance against the ${yAttackTerm} (both take ${xTakesPrim}%)`
+            : `<strong>${X.name}</strong> has better resistance against the ${yAttackTerm} (${xTakesPrim}% vs ${yTakesPrim}%)`;
+
+        let skillPartVi = '';
+        let skillPartEn = '';
+        if (xMultSkill < yMultSkill) {
+            skillPartVi = `đồng thời cũng kháng tốt hơn với kỹ năng của ${Y.name} (nhận <strong>${xTakesSkill}%</strong> so với <strong>${yTakesSkill}%</strong>).`;
+            skillPartEn = `and also has better resistance against ${Y.name}'s skill (takes <strong>${xTakesSkill}%</strong> vs <strong>${yTakesSkill}%</strong>).`;
+        } else if (xMultSkill > yMultSkill) {
+            skillPartVi = `nhưng kháng kém hơn với kỹ năng của ${Y.name} (nhận <strong>${xTakesSkill}%</strong> so với <strong>${yTakesSkill}%</strong>).`;
+            skillPartEn = `but has worse resistance against ${Y.name}'s skill (takes <strong>${xTakesSkill}%</strong> vs <strong>${yTakesSkill}%</strong>).`;
+        } else {
+            skillPartVi = `đồng thời kháng ngang bằng với kỹ năng của ${Y.name} (cùng nhận <strong>${xTakesSkill}%</strong>).`;
+            skillPartEn = `and has equal resistance against ${Y.name}'s skill (both take <strong>${xTakesSkill}%</strong>).`;
+        }
+
+        conclusionHtml = currentLang === 'vi' ?
+            `${primPartVi}, ${skillPartVi}` :
+            `${primPartEn}, ${skillPartEn}`;
+    }
 
     let cardAClass = winner === 'A' ? 'winner' : winner === 'B' ? 'loser' : 'tie';
     let cardBClass = winner === 'B' ? 'winner' : winner === 'A' ? 'loser' : 'tie';
@@ -1630,7 +1707,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong> (<strong>${unitAAtkMode}</strong>)${hasSkillA ? `<br>• Skill: <strong style="text-transform: capitalize;">${skillADmgName}</strong>` : ''}
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitADmgName}</strong> (<strong>${unitAAtkMode}</strong>)${hasSkillA ? `<br>• ${currentLang === 'vi' ? 'Kỹ năng' : 'Skill'}: <strong style="text-transform: capitalize;">${skillADmgName}</strong>` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1656,7 +1733,7 @@ function renderComparison() {
                     </div>
                     ${hasSkillA ? `
                     <div class="advantage-box-skill">
-                        ⚡ ${currentLang === 'vi' ? `Skill lên ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})` : `Skill to ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})`}
+                        ⚡ ${currentLang === 'vi' ? `Kỹ năng lên ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})` : `Skill to ${unitB.name}: ${skillAToBPercent}% (${skillADmgName.toLowerCase()})`}
                     </div>` : ''}
                 </div>
             </div>
@@ -1670,7 +1747,7 @@ function renderComparison() {
                     </div>
                 </div>
                 <div style="margin-bottom: 15px; font-size: 0.9em;">
-                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong> (<strong>${unitBAtkMode}</strong>)${hasSkillB ? `<br>• Skill: <strong style="text-transform: capitalize;">${skillBDmgName}</strong>` : ''}
+                    • ${t.primaryAttack} <strong style="text-transform: capitalize;">${unitBDmgName}</strong> (<strong>${unitBAtkMode}</strong>)${hasSkillB ? `<br>• ${currentLang === 'vi' ? 'Kỹ năng' : 'Skill'}: <strong style="text-transform: capitalize;">${skillBDmgName}</strong>` : ''}
                 </div>
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
@@ -1696,7 +1773,7 @@ function renderComparison() {
                     </div>
                     ${hasSkillB ? `
                     <div class="advantage-box-skill">
-                        ⚡ ${currentLang === 'vi' ? `Skill lên ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})` : `Skill to ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})`}
+                        ⚡ ${currentLang === 'vi' ? `Kỹ năng lên ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})` : `Skill to ${unitA.name}: ${skillBToAPercent}% (${skillBDmgName.toLowerCase()})`}
                     </div>` : ''}
                 </div>
             </div>
@@ -1704,19 +1781,17 @@ function renderComparison() {
 
         <!-- VERDICT BANNER -->
         <div class="verdict-banner">
-            <div class="verdict-title">
-                ${winner === 'A' ? (currentLang === 'vi' ? `🛡️ KẾT QUẢ: ${unitA.name.toUpperCase()} NẮM ƯU THẾ` : `🛡️ VERDICT: ${unitA.name.toUpperCase()} HAS THE ADVANTAGE`) : winner === 'B' ? (currentLang === 'vi' ? `🛡️ KẾT QUẢ: ${unitB.name.toUpperCase()} NẮM ƯU THẾ` : `🛡️ VERDICT: ${unitB.name.toUpperCase()} HAS THE ADVANTAGE`) : (currentLang === 'vi' ? `⚖️ KẾT QUẢ: KHẢ NĂNG KHÁNG SÁT THƯƠNG NGANG BẰNG` : `⚖️ VERDICT: EQUAL ARMOR RESISTANCE`)}
+            <div class="verdict-title" id="verdictTitleElem">
+                <!-- Dynamic Verdict Title -->
             </div>
             <div class="verdict-detail">
-                ${advantageMsg}
-                ${skillVerdictHtml}
+                ${conclusionHtml}
             </div>
         </div>
     `;
 
     compareOutput.innerHTML = html;
 }
-
 clanSelect.addEventListener('change', () => {
     populateLookupUnits();
     renderResults();
