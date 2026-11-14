@@ -972,7 +972,7 @@ const TRANSLATIONS = {
         korilImmunityNote: " (Nội tại miễn nhiễm đòn đánh xa, ngoại trừ Xạ thủ Musketeer)",
         primShort: "Chính",
         skillShort: "Kỹ",
-        leafDiscipleSkillNote: " (Kỹ năng chỉ có tác dụng lên đơn vị cận chiến, vô hiệu với đơn vị tầm xa)"
+        leafDiscipleSkillNote: " (Kỹ năng chỉ hiệu lực khi cận chiến)"
     }
 };
 
@@ -1298,8 +1298,17 @@ function getTwoWayCountersForUnit(targetUnit) {
     });
 
     const sortCounterItems = (a, b) => {
-        if (a.dmgReceived !== b.dmgReceived) {
-            return a.dmgReceived - b.dmgReceived;
+        const primA = (a.incomingThreats.find(th => !th.isSkill) || a.incomingThreats[0]).mult;
+        const primB = (b.incomingThreats.find(th => !th.isSkill) || b.incomingThreats[0]).mult;
+        if (primA !== primB) {
+            return primA - primB;
+        }
+        const skillThA = a.incomingThreats.find(th => th.isSkill);
+        const skillThB = b.incomingThreats.find(th => th.isSkill);
+        const skillA = skillThA ? skillThA.mult : -1;
+        const skillB = skillThB ? skillThB.mult : -1;
+        if (skillA !== skillB) {
+            return skillA - skillB;
         }
         return b.dmgDealt - a.dmgDealt;
     };
@@ -1349,13 +1358,13 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                 const primTakesVal = (primaryThreat.mult * 100).toFixed(0);
                 const primDmgName = t[primaryThreat.dmgType] || primaryThreat.dmgType;
 
-                let takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
+                let takesDisplayHtml = "";
                 let tooltipText = "";
 
                 if (skillThreat) {
                     const skillTakesVal = (skillThreat.mult * 100).toFixed(0);
                     const skillDmgName = t[skillThreat.dmgType] || skillThreat.dmgType;
-                    takesDisplayHtml += ` | <strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(${t.skillShort})</span>`;
+                    takesDisplayHtml = `<strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(${t.skillShort})</span> | <strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
                     
                     tooltipText = t.counterTooltipTwoWay
                         .replace('{attacker}', atk.name)
@@ -1368,6 +1377,7 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                         .replace('{skillTakes}', skillTakesVal)
                         .replace('{skillDmg}', skillDmgName);
                 } else {
+                    takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
                     const targetSourceLabel = isMissileAttacker(targetUnit) ? t.missile : t.melee;
                     tooltipText = t.counterTooltipOneWay
                         .replace('{attacker}', atk.name)
@@ -1623,12 +1633,12 @@ function renderComparison() {
 
         if (oppHasSkill) {
             conclusionHtml = currentLang === 'vi' ?
-                `<strong>Koril</strong> miễn nhiễm hoàn toàn với đòn đánh xa của ${opp.name} (nhận <strong>0%</strong> so với <strong>${oppTakesKoril}%</strong>) nhờ nội tại, nhưng vẫn nhận <strong>${korilTakesSkill}%</strong> sát thương từ kỹ năng của ${opp.name}.` :
-                `<strong>Koril</strong> is completely immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to passive immunity, but still takes <strong>${korilTakesSkill}%</strong> damage from ${opp.name}'s skill.`;
+                `<strong>Koril</strong> miễn nhiễm với đòn đánh xa của ${opp.name} (nhận <strong>0%</strong> so với <strong>${oppTakesKoril}%</strong>) nhờ nội tại, nhưng vẫn nhận <strong>${korilTakesSkill}%</strong> sát thương từ kỹ năng của ${opp.name}.` :
+                `<strong>Koril</strong> is immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to the innate, but still takes <strong>${korilTakesSkill}%</strong> damage from ${opp.name}'s skill.`;
         } else {
             conclusionHtml = currentLang === 'vi' ?
                 `<strong>Koril</strong> miễn nhiễm với đòn đánh xa của ${opp.name} (nhận <strong>0%</strong> so với <strong>${oppTakesKoril}%</strong>) nhờ nội tại.` :
-                `<strong>Koril</strong> is completely immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to passive immunity, holding a decisive defensive advantage.`;
+                `<strong>Koril</strong> is immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to the innate.`;
         }
     } else if (!hasSkillA && !hasSkillB) {
         // Rule 1: Cả 2 không có skill
