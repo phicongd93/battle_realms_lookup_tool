@@ -23,6 +23,7 @@
             color: var(--text-main);
             margin: 0;
             padding: 20px;
+            padding-top: 68px;
         }
 
         .container {
@@ -131,7 +132,7 @@
         .sticky-filter-wrapper {
             position: relative;
             z-index: 1000;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         .sticky-filter-bar {
@@ -193,14 +194,16 @@
             }
             body {
                 padding: 12px;
+                padding-top: 76px;
             }
             .sticky-filter-bar {
                 padding: 10px 12px;
             }
             .sticky-filter-bar.is-pinned {
-                width: 100%;
-                left: 0;
-                transform: none;
+                width: calc(100% - 24px);
+                left: 50%;
+                transform: translateX(-50%);
+                max-width: 1200px;
                 border-radius: 0 0 10px 10px;
             }
             .sticky-filter-bar.is-collapsed {
@@ -329,7 +332,7 @@
             max-height: 600px;
             opacity: 1;
             overflow: hidden;
-            transition: max-height 0.24s ease-out, opacity 0.2s ease, padding-top 0.24s ease, margin-top 0.24s ease;
+            transition: none;
         }
 
         .sticky-bar-body.collapsed {
@@ -339,6 +342,7 @@
             margin-top: 0;
             border-top-color: transparent;
             pointer-events: none;
+            visibility: hidden;
         }
 
         .sticky-filter-row {
@@ -1036,7 +1040,7 @@
     <!-- STICKY FILTER BAR (SHARED ACROSS ALL 3 TABS) -->
     <div id="filterAnchor" style="height: 0; overflow: hidden;"></div>
     <div class="sticky-filter-wrapper" id="stickyFilterWrapper">
-    <div class="sticky-filter-bar hide-sticky-pills" id="stickyFilterBar">
+    <div class="sticky-filter-bar hide-sticky-pills is-pinned is-collapsed" id="stickyFilterBar">
         <div class="sticky-bar-header">
             <div class="sticky-bar-title">
                 <span id="stickyBarTitle">⚙️ Quick Filters</span>
@@ -1046,9 +1050,9 @@
                     <button type="button" class="sticky-tab-pill" data-tab="tabCompare" onclick="event.stopPropagation(); switchTab('tabCompare')">⚔️ 1v1</button>
                 </div>
             </div>
-            <span class="sticky-hint-text" id="stickyHintText">Click outside or scroll down to collapse</span>
+            <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
         </div>
-        <div class="sticky-bar-body" id="stickyBarBody">
+        <div class="sticky-bar-body collapsed" id="stickyBarBody">
             <!-- Bộ lọc Tab 1 -->
             <div class="sticky-filter-group tab-filter-group" data-tab="tabLookup">
                 <div class="sticky-filter-row">
@@ -1269,7 +1273,7 @@ const TRANSLATIONS = {
         pillCounter: "🔍 Counter",
         pillResistance: "🛡️ Resistance",
         pillCompare: "⚔️ 1v1",
-        hintExpanded: "Click outside or scroll down to collapse",
+        hintExpanded: "Click outside or scroll to collapse",
         hintCollapsed: "Click bar to expand filters"
     },
     vi: {
@@ -1360,17 +1364,17 @@ const TRANSLATIONS = {
         pillCounter: "🔍 Khắc chế",
         pillResistance: "🛡️ Kháng",
         pillCompare: "⚔️ 1v1",
-        hintExpanded: "Nhấp ngoài hoặc cuộn xuống để thu gọn",
+        hintExpanded: "Nhấp ngoài hoặc cuộn để thu gọn",
         hintCollapsed: "Nhấp vào thanh này để mở bộ lọc"
     }
 };
 
 let currentLang = 'en';
 let activeTabId = 'tabLookup';
-let isStickyCollapsed = false; // Mặc định mở thanh filter khi mới tải trang
+let isStickyCollapsed = true; // Mặc định thu gọn khi mới tải trang
 let lastScrollY = window.scrollY;
 let isMainTabNavVisible = true;
-let isBarPinned = false;
+let isBarPinned = true;
 
 function updateStickyBarUI() {
     const bar = document.getElementById('stickyFilterBar');
@@ -1402,24 +1406,8 @@ function updateStickyBarUI() {
 
 function syncWrapperPlaceholderHeight() {
     const wrapper = document.getElementById('stickyFilterWrapper');
-    const bar = document.getElementById('stickyFilterBar');
-    const header = bar ? bar.querySelector('.sticky-bar-header') : null;
-    if (!wrapper || !bar) return;
-
-    if (!isBarPinned) {
-        wrapper.style.minHeight = '';
-        return;
-    }
-
-    if (isStickyCollapsed) {
-        const style = window.getComputedStyle(bar);
-        const padV = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-        const borderV = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
-        const collapsedH = (header ? header.offsetHeight : 36) + padV + borderV;
-        wrapper.style.minHeight = Math.ceil(collapsedH) + 'px';
-    } else {
-        wrapper.style.minHeight = bar.offsetHeight + 'px';
-    }
+    if (!wrapper) return;
+    wrapper.style.minHeight = '';
 }
 
 function setStickyCollapsed(collapsed) {
@@ -1427,34 +1415,14 @@ function setStickyCollapsed(collapsed) {
     isStickyCollapsed = collapsed;
     updateStickyBarUI();
     syncWrapperPlaceholderHeight();
-    if (!collapsed && isBarPinned) {
-        setTimeout(syncWrapperPlaceholderHeight, 260);
-    }
 }
 
 function updatePinStateFromAnchor() {
-    const anchor = document.getElementById('filterAnchor');
-    const anchorTop = anchor ? anchor.getBoundingClientRect().top : (200 - window.scrollY);
-    const shouldPin = anchorTop < 0;
-    if (shouldPin !== isBarPinned) {
-        const wrapper = document.getElementById('stickyFilterWrapper');
-        if (!shouldPin && wrapper && isStickyCollapsed) {
-            // Giữ chiều cao ổn định trong lúc mở rộng lại ở Tab 1 để tránh giật/nảy bố cục
-            wrapper.style.minHeight = wrapper.offsetHeight + 'px';
-        }
-        isBarPinned = shouldPin;
+    if (!isBarPinned) {
+        isBarPinned = true;
         updateStickyBarUI();
-        if (shouldPin) {
-            syncWrapperPlaceholderHeight();
-        } else {
-            requestAnimationFrame(() => {
-                if (!isBarPinned && wrapper) {
-                    wrapper.style.minHeight = '';
-                }
-            });
-        }
     }
-    return anchorTop;
+    return -1;
 }
 
 // Theo dõi khả năng hiển thị của thanh 3 nút tab chính trên trang
@@ -1470,14 +1438,12 @@ if (mainTabNavEl && 'IntersectionObserver' in window) {
 }
 
 let ignoreScrollCollapseUntil = 0;
-let downwardScrollAccum = 0;
 
 // Mở ra khi nhấp trực tiếp vào bar khi đang thu gọn
 document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
     if (isStickyCollapsed) {
         e.stopPropagation();
         ignoreScrollCollapseUntil = Date.now() + 650;
-        downwardScrollAccum = 0;
         lastScrollY = window.scrollY;
         setStickyCollapsed(false);
     }
@@ -1492,46 +1458,20 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Xử lý cuộn trang bằng requestAnimationFrame + ghim cố định (position: fixed) khi cuộn qua filterAnchor:
-// Hoạt động đồng nhất 100% trên cả 3 tab và mọi trình duyệt di động bất kể tốc độ cuộn
+// Xử lý cuộn trang bằng requestAnimationFrame (Thu gọn khi cuộn xuống hay cuộn lên)
 let scrollTicking = false;
 window.addEventListener('scroll', () => {
     if (!scrollTicking) {
         window.requestAnimationFrame(() => {
             const currentScrollY = window.scrollY;
-            const anchorTop = updatePinStateFromAnchor();
+            updatePinStateFromAnchor();
             const deltaY = currentScrollY - lastScrollY;
 
-            if (deltaY > 0) {
-                downwardScrollAccum += deltaY;
-            } else if (deltaY < 0) {
-                downwardScrollAccum = 0;
-            }
-
-            // Khi cuộn lên sát vị trí gốc của thanh filter (anchorTop >= -5), tự động mở ra đồng nhất & không nảy trên cả 3 tab
-            if (anchorTop >= -5) {
-                downwardScrollAccum = 0;
-                if (isStickyCollapsed) {
-                    const body = document.getElementById('stickyBarBody');
-                    if (body) {
-                        body.style.transition = 'none';
-                        setStickyCollapsed(false);
-                        void body.offsetHeight;
-                        body.style.transition = '';
-                    } else {
-                        setStickyCollapsed(false);
-                    }
-                } else {
-                    syncWrapperPlaceholderHeight();
-                }
-            } else if (
+            if (
                 !isStickyCollapsed &&
                 Date.now() >= ignoreScrollCollapseUntil &&
-                downwardScrollAccum >= 30 &&
-                anchorTop < -25
+                Math.abs(deltaY) >= 5
             ) {
-                // Chỉ thu gọn khi người dùng thực sự cuộn xuống >= 30px
-                downwardScrollAccum = 0;
                 setStickyCollapsed(true);
             }
 
@@ -1544,9 +1484,6 @@ window.addEventListener('scroll', () => {
 
 window.addEventListener('resize', () => {
     updatePinStateFromAnchor();
-    if (!isStickyCollapsed) {
-        syncWrapperPlaceholderHeight();
-    }
 }, { passive: true });
 
 function setLanguage(lang) {
