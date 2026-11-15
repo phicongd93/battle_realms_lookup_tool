@@ -680,23 +680,23 @@
     </div>
 
     <h1>Battle Realms Lookup & Comparison Tool</h1>
-    <p class="subtitle">Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)</p>
+    <p class="subtitle">Unit Counter Lookup & 1v1 Comparison (Zen Edition)</p>
 
     <!-- TAB NAVIGATION -->
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
         <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Resistance Filter</button>
-        <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Direct Comparison</button>
+        <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Comparison</button>
     </div>
 
     <!-- TAB 1: LOOKUP -->
     <div id="tabLookup" class="tab-content active">
         <div class="rules-info" id="lookupRulesBox">
             <strong>📖 How to Use Counter Lookup:</strong><br>
-            • <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and damage types. The analysis will display a list of counter units categorized into Tier tabs corresponding to effectiveness levels 1, 2, and 3. Click on each tab (if available) to view its detailed unit list.<br>
-            • <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>
-            • <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking low/equal counter-damage.<br>
-            • <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) but take heavy counter-damage in return (Deals < Takes).
+            • <strong>Target Selection:</strong> Select a target unit to inspect its armor multipliers and damage types. Counter units are grouped into Tier 1, 2, and 3 tabs by effectiveness. Click each available tab to view the full unit list.<br>
+            • <strong>Safe & Dominant Counters (Tier 1):</strong> Deals high damage (≥125%) to the target while taking equal or lower in return (Deals ≥ Takes).<br>
+            • <strong>Effective Counters (Tier 2):</strong> Deals standard damage (100%) to the target while taking equal or lower in return.<br>
+            • <strong>High-Risk Counters (Tier 3):</strong> Deals effective damage (≥100%) to the target while taking heavier damage in return (Deals < Takes).
         </div>
 
         <div class="control-panel">
@@ -738,9 +738,9 @@
     <div id="tabWeakness" class="tab-content">
         <div class="rules-info" id="weaknessRulesBox">
             <strong>📖 How to Use Resistance Filter:</strong><br>
-            • <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low by default) or Strong Resistance (units taking < 100% damage, sorted low → high by default).<br>
-            • <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>
-            • <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.
+            • <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low) or Strong Resistance (units taking < 100% damage, sorted low → high).<br>
+            • <strong>Damage & Unit Type:</strong> Select an attack damage type and filter by melee or missile units.<br>
+            • <strong>Custom Sort:</strong> Click the sort button anytime to reverse the order.
         </div>
 
         <div class="control-panel">
@@ -787,9 +787,9 @@
     <div id="tabCompare" class="tab-content">
         <div class="rules-info" id="compareRulesBox">
             <strong>📖 How to Use 1v1 Comparison:</strong><br>
-            • <strong>Select Units:</strong> Select any Unit A and Unit B to start the comparison.<br>
-            • <strong>Two-Way Comparison:</strong> The tool compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including Skills if available).<br>
-            • <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive/armor efficiency rather than the actual outcome of a 1v1 duel.
+            • <strong>Unit Selection:</strong> Select Unit A and Unit B to start comparing.<br>
+            • <strong>Two-Way Comparison:</strong> Compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including skills, if available).<br>
+            • <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive efficiency rather than the actual outcome of a 1v1 duel.
         </div>
 
         <div class="control-panel">
@@ -824,12 +824,12 @@ const TRANSLATIONS = {
         serpentHeader: "Serpent Clan",
         lotusHeader: "Lotus Clan",
         wolfHeader: "Wolf Clan",
-        subtitle: "Unit Counter Lookup & 1v1 Direct Comparison (Zen Edition)",
+        subtitle: "Unit Counter Lookup & 1v1 Comparison (Zen Edition)",
         tabLookup: "🔍 Unit Counter Lookup",
         tabWeakness: "🛡️ Resistance Filter",
-        tabCompare: "⚔️ 1v1 Direct Comparison",
-        lookupRules: "<strong>📖 How to Use Counter Lookup:</strong><br>• <strong>Select Target:</strong> Choose a target unit to inspect its armor multipliers and damage types. The analysis will display a list of counter units categorized into Tier tabs corresponding to effectiveness levels 1, 2, and 3. Click on each tab (if available) to view its detailed unit list.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Units that deal high damage (≥125%) to the target while taking low/equal counter-damage (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Units that deal standard damage (100%) while taking low/equal counter-damage.<br>• <strong>High-Risk Counters (Tier 3):</strong> Units that deal effective damage (≥100%) but take heavy counter-damage in return (Deals < Takes).",
-        weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low by default) or Strong Resistance (units taking < 100% damage, sorted low → high by default).<br>• <strong>Select Damage Type & Unit Type:</strong> Pick the attack damage type and filter by melee/missile units.<br>• <strong>Custom Sort:</strong> Click the sort toggle button anytime to reverse the order.",
+        tabCompare: "⚔️ 1v1 Comparison",
+        lookupRules: "<strong>📖 How to Use Counter Lookup:</strong><br>• <strong>Target Selection:</strong> Select a target unit to inspect its armor multipliers and damage types. Counter units are grouped into Tier 1, 2, and 3 tabs by effectiveness. Click each available tab to view the full unit list.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Deals high damage (≥125%) to the target while taking equal or lower in return (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Deals standard damage (100%) to the target while taking equal or lower in return.<br>• <strong>High-Risk Counters (Tier 3):</strong> Deals effective damage (≥100%) to the target while taking heavier damage in return (Deals < Takes).",
+        weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low) or Strong Resistance (units taking < 100% damage, sorted low → high).<br>• <strong>Damage & Unit Type:</strong> Select an attack damage type and filter by melee or missile units.<br>• <strong>Custom Sort:</strong> Click the sort button anytime to reverse the order.",
         resistanceCategoryLabel: "1. Resistance Category:",
         weaknessDmgLabel: "2. Select Damage Type:",
         weaknessUnitTypeSelect: "3. Filter Unit Type:",
@@ -839,11 +839,11 @@ const TRANSLATIONS = {
         sortAscBtn: "⬆️ Ascending (% Low → High)",
         sortDescBtn: "⬇️ Descending (% High → Low)",
         allUnitTypes: "-- All Unit Types --",
-        weaknessResultTitle: "🛡️ Units with Weak Resistance (≥ 100% Damage Taken) to",
-        strongResultTitle: "🛡️ Units with Strong Resistance (< 100% Damage Taken) to",
+        weaknessResultTitle: "🛡️ Units with Weak Resistance to",
+        strongResultTitle: "🛡️ Units with Strong Resistance to",
         damageTakenLabel: "Takes:",
         weaknessTooltip: "{unit} takes {mult}% {dmg} damage (Primary attack: {atkMode} - {primDmg}).",
-        compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Select Units:</strong> Select any Unit A and Unit B to start the comparison.<br>• <strong>Two-Way Comparison:</strong> The tool compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including Skills if available).<br>• <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive/armor efficiency rather than the actual outcome of a 1v1 duel.",
+        compareRules: "<strong>📖 How to Use 1v1 Comparison:</strong><br>• <strong>Unit Selection:</strong> Select Unit A and Unit B to start comparing.<br>• <strong>Two-Way Comparison:</strong> Compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including skills, if available).<br>• <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive efficiency rather than the actual outcome of a 1v1 duel.",
         filterClanLabel: "1. Filter Target Clan:",
         selectUnitLabel: "2. Select Target Unit:",
         filterCounterTypeLabel: "3. Filter Counter Attack Type:",
@@ -871,7 +871,7 @@ const TRANSLATIONS = {
         tier2Title: "⚔️ Tier 2: Effective Counters",
         tier2Desc: "(100% Neutral Damage Dealt)",
         tier3Title: "⚠️ Tier 3: High-Risk Counters",
-        tier3Desc: "(High Counter Damage Received - Deals < Takes)",
+        tier3Desc: "(High Counter-Damage - Deals < Takes)",
         noUnits: "No units available",
         melee: "Melee",
         missile: "Missile",
@@ -904,13 +904,13 @@ const TRANSLATIONS = {
         serpentHeader: "Tộc Rắn",
         lotusHeader: "Tộc Sen",
         wolfHeader: "Tộc Sói",
-        subtitle: "Tra cứu khắc chế đơn vị & So sánh 1v1 trực tiếp (Bản Zen)",
+        subtitle: "Tra cứu khắc chế đơn vị & So sánh 1v1 (Bản Zen)",
         tabLookup: "🔍 Tra Cứu Khắc Chế",
         tabWeakness: "🛡️ Bộ Lọc Kháng",
         tabCompare: "⚔️ So Sánh 1v1",
-        lookupRules: "<strong>📖 Hướng dẫn Tra cứu khắc chế:</strong><br>• <strong>Chọn mục tiêu:</strong> Chọn một đơn vị mục tiêu để xem hệ số giáp và các loại sát thương. Kết quả phân tích sẽ hiển thị danh sách các đơn vị có thể dùng để counter mục tiêu đã chọn chia theo từng Tier tab tương ứng với mức độ hiệu quả lần lượt là 1, 2 và 3. Nhấp vào từng tab (nếu có) để hiển thị danh sách chi tiết của tab đó.<br>• <strong>Khắc chế áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu nhưng chịu sát thương phản lại thấp/bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) và chịu sát thương phản lại thấp/bằng.<br>• <strong>Khắc chế rủi ro cao (Tier 3):</strong> Gây sát thương tốt (≥100%) nhưng chịu sát thương phản lại rất nặng (Gây < Nhận).",
-        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc kháng:</strong><br>• <strong>Tùy chọn Kháng:</strong> Chọn Kháng yếu (hiển thị đơn vị nhận ≥ 100% sát thương, mặc định xếp từ cao xuống thấp) hoặc Kháng mạnh (hiển thị đơn vị nhận < 100% sát thương, mặc định xếp từ thấp đến cao).<br>• <strong>Chọn loại sát thương & loại đơn vị:</strong> Lọc theo hệ sát thương (Cắt, Cùn, Xuyên, Nổ, Phép) và đơn vị cận chiến/tầm xa.<br>• <strong>Sắp xếp tùy chỉnh:</strong> Nhấn nút Thứ Tự Sắp Xếp để đảo chiều tăng/giảm bất cứ lúc nào.",
-        resistanceCategoryLabel: "1. Tùy Chọn Kháng:",
+        lookupRules: "<strong>📖 Hướng dẫn Tra cứu Khắc chế:</strong><br>• <strong>Chọn Mục tiêu:</strong> Lựa chọn một đơn vị mục tiêu để xem hệ số giáp và loại sát thương của đơn vị đó. Danh sách đơn vị khắc chế được chia thành các thẻ Tier 1, 2 và 3 theo mức độ hiệu quả. Nhấp vào từng thẻ khả dụng để xem danh sách đơn vị đầy đủ.<br>• <strong>Khắc chế An toàn & Áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu trong khi nhận lại thấp hơn hoặc bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế Hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) lên mục tiêu trong khi nhận lại thấp hơn hoặc bằng.<br>• <strong>Khắc chế Rủi ro cao (Tier 3):</strong> Gây sát thương hiệu quả (≥100%) lên mục tiêu trong khi chịu tổn thương nặng hơn ở chiều ngược lại (Gây < Nhận).",
+        weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc Kháng:</strong><br>• <strong>Danh mục Kháng:</strong> Chọn giữa Kháng yếu (các đơn vị nhận ≥ 100% sát thương, xếp từ cao → thấp) hoặc Kháng mạnh (các đơn vị nhận < 100% sát thương, xếp từ thấp → cao).<br>• <strong>Loại Sát thương & Đơn vị:</strong> Chọn loại sát thương và lọc theo đơn vị cận chiến hoặc tầm xa.<br>• <strong>Sắp xếp Tùy chỉnh:</strong> Nhấp vào nút sắp xếp để đảo ngược thứ tự tùy ý.",
+        resistanceCategoryLabel: "1. Danh mục Kháng:",
         weaknessDmgLabel: "2. Chọn Loại Sát Thương:",
         weaknessUnitTypeSelect: "3. Lọc Loại Đơn Vị:",
         weaknessSortLabel: "4. Thứ Tự Sắp Xếp:",
@@ -919,11 +919,11 @@ const TRANSLATIONS = {
         sortAscBtn: "⬆️ Tăng dần (% Thấp → Cao)",
         sortDescBtn: "⬇️ Giảm dần (% Cao → Thấp)",
         allUnitTypes: "-- Tất cả loại đơn vị --",
-        weaknessResultTitle: "🛡️ Danh sách đơn vị Kháng yếu (Nhận ≥ 100% sát thương) trước sát thương",
-        strongResultTitle: "🛡️ Danh sách đơn vị Kháng mạnh (Nhận < 100% sát thương) trước sát thương",
+        weaknessResultTitle: "🛡️ Danh sách đơn vị Kháng yếu trước sát thương",
+        strongResultTitle: "🛡️ Danh sách đơn vị Kháng mạnh trước sát thương",
         damageTakenLabel: "Nhận:",
         weaknessTooltip: "{unit} nhận {mult}% sát thương {dmg} (Đòn đánh chính: {atkMode} - {primDmg}).",
-        compareRules: "<strong>📖 Hướng dẫn So sánh 1v1:</strong><br>• <strong>Chọn đơn vị:</strong> Chọn đơn vị A và B tùy ý để bắt đầu so sánh.<br>• <strong>So sánh 2 chiều:</strong> Công cụ sẽ so sánh mức độ hiệu quả sát thương của A lên B và ngược lại dựa trên khả năng kháng và các loại sát thương mà cả hai có (bao gồm Skill nếu có).<br>• <strong>Kết luận:</strong> Đánh giá bên nào có lợi thế hơn về giáp (kháng sát thương của đối phương tốt hơn). Kết quả này phản ánh hiệu quả phòng thủ/giáp chứ không quyết định thắng thua của một trận solo 1v1 thực tế.",
+        compareRules: "<strong>📖 Hướng dẫn So sánh 1v1:</strong><br>• <strong>Chọn Đơn vị:</strong> Lựa chọn Đơn vị A và Đơn vị B để bắt đầu so sánh.<br>• <strong>So sánh Hai chiều:</strong> Đối chiếu hiệu quả sát thương của A lên B và ngược lại dựa trên chỉ số kháng và loại sát thương của cả hai đơn vị (bao gồm cả kỹ năng nếu có).<br>• <strong>Kết luận:</strong> Đánh giá bên nào có lợi thế hơn về giáp (kháng sát thương của đối phương tốt hơn). Kết quả này phản ánh hiệu quả phòng thủ chứ không đại diện cho kết quả giao chiến 1v1 thực tế.",
         filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
         selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
         filterCounterTypeLabel: "3. Lọc Kiểu Đánh Khắc Chế:",
@@ -951,7 +951,7 @@ const TRANSLATIONS = {
         tier2Title: "⚔️ Tier 2: Khắc chế hiệu quả",
         tier2Desc: "(Gây sát thương chuẩn 100%)",
         tier3Title: "⚠️ Tier 3: Khắc chế rủi ro cao",
-        tier3Desc: "(Nhận sát thương phản lại lớn - Gây < Nhận)",
+        tier3Desc: "(Sát thương nhận lại cao - Gây < Nhận)",
         noUnits: "Không có đơn vị",
         melee: "Cận chiến",
         missile: "Tầm xa",
@@ -1049,7 +1049,7 @@ function setLanguage(lang) {
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
-        footerDiv.textContent = `${t.lastUpdate} 14/11/2026`;
+        footerDiv.textContent = `${t.lastUpdate} 15/11/2026`;
     }
     
     populateLookupUnits();
@@ -1663,8 +1663,8 @@ function renderComparison() {
         if (yHasSkill) {
             // Đối phương Y có skill -> X nhận thêm sát thương từ skill của Y
             conclusionHtml = currentLang === 'vi' ?
-                `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận thêm <strong>${xTakesSkill}%</strong> sát thương từ skill của ${Y.name}.` :
-                `<strong>${X.name}</strong> ${primStatusEn}, but takes an additional <strong>${xTakesSkill}%</strong> damage from ${Y.name}'s skill.`;
+                `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận <strong>${xTakesSkill}%</strong> sát thương từ skill của ${Y.name}.` :
+                `<strong>${X.name}</strong> ${primStatusEn}, but takes <strong>${xTakesSkill}%</strong> damage from ${Y.name}'s skill.`;
         } else {
             // Chính X có skill -> X còn có thêm kỹ năng gây sát thương lên Y
             conclusionHtml = currentLang === 'vi' ?
@@ -1967,7 +1967,7 @@ populateCompareDropdowns();
 </script>
 
 <footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
-    <div>Last update: 14/11/2026</div>
+    <div>Last update: 15/11/2026</div>
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
 
