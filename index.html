@@ -107,6 +107,7 @@
 
         .tab-content {
             display: none;
+            overflow-anchor: none;
         }
 
         .tab-content.active {
@@ -151,19 +152,42 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 24px);
+            width: calc(100% - 40px);
             max-width: 1200px;
             z-index: 1000;
             border-radius: 0 0 10px 10px;
         }
 
         @media (max-width: 640px) {
-            .sticky-bar-header {
+            .sticky-filter-bar .sticky-bar-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 6px;
             }
-            .sticky-hint-text {
+            .sticky-filter-bar .sticky-bar-title {
+                flex-wrap: nowrap !important;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                gap: 4px;
+                font-size: 0.86em;
+            }
+            .sticky-filter-bar #stickyBarTitle {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .sticky-filter-bar .sticky-tab-pills {
+                margin-left: 0 !important;
+                gap: 4px;
+                flex-shrink: 1;
+                min-width: 0;
+            }
+            .sticky-filter-bar .sticky-tab-pill {
+                padding: 4px 7px;
+                font-size: 0.84em;
+                white-space: nowrap;
+            }
+            .sticky-filter-bar .sticky-hint-text {
                 width: 100%;
                 text-align: left;
             }
@@ -202,7 +226,7 @@
                 padding: 6px 8px;
                 font-size: 0.85em;
             }
-            .sticky-filter-row > .select-group:last-child:nth-child(odd) {
+            .tab-filter-group:not([data-tab="tabCompare"]) .sticky-filter-row > .select-group:last-child:nth-child(odd) {
                 grid-column: 1 / -1;
             }
             .sticky-vs-sep {
@@ -1376,28 +1400,35 @@ function updateStickyBarUI() {
     }
 }
 
-let expandedBarHeight = 0;
 function syncWrapperPlaceholderHeight() {
     const wrapper = document.getElementById('stickyFilterWrapper');
     const bar = document.getElementById('stickyFilterBar');
+    const header = bar ? bar.querySelector('.sticky-bar-header') : null;
     if (!wrapper || !bar) return;
-    if (!isStickyCollapsed) {
-        expandedBarHeight = bar.offsetHeight;
-        wrapper.style.minHeight = expandedBarHeight + 'px';
-    } else if (expandedBarHeight > 0) {
-        wrapper.style.minHeight = expandedBarHeight + 'px';
+
+    if (!isBarPinned) {
+        wrapper.style.minHeight = '';
+        return;
+    }
+
+    if (isStickyCollapsed) {
+        const style = window.getComputedStyle(bar);
+        const padV = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        const borderV = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+        const collapsedH = (header ? header.offsetHeight : 36) + padV + borderV;
+        wrapper.style.minHeight = Math.ceil(collapsedH) + 'px';
+    } else {
+        wrapper.style.minHeight = bar.offsetHeight + 'px';
     }
 }
 
 function setStickyCollapsed(collapsed) {
     if (isStickyCollapsed === collapsed) return;
-    if (collapsed) {
-        syncWrapperPlaceholderHeight();
-    }
     isStickyCollapsed = collapsed;
     updateStickyBarUI();
-    if (!collapsed) {
-        requestAnimationFrame(syncWrapperPlaceholderHeight);
+    syncWrapperPlaceholderHeight();
+    if (!collapsed && isBarPinned) {
+        setTimeout(syncWrapperPlaceholderHeight, 260);
     }
 }
 
@@ -1406,11 +1437,22 @@ function updatePinStateFromAnchor() {
     const anchorTop = anchor ? anchor.getBoundingClientRect().top : (200 - window.scrollY);
     const shouldPin = anchorTop < 0;
     if (shouldPin !== isBarPinned) {
-        if (shouldPin && !isStickyCollapsed) {
-            syncWrapperPlaceholderHeight();
+        const wrapper = document.getElementById('stickyFilterWrapper');
+        if (!shouldPin && wrapper && isStickyCollapsed) {
+            // Giữ chiều cao ổn định trong lúc mở rộng lại ở Tab 1 để tránh giật/nảy bố cục
+            wrapper.style.minHeight = wrapper.offsetHeight + 'px';
         }
         isBarPinned = shouldPin;
         updateStickyBarUI();
+        if (shouldPin) {
+            syncWrapperPlaceholderHeight();
+        } else {
+            requestAnimationFrame(() => {
+                if (!isBarPinned && wrapper) {
+                    wrapper.style.minHeight = '';
+                }
+            });
+        }
     }
     return anchorTop;
 }
@@ -1466,11 +1508,19 @@ window.addEventListener('scroll', () => {
                 downwardScrollAccum = 0;
             }
 
-            // Khi cuộn lên sát vị trí gốc của thanh filter (anchorTop >= -5), tự động mở ra
+            // Khi cuộn lên sát vị trí gốc của thanh filter (anchorTop >= -5), tự động mở ra đồng nhất & không nảy trên cả 3 tab
             if (anchorTop >= -5) {
                 downwardScrollAccum = 0;
                 if (isStickyCollapsed) {
-                    setStickyCollapsed(false);
+                    const body = document.getElementById('stickyBarBody');
+                    if (body) {
+                        body.style.transition = 'none';
+                        setStickyCollapsed(false);
+                        void body.offsetHeight;
+                        body.style.transition = '';
+                    } else {
+                        setStickyCollapsed(false);
+                    }
                 } else {
                     syncWrapperPlaceholderHeight();
                 }
