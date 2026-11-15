@@ -293,8 +293,30 @@
             display: block;
         }
 
+        .single-clan-tiers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            align-items: stretch;
+        }
+
         .tier-group {
             margin-bottom: 20px;
+            background-color: #17171d;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #2d2d38;
+        }
+
+        .single-clan-tiers-grid .tier-group {
+            margin-bottom: 0;
+            flex: 1 1 300px;
+            max-width: 400px;
+        }
+
+        .single-clan-tiers-grid .clan-grid.cols-1 {
+            max-width: 100%;
         }
 
         .tier-title {
@@ -311,10 +333,39 @@
         .tier-3 { background-color: rgba(217, 83, 79, 0.2); color: #ff6b6b; border: 1px solid #d9534f; }
         .tier-neutral { background-color: rgba(229, 169, 59, 0.15); color: #e5a93b; border: 1px solid #e5a93b; }
 
+        .dmg-5-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 1050px) {
+            .dmg-5-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .dmg-5-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 450px) {
+            .dmg-5-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .clan-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
+        }
+        .clan-grid.cols-1 {
+            grid-template-columns: 1fr;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         @media (max-width: 900px) {
@@ -727,6 +778,17 @@
                     <option value="SKILL">Skill Only</option>
                 </select>
             </div>
+
+            <div class="select-group">
+                <label for="displayClanSelect" id="displayClanLabel">4. Display List:</label>
+                <select id="displayClanSelect">
+                    <option value="ALL">-- All Clans --</option>
+                    <option value="Dragon">Dragon Clan</option>
+                    <option value="Serpent">Serpent Clan</option>
+                    <option value="Lotus">Lotus Clan</option>
+                    <option value="Wolf">Wolf Clan</option>
+                </select>
+            </div>
         </div>
 
         <div id="resultOutput" class="result-container">
@@ -773,7 +835,18 @@
             </div>
 
             <div class="select-group">
-                <label for="weaknessSortBtn" id="weaknessSortLabel">4. Sort Order:</label>
+                <label for="weaknessDisplayClanSelect" id="weaknessDisplayClanLabel">4. Display List:</label>
+                <select id="weaknessDisplayClanSelect">
+                    <option value="ALL">-- All Clans --</option>
+                    <option value="Dragon">Dragon Clan</option>
+                    <option value="Serpent">Serpent Clan</option>
+                    <option value="Lotus">Lotus Clan</option>
+                    <option value="Wolf">Wolf Clan</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="weaknessSortBtn" id="weaknessSortLabel">5. Sort Order:</label>
                 <button type="button" id="weaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()">⬇️ Descending (% High → Low)</button>
             </div>
         </div>
@@ -833,7 +906,8 @@ const TRANSLATIONS = {
         resistanceCategoryLabel: "1. Resistance Category:",
         weaknessDmgLabel: "2. Select Damage Type:",
         weaknessUnitTypeSelect: "3. Filter Unit Type:",
-        weaknessSortLabel: "4. Sort Order:",
+        weaknessDisplayClanLabel: "4. Display List:",
+        weaknessSortLabel: "5. Sort Order:",
         weakOption: "Weak Resistance (≥ 100%)",
         strongOption: "Strong Resistance (< 100%)",
         sortAscBtn: "⬆️ Ascending (% Low → High)",
@@ -847,6 +921,7 @@ const TRANSLATIONS = {
         filterClanLabel: "1. Filter Target Clan:",
         selectUnitLabel: "2. Select Target Unit:",
         filterCounterTypeLabel: "3. Filter Counter Attack Type:",
+        displayClanLabel: "4. Display List:",
         allAttackTypes: "-- All Attack Types --",
         meleeOnly: "Melee Only",
         missileOnly: "Missile Only",
@@ -913,7 +988,8 @@ const TRANSLATIONS = {
         resistanceCategoryLabel: "1. Danh mục Kháng:",
         weaknessDmgLabel: "2. Chọn Loại Sát Thương:",
         weaknessUnitTypeSelect: "3. Lọc Loại Đơn Vị:",
-        weaknessSortLabel: "4. Thứ Tự Sắp Xếp:",
+        weaknessDisplayClanLabel: "4. Danh Sách Hiển Thị:",
+        weaknessSortLabel: "5. Thứ Tự Sắp Xếp:",
         weakOption: "Kháng yếu (≥ 100%)",
         strongOption: "Kháng mạnh (< 100%)",
         sortAscBtn: "⬆️ Tăng dần (% Thấp → Cao)",
@@ -927,6 +1003,7 @@ const TRANSLATIONS = {
         filterClanLabel: "1. Lọc Tộc Mục Tiêu:",
         selectUnitLabel: "2. Chọn Đơn Vị Mục Tiêu:",
         filterCounterTypeLabel: "3. Lọc Kiểu Đánh Khắc Chế:",
+        displayClanLabel: "4. Danh Sách Hiển Thị:",
         allAttackTypes: "-- Tất cả kiểu đánh --",
         meleeOnly: "Chỉ Cận chiến (Melee)",
         missileOnly: "Chỉ Tầm xa (Missile)",
@@ -1002,6 +1079,7 @@ function setLanguage(lang) {
     document.getElementById('resistanceCategoryLabel').textContent = t.resistanceCategoryLabel;
     document.getElementById('weaknessDmgLabel').textContent = t.weaknessDmgLabel;
     document.getElementById('weaknessUnitTypeSelect').previousElementSibling.textContent = t.weaknessUnitTypeSelect;
+    document.getElementById('weaknessDisplayClanLabel').textContent = t.weaknessDisplayClanLabel;
     document.getElementById('weaknessSortLabel').textContent = t.weaknessSortLabel;
     document.getElementById('unitALabel').textContent = t.unitALabel;
     document.getElementById('unitBLabel').textContent = t.unitBLabel;
@@ -1038,6 +1116,8 @@ function setLanguage(lang) {
         typeSel.options[3].textContent = t.skillOnly;
     }
     
+    document.getElementById('displayClanLabel').textContent = t.displayClanLabel;
+
     const clanSel = document.getElementById('clanSelect');
     if (clanSel && clanSel.options.length >= 5) {
         clanSel.options[0].textContent = t.allClans;
@@ -1046,6 +1126,17 @@ function setLanguage(lang) {
         clanSel.options[3].textContent = t.lotusClan;
         clanSel.options[4].textContent = t.wolfClan;
     }
+
+    ['displayClanSelect', 'weaknessDisplayClanSelect'].forEach(selId => {
+        const dispClanSel = document.getElementById(selId);
+        if (dispClanSel && dispClanSel.options.length >= 5) {
+            dispClanSel.options[0].textContent = t.allClans;
+            dispClanSel.options[1].textContent = t.dragonClan;
+            dispClanSel.options[2].textContent = t.serpentClan;
+            dispClanSel.options[3].textContent = t.lotusClan;
+            dispClanSel.options[4].textContent = t.wolfClan;
+        }
+    });
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
@@ -1109,10 +1200,12 @@ const UNITS = RAW_UNITS.map(u => {
 const clanSelect = document.getElementById('clanSelect');
 const unitSelect = document.getElementById('unitSelect');
 const counterTypeSelect = document.getElementById('counterTypeSelect');
+const displayClanSelect = document.getElementById('displayClanSelect');
 const resultOutput = document.getElementById('resultOutput');
 const resistanceCategorySelect = document.getElementById('resistanceCategorySelect');
 const weaknessDmgSelect = document.getElementById('weaknessDmgSelect');
 const weaknessUnitTypeSelect = document.getElementById('weaknessUnitTypeSelect');
+const weaknessDisplayClanSelect = document.getElementById('weaknessDisplayClanSelect');
 const weaknessOutput = document.getElementById('weaknessOutput');
 const unitASelect = document.getElementById('unitASelect');
 const unitBSelect = document.getElementById('unitBSelect');
@@ -1322,20 +1415,26 @@ function getTwoWayCountersForUnit(targetUnit) {
     const tier3 = evaluated.filter(x => x.dmgDealt >= 1.0 && x.netScore < 0.0);
     tier3.sort(sortCounterItems);
 
+    const selectedDisplayClan = displayClanSelect ? displayClanSelect.value : 'ALL';
+    const hasVisibleItems = (arr) => selectedDisplayClan === 'ALL' ? arr.length > 0 : arr.some(x => x.attacker.clan === selectedDisplayClan);
+
     const resultTiers = [];
     const t = TRANSLATIONS[currentLang];
-    if (tier1.length > 0) resultTiers.push({ title: t.tier1Title, desc: t.tier1Desc, items: tier1, class: 'tier-1' });
-    if (tier2.length > 0) resultTiers.push({ title: t.tier2Title, desc: t.tier2Desc, items: tier2, class: 'tier-2' });
-    if (tier3.length > 0) resultTiers.push({ title: t.tier3Title, desc: t.tier3Desc, items: tier3, class: 'tier-3' });
+    if (hasVisibleItems(tier1)) resultTiers.push({ title: t.tier1Title, desc: t.tier1Desc, items: tier1, class: 'tier-1' });
+    if (hasVisibleItems(tier2)) resultTiers.push({ title: t.tier2Title, desc: t.tier2Desc, items: tier2, class: 'tier-2' });
+    if (hasVisibleItems(tier3)) resultTiers.push({ title: t.tier3Title, desc: t.tier3Desc, items: tier3, class: 'tier-3' });
 
     return resultTiers;
 }
 
 function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
-    let html = '<div class="clan-grid">';
+    const selectedDisplayClan = displayClanSelect ? displayClanSelect.value : 'ALL';
+    const clansToRender = selectedDisplayClan === 'ALL' ? CLANS : [selectedDisplayClan];
+    const gridClass = clansToRender.length === 1 ? 'clan-grid cols-1' : 'clan-grid';
+    let html = `<div class="${gridClass}">`;
     const t = TRANSLATIONS[currentLang];
     
-    CLANS.forEach(clanName => {
+    clansToRender.forEach(clanName => {
         const clanItems = evaluatedItems.filter(x => x.attacker.clan === clanName);
         
         html += `
@@ -1494,27 +1593,45 @@ function renderResults() {
             </h4>
         `;
 
-        if (tiers.length > 0) {
-            html += `<div class="tier-tabs-row">`;
-            tiers.forEach((tier, idx) => {
-                const activeClass = idx === 0 ? 'active' : '';
-                html += `
-                    <div class="tier-tab-btn ${tier.class} ${activeClass}" onclick="switchTierTab(this, '${unit.id}', ${idx})">
-                        ${tier.title}
-                        <span class="tier-tab-tooltip">${tier.desc}</span>
-                    </div>
-                `;
-            });
-            html += `</div>`;
+        const isSingleClanDisplay = displayClanSelect && displayClanSelect.value !== 'ALL';
 
-            tiers.forEach((tier, idx) => {
-                const activeClass = idx === 0 ? 'active' : '';
-                html += `
-                    <div class="tier-panel tier-panel-${unit.id} ${activeClass}" data-tier-idx="${idx}">
-                        ${renderClanColumnsForTwoWay(tier.items, unit)}
-                    </div>
-                `;
-            });
+        if (tiers.length > 0) {
+            if (isSingleClanDisplay) {
+                html += `<div class="single-clan-tiers-grid">`;
+                tiers.forEach(tier => {
+                    html += `
+                        <div class="tier-group">
+                            <div class="tier-title ${tier.class}" style="display: block; text-align: center;">
+                                ${tier.title}<br>
+                                <span style="font-size: 0.82em; font-weight: normal; opacity: 0.85;">${tier.desc}</span>
+                            </div>
+                            ${renderClanColumnsForTwoWay(tier.items, unit)}
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="tier-tabs-row">`;
+                tiers.forEach((tier, idx) => {
+                    const activeClass = idx === 0 ? 'active' : '';
+                    html += `
+                        <div class="tier-tab-btn ${tier.class} ${activeClass}" onclick="switchTierTab(this, '${unit.id}', ${idx})">
+                            ${tier.title}
+                            <span class="tier-tab-tooltip">${tier.desc}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+
+                tiers.forEach((tier, idx) => {
+                    const activeClass = idx === 0 ? 'active' : '';
+                    html += `
+                        <div class="tier-panel tier-panel-${unit.id} ${activeClass}" data-tier-idx="${idx}">
+                            ${renderClanColumnsForTwoWay(tier.items, unit)}
+                        </div>
+                    `;
+                });
+            }
         } else {
             html += `<div class="no-attacker-msg">${t.noUnits}</div>`;
         }
@@ -1815,6 +1932,10 @@ counterTypeSelect.addEventListener('change', () => {
     renderResults();
 });
 
+displayClanSelect.addEventListener('change', () => {
+    renderResults();
+});
+
 
 let weaknessSortAsc = false;
 
@@ -1842,6 +1963,45 @@ resistanceCategorySelect.addEventListener('change', () => {
     renderWeaknessFilter();
 });
 
+function renderWeaknessUnitCard(u, dmgKey, dmgLabel, t) {
+    const mult = u.armor[dmgKey];
+    const multPercent = (mult * 100).toFixed(0);
+    const atkMode = isMissileAttacker(u) ? t.missile : t.melee;
+    const primDmgName = u.damageType ? (t[u.damageType] || u.damageType) : 'N/A';
+
+    let riskClass = 'risky';
+    let multColor = '#f0ad4e';
+    if (mult > 1.0) {
+        riskClass = 'mutual';
+        multColor = '#ff6b6b';
+    } else if (mult < 1.0) {
+        riskClass = 'safe';
+        multColor = '#5cb85c';
+    }
+
+    const tooltipText = t.weaknessTooltip
+        .replace('{unit}', u.name)
+        .replace('{mult}', multPercent)
+        .replace('{dmg}', dmgLabel)
+        .replace('{atkMode}', atkMode)
+        .replace('{primDmg}', primDmgName);
+
+    return `
+        <div class="counter-item ${riskClass}">
+            <div class="counter-header-row">
+                <span class="counter-unit-name">${u.name}</span>
+                <span class="damage-badge" style="color: ${multColor};">${multPercent}%</span>
+            </div>
+            <div class="counter-detail">${atkMode} • <span style="text-transform: capitalize;">${primDmgName}</span></div>
+            <div class="exchange-stats">
+                <span>${t.damageTakenLabel} <strong style="color: ${multColor};">${multPercent}%</strong></span>
+                <span style="text-transform: capitalize; color: #aaa;">${dmgLabel}</span>
+            </div>
+            <span class="counter-item-tooltip">${tooltipText}</span>
+        </div>
+    `;
+}
+
 function renderWeaknessFilter() {
     if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput || !resistanceCategorySelect) return;
     updateWeaknessSortBtnLabel();
@@ -1849,7 +2009,81 @@ function renderWeaknessFilter() {
     const cat = resistanceCategorySelect.value;
     const dmgKey = weaknessDmgSelect.value;
     const unitTypeFilter = weaknessUnitTypeSelect.value;
+    const selectedDisplayClan = weaknessDisplayClanSelect ? weaknessDisplayClanSelect.value : 'ALL';
     const t = TRANSLATIONS[currentLang];
+    const titleText = (cat === 'weak') ? t.weaknessResultTitle : t.strongResultTitle;
+
+    if (selectedDisplayClan !== 'ALL') {
+        weaknessDmgSelect.disabled = true;
+        weaknessDmgSelect.style.opacity = '0.5';
+        weaknessDmgSelect.style.cursor = 'not-allowed';
+
+        const ALL_DMG_TYPES = ['cutting', 'blunt', 'piercing', 'explosive', 'magical'];
+        const clanUnitsBase = UNITS.filter(u => {
+            if (u.clan !== selectedDisplayClan) return false;
+            if (unitTypeFilter === 'MELEE' && isMissileAttacker(u)) return false;
+            if (unitTypeFilter === 'MISSILE' && !isMissileAttacker(u)) return false;
+            return true;
+        });
+
+        const allLabel = currentLang === 'vi' ? 'Tất cả' : 'All';
+        let html = `
+            <div class="target-card">
+                <div class="target-header">
+                    <div>
+                        <span class="target-name">${titleText}: <span style="color: var(--accent-color); text-transform: capitalize;">${allLabel}</span></span>
+                    </div>
+                    <span class="clan-badge clan-${selectedDisplayClan}">${getClanBadgeText(selectedDisplayClan)}</span>
+                </div>
+                <div class="dmg-5-grid">
+        `;
+
+        ALL_DMG_TYPES.forEach(dKey => {
+            const dLabel = t[dKey] || dKey;
+            const colUnits = clanUnitsBase
+                .filter(u => {
+                    const mult = u.armor[dKey];
+                    if (mult === undefined) return false;
+                    return cat === 'weak' ? mult >= 1.0 : mult < 1.0;
+                })
+                .sort((a, b) => {
+                    if (a.armor[dKey] !== b.armor[dKey]) {
+                        return weaknessSortAsc
+                            ? (a.armor[dKey] - b.armor[dKey])
+                            : (b.armor[dKey] - a.armor[dKey]);
+                    }
+                    return a.name.localeCompare(b.name);
+                });
+
+            html += `
+                <div class="clan-column">
+                    <div class="clan-column-header clan-${selectedDisplayClan}" style="text-transform: capitalize;">${dLabel} (${colUnits.length})</div>
+            `;
+
+            if (colUnits.length === 0) {
+                html += `<div class="no-attacker-msg">${t.noUnits}</div>`;
+            } else {
+                colUnits.forEach(u => {
+                    html += renderWeaknessUnitCard(u, dKey, dLabel, t);
+                });
+            }
+
+            html += `</div>`;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        weaknessOutput.innerHTML = html;
+        return;
+    }
+
+    weaknessDmgSelect.disabled = false;
+    weaknessDmgSelect.style.opacity = '1';
+    weaknessDmgSelect.style.cursor = 'pointer';
+
     const dmgLabel = t[dmgKey] || dmgKey;
 
     const matchingUnits = UNITS.filter(u => {
@@ -1866,8 +2100,6 @@ function renderWeaknessFilter() {
         if (unitTypeFilter === 'MISSILE' && !isMissileAttacker(u)) return false;
         return true;
     });
-
-    const titleText = (cat === 'weak') ? t.weaknessResultTitle : t.strongResultTitle;
 
     let html = `
         <div class="target-card">
@@ -1903,42 +2135,7 @@ function renderWeaknessFilter() {
             html += `<div class="no-attacker-msg">${t.noUnits}</div>`;
         } else {
             clanUnits.forEach(u => {
-                const mult = u.armor[dmgKey];
-                const multPercent = (mult * 100).toFixed(0);
-                const atkMode = isMissileAttacker(u) ? t.missile : t.melee;
-                const primDmgName = u.damageType ? (t[u.damageType] || u.damageType) : 'N/A';
-
-                let riskClass = 'risky';
-                let multColor = '#f0ad4e';
-                if (mult > 1.0) {
-                    riskClass = 'mutual';
-                    multColor = '#ff6b6b';
-                } else if (mult < 1.0) {
-                    riskClass = 'safe';
-                    multColor = '#5cb85c';
-                }
-
-                const tooltipText = t.weaknessTooltip
-                    .replace('{unit}', u.name)
-                    .replace('{mult}', multPercent)
-                    .replace('{dmg}', dmgLabel)
-                    .replace('{atkMode}', atkMode)
-                    .replace('{primDmg}', primDmgName);
-
-                html += `
-                    <div class="counter-item ${riskClass}">
-                        <div class="counter-header-row">
-                            <span class="counter-unit-name">${u.name}</span>
-                            <span class="damage-badge" style="color: ${multColor};">${multPercent}%</span>
-                        </div>
-                        <div class="counter-detail">${atkMode} • <span style="text-transform: capitalize;">${primDmgName}</span></div>
-                        <div class="exchange-stats">
-                            <span>${t.damageTakenLabel} <strong style="color: ${multColor};">${multPercent}%</strong></span>
-                            <span style="text-transform: capitalize; color: #aaa;">${dmgLabel}</span>
-                        </div>
-                        <span class="counter-item-tooltip">${tooltipText}</span>
-                    </div>
-                `;
+                html += renderWeaknessUnitCard(u, dmgKey, dmgLabel, t);
             });
         }
 
@@ -1955,6 +2152,9 @@ function renderWeaknessFilter() {
 
 weaknessDmgSelect.addEventListener('change', renderWeaknessFilter);
 weaknessUnitTypeSelect.addEventListener('change', renderWeaknessFilter);
+if (weaknessDisplayClanSelect) {
+    weaknessDisplayClanSelect.addEventListener('change', renderWeaknessFilter);
+}
 
 unitASelect.addEventListener('change', renderComparison);
 unitBSelect.addEventListener('change', renderComparison);
