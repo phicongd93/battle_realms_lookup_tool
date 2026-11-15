@@ -126,6 +126,217 @@
             justify-content: center;
         }
 
+        /* STICKY / FIXED GLOBAL FILTER BAR STYLES */
+        .sticky-filter-wrapper {
+            position: relative;
+            z-index: 1000;
+            margin-bottom: 20px;
+        }
+
+        .sticky-filter-bar {
+            background-color: rgba(30, 30, 36, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 12px 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+            border-radius: 8px;
+            box-sizing: border-box;
+            width: 100%;
+            transition: padding 0.2s ease, background-color 0.2s ease;
+        }
+
+        .sticky-filter-bar.is-pinned {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 24px);
+            max-width: 1200px;
+            z-index: 1000;
+            border-radius: 0 0 10px 10px;
+        }
+
+        @media (max-width: 640px) {
+            .sticky-bar-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .sticky-hint-text {
+                width: 100%;
+                text-align: left;
+            }
+            body {
+                padding: 12px;
+            }
+            .sticky-filter-bar {
+                padding: 10px 12px;
+            }
+            .sticky-filter-bar.is-pinned {
+                width: 100%;
+                left: 0;
+                transform: none;
+                border-radius: 0 0 10px 10px;
+            }
+            .sticky-filter-bar.is-collapsed {
+                padding: 9px 12px;
+            }
+            .sticky-filter-row {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px 10px !important;
+                width: 100%;
+            }
+            .sticky-filter-group {
+                width: 100%;
+            }
+            .sticky-filter-bar .select-group {
+                min-width: 0;
+                width: 100%;
+            }
+            .sticky-filter-bar select,
+            .sticky-filter-bar .sort-toggle-btn {
+                min-width: 0 !important;
+                width: 100% !important;
+                padding: 6px 8px;
+                font-size: 0.85em;
+            }
+            .sticky-filter-row > .select-group:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+            }
+            .sticky-vs-sep {
+                display: none;
+            }
+            .stats-table th, .stats-table td {
+                padding: 5px 3px !important;
+                font-size: 0.78em !important;
+            }
+            .info-tooltip {
+                width: 260px !important;
+                max-width: calc(100vw - 32px) !important;
+            }
+            .counter-item-tooltip {
+                width: 240px !important;
+                max-width: calc(100vw - 32px) !important;
+            }
+            .target-card, .unit-card-comp {
+                padding: 14px 10px !important;
+                min-width: 0;
+            }
+        }
+
+        .sticky-filter-bar.is-collapsed {
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+
+        .sticky-filter-bar.is-collapsed:hover {
+            background-color: rgba(42, 42, 52, 0.98);
+        }
+
+        .sticky-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sticky-bar-title {
+            font-size: 0.95em;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sticky-tab-pills {
+            display: none;
+            gap: 6px;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .sticky-filter-bar:not(.is-collapsed):not(.hide-sticky-pills) .sticky-tab-pills {
+            display: inline-flex;
+        }
+
+        .sticky-tab-pill {
+            background-color: #2b2b36;
+            color: var(--text-sub);
+            border: 1px solid #444;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sticky-tab-pill:hover {
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .sticky-tab-pill.active {
+            background-color: var(--accent-color);
+            color: #121214;
+            border-color: var(--accent-color);
+        }
+
+        .sticky-hint-text {
+            font-size: 0.8em;
+            color: var(--text-sub);
+            font-style: italic;
+        }
+
+        .sticky-bar-body {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: flex-end;
+            justify-content: center;
+            border-top: 1px solid #333;
+            padding-top: 12px;
+            max-height: 600px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.24s ease-out, opacity 0.2s ease, padding-top 0.24s ease, margin-top 0.24s ease;
+        }
+
+        .sticky-bar-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            margin-top: 0;
+            border-top-color: transparent;
+            pointer-events: none;
+        }
+
+        .sticky-filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .sticky-filter-bar .select-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sticky-filter-bar select {
+            padding: 8px 12px;
+            min-width: 195px;
+            font-size: 0.92em;
+        }
+
         .select-group {
             display: flex;
             flex-direction: column;
@@ -207,7 +418,6 @@
         .clan-Lotus { background-color: var(--lotus-color); }
         .clan-Wolf { background-color: var(--wolf-color); }
 
-        
         .tier-tabs-row {
             display: flex;
             flex-wrap: wrap;
@@ -294,44 +504,82 @@
         }
 
         .single-clan-tiers-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
-            align-items: stretch;
+            display: grid !important;
+            gap: 16px !important;
+            align-items: stretch !important;
+            margin: 0 auto;
+        }
+        .single-clan-tiers-grid.cols-3 {
+            grid-template-columns: repeat(3, 1fr) !important;
+        }
+        .single-clan-tiers-grid.cols-2 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            max-width: 800px;
+        }
+        .single-clan-tiers-grid.cols-1 {
+            grid-template-columns: 1fr !important;
+            max-width: 420px;
         }
 
-        .tier-group {
-            margin-bottom: 20px;
-            background-color: #17171d;
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid #2d2d38;
-        }
-
-        .single-clan-tiers-grid .tier-group {
-            margin-bottom: 0;
-            flex: 1 1 300px;
-            max-width: 400px;
-        }
-
-        .single-clan-tiers-grid .clan-grid.cols-1 {
-            max-width: 100%;
+        @media (max-width: 900px) {
+            .single-clan-tiers-grid.cols-3,
+            .single-clan-tiers-grid.cols-2 {
+                grid-template-columns: 1fr !important;
+                max-width: 100%;
+            }
         }
 
         .tier-title {
             font-weight: bold;
             font-size: 0.95em;
-            padding: 6px 12px;
-            border-radius: 5px;
+            padding: 10px 12px;
+            border-radius: 6px;
             margin-bottom: 12px;
-            display: inline-block;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        .tier-title.tier-1 {
+            color: #5cb85c;
+            background-color: rgba(92, 184, 92, 0.18);
+            border-color: rgba(92, 184, 92, 0.45);
+        }
+        .tier-title.tier-2 {
+            color: #f0ad4e;
+            background-color: rgba(240, 173, 78, 0.18);
+            border-color: rgba(240, 173, 78, 0.45);
+        }
+        .tier-title.tier-3 {
+            color: #ff6b6b;
+            background-color: rgba(217, 83, 79, 0.18);
+            border-color: rgba(217, 83, 79, 0.45);
         }
 
-        .tier-1 { background-color: rgba(92, 184, 92, 0.2); color: #5cb85c; border: 1px solid #5cb85c; }
-        .tier-2 { background-color: rgba(240, 173, 78, 0.2); color: #f0ad4e; border: 1px solid #f0ad4e; }
-        .tier-3 { background-color: rgba(217, 83, 79, 0.2); color: #ff6b6b; border: 1px solid #d9534f; }
-        .tier-neutral { background-color: rgba(229, 169, 59, 0.15); color: #e5a93b; border: 1px solid #e5a93b; }
+        .tier-group {
+            margin-bottom: 20px;
+            background-color: #17171d !important;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #2d2d38 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .single-clan-tiers-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 16px !important;
+            align-items: stretch !important;
+        }
+
+        @media (max-width: 900px) {
+            .single-clan-tiers-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .single-clan-tiers-grid .tier-group {
+            margin-bottom: 0;
+            min-width: 0;
+        }
 
         .dmg-5-grid {
             display: grid;
@@ -398,7 +646,6 @@
             color: #fff;
         }
 
-        
         .counter-item {
             background-color: #242430;
             padding: 8px 10px;
@@ -451,7 +698,6 @@
             visibility: visible;
             opacity: 1;
         }
-
 
         .counter-item.safe { border-left-color: #5cb85c; }
         .counter-item.risky { border-left-color: #f0ad4e; }
@@ -734,63 +980,161 @@
     <p class="subtitle">Unit Counter Lookup & 1v1 Comparison (Zen Edition)</p>
 
     <!-- TAB NAVIGATION -->
-    <div class="tab-nav">
+    <div class="tab-nav" id="mainTabNav">
         <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
         <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Resistance Filter</button>
         <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Comparison</button>
     </div>
 
+    <!-- RULES INFO SECTION FOR ACTIVE TAB -->
+    <div id="rulesLookup" class="rules-info tab-rule-box">
+        <strong>📖 How to Use Counter Lookup:</strong><br>
+        • <strong>Target Selection:</strong> Select a target unit to inspect its armor multipliers and damage types. Counter units are grouped into Tier 1, 2, and 3 tabs by effectiveness. Click each available tab to view the full unit list.<br>
+        • <strong>Safe & Dominant Counters (Tier 1):</strong> Deals high damage (≥125%) to the target while taking equal or lower in return (Deals ≥ Takes).<br>
+        • <strong>Effective Counters (Tier 2):</strong> Deals standard damage (100%) to the target while taking equal or lower in return.<br>
+        • <strong>High-Risk Counters (Tier 3):</strong> Deals effective damage (≥100%) to the target while taking heavier damage in return (Deals < Takes).
+    </div>
+
+    <div id="rulesWeakness" class="rules-info tab-rule-box" style="display: none;">
+        <strong>📖 How to Use Resistance Filter:</strong><br>
+        • <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low) or Strong Resistance (units taking < 100% damage, sorted low → high).<br>
+        • <strong>Damage & Unit Type:</strong> Select an attack damage type and filter by melee or missile units.<br>
+        • <strong>Custom Sort:</strong> Click the sort button anytime to reverse the order.
+    </div>
+
+    <div id="rulesCompare" class="rules-info tab-rule-box" style="display: none;">
+        <strong>📖 How to Use 1v1 Comparison:</strong><br>
+        • <strong>Unit Selection:</strong> Select Unit A and Unit B to start comparing.<br>
+        • <strong>Two-Way Comparison:</strong> Compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including skills, if available).<br>
+        • <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive efficiency rather than the actual outcome of a 1v1 duel.
+    </div>
+
+    <!-- STICKY FILTER BAR (SHARED ACROSS ALL 3 TABS) -->
+    <div id="filterAnchor" style="height: 0; overflow: hidden;"></div>
+    <div class="sticky-filter-wrapper" id="stickyFilterWrapper">
+    <div class="sticky-filter-bar hide-sticky-pills" id="stickyFilterBar">
+        <div class="sticky-bar-header">
+            <div class="sticky-bar-title">
+                <span id="stickyBarTitle">⚙️ Quick Filters</span>
+                <div class="sticky-tab-pills" id="stickyTabPills">
+                    <button type="button" class="sticky-tab-pill active" data-tab="tabLookup" onclick="event.stopPropagation(); switchTab('tabLookup')">🔍 Counter</button>
+                    <button type="button" class="sticky-tab-pill" data-tab="tabWeakness" onclick="event.stopPropagation(); switchTab('tabWeakness')">🛡️ Resistance</button>
+                    <button type="button" class="sticky-tab-pill" data-tab="tabCompare" onclick="event.stopPropagation(); switchTab('tabCompare')">⚔️ 1v1</button>
+                </div>
+            </div>
+            <span class="sticky-hint-text" id="stickyHintText">Click outside or scroll down to collapse</span>
+        </div>
+        <div class="sticky-bar-body" id="stickyBarBody">
+            <!-- Bộ lọc Tab 1 -->
+            <div class="sticky-filter-group tab-filter-group" data-tab="tabLookup">
+                <div class="sticky-filter-row">
+                    <div class="select-group">
+                        <label for="stickyClanSelect" id="lblFilterClan">1. Filter Target Clan:</label>
+                        <select id="stickyClanSelect">
+                            <option value="ALL">-- All Clans --</option>
+                            <option value="Dragon">Dragon Clan</option>
+                            <option value="Serpent">Serpent Clan</option>
+                            <option value="Lotus">Lotus Clan</option>
+                            <option value="Wolf">Wolf Clan</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyUnitSelect" id="lblSelectUnit">2. Select Target Unit:</label>
+                        <select id="stickyUnitSelect">
+                            <option value="ALL">-- All Units --</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyCounterTypeSelect" id="lblFilterCounterType">3. Filter Counter Attack Type:</label>
+                        <select id="stickyCounterTypeSelect">
+                            <option value="ALL">-- All Attack Types --</option>
+                            <option value="MELEE">Melee Only</option>
+                            <option value="MISSILE">Missile Only</option>
+                            <option value="SKILL">Skill Only</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyDisplayClanSelect" id="lblDisplayClan">4. Display List:</label>
+                        <select id="stickyDisplayClanSelect">
+                            <option value="ALL">-- All Clans --</option>
+                            <option value="Dragon">Dragon Clan</option>
+                            <option value="Serpent">Serpent Clan</option>
+                            <option value="Lotus">Lotus Clan</option>
+                            <option value="Wolf">Wolf Clan</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label id="lblLookupSort">5. Sort Order:</label>
+                        <button type="button" id="stickyLookupSortBtn" class="sort-toggle-btn" onclick="toggleLookupSort()" style="min-width: 205px; height: 37px; font-size: 0.88em;">🛡️ Priority: Defense First</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bộ lọc Tab 2 -->
+            <div class="sticky-filter-group tab-filter-group" data-tab="tabWeakness" style="display: none;">
+                <div class="sticky-filter-row">
+                    <div class="select-group">
+                        <label for="stickyResistanceCategorySelect" id="lblResistanceCategory">1. Resistance Category:</label>
+                        <select id="stickyResistanceCategorySelect">
+                            <option value="weak">Weak Resistance (≥ 100%)</option>
+                            <option value="strong">Strong Resistance (< 100%)</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyWeaknessDmgSelect" id="lblWeaknessDmg">2. Select Damage Type:</label>
+                        <select id="stickyWeaknessDmgSelect">
+                            <option value="cutting">Cutting</option>
+                            <option value="blunt">Blunt</option>
+                            <option value="piercing">Piercing</option>
+                            <option value="explosive">Explosive</option>
+                            <option value="magical">Magical</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyWeaknessUnitTypeSelect" id="lblWeaknessUnitType">3. Filter Unit Type:</label>
+                        <select id="stickyWeaknessUnitTypeSelect">
+                            <option value="ALL">-- All Unit Types --</option>
+                            <option value="MELEE">Melee Only</option>
+                            <option value="MISSILE">Missile Only</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label for="stickyWeaknessDisplayClanSelect" id="lblWeaknessDisplayClan">4. Display List:</label>
+                        <select id="stickyWeaknessDisplayClanSelect">
+                            <option value="ALL">-- All Clans --</option>
+                            <option value="Dragon">Dragon Clan</option>
+                            <option value="Serpent">Serpent Clan</option>
+                            <option value="Lotus">Lotus Clan</option>
+                            <option value="Wolf">Wolf Clan</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label id="lblWeaknessSort">5. Sort Order:</label>
+                        <button type="button" id="stickyWeaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()" style="min-width: 205px; height: 37px; font-size: 0.88em;">⬇️ Descending (% High → Low)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bộ lọc Tab 3 -->
+            <div class="sticky-filter-group tab-filter-group" data-tab="tabCompare" style="display: none;">
+                <div class="sticky-filter-row" style="align-items: center;">
+                    <div class="select-group">
+                        <label for="stickyUnitASelect" id="lblUnitA">Unit A:</label>
+                        <select id="stickyUnitASelect"></select>
+                    </div>
+                    <span class="sticky-vs-sep" style="font-weight: bold; color: var(--accent-color); margin-top: 18px; font-size: 1.1em;">VS</span>
+                    <div class="select-group">
+                        <label for="stickyUnitBSelect" id="lblUnitB">Unit B:</label>
+                        <select id="stickyUnitBSelect"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
     <!-- TAB 1: LOOKUP -->
     <div id="tabLookup" class="tab-content active">
-        <div class="rules-info" id="lookupRulesBox">
-            <strong>📖 How to Use Counter Lookup:</strong><br>
-            • <strong>Target Selection:</strong> Select a target unit to inspect its armor multipliers and damage types. Counter units are grouped into Tier 1, 2, and 3 tabs by effectiveness. Click each available tab to view the full unit list.<br>
-            • <strong>Safe & Dominant Counters (Tier 1):</strong> Deals high damage (≥125%) to the target while taking equal or lower in return (Deals ≥ Takes).<br>
-            • <strong>Effective Counters (Tier 2):</strong> Deals standard damage (100%) to the target while taking equal or lower in return.<br>
-            • <strong>High-Risk Counters (Tier 3):</strong> Deals effective damage (≥100%) to the target while taking heavier damage in return (Deals < Takes).
-        </div>
-
-        <div class="control-panel">
-            <div class="select-group">
-                <label for="clanSelect" id="filterClanLabel">1. Filter Target Clan:</label>
-                <select id="clanSelect">
-                    <option value="ALL">-- All Clans --</option>
-                    <option value="Dragon">Dragon Clan</option>
-                    <option value="Serpent">Serpent Clan</option>
-                    <option value="Lotus">Lotus Clan</option>
-                    <option value="Wolf">Wolf Clan</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="unitSelect" id="selectUnitLabel">2. Select Target Unit:</label>
-                <select id="unitSelect">
-                    <!-- Javascript populates -->
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="counterTypeSelect" id="filterCounterTypeLabel">3. Filter Counter Attack Type:</label>
-                <select id="counterTypeSelect">
-                    <option value="ALL">-- All Attack Types --</option>
-                    <option value="MELEE">Melee Only</option>
-                    <option value="MISSILE">Missile Only</option>
-                    <option value="SKILL">Skill Only</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="displayClanSelect" id="displayClanLabel">4. Display List:</label>
-                <select id="displayClanSelect">
-                    <option value="ALL">-- All Clans --</option>
-                    <option value="Dragon">Dragon Clan</option>
-                    <option value="Serpent">Serpent Clan</option>
-                    <option value="Lotus">Lotus Clan</option>
-                    <option value="Wolf">Wolf Clan</option>
-                </select>
-            </div>
-        </div>
-
         <div id="resultOutput" class="result-container">
             <!-- Results rendered here -->
         </div>
@@ -798,59 +1142,6 @@
 
     <!-- TAB 2: RESISTANCE FILTER -->
     <div id="tabWeakness" class="tab-content">
-        <div class="rules-info" id="weaknessRulesBox">
-            <strong>📖 How to Use Resistance Filter:</strong><br>
-            • <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low) or Strong Resistance (units taking < 100% damage, sorted low → high).<br>
-            • <strong>Damage & Unit Type:</strong> Select an attack damage type and filter by melee or missile units.<br>
-            • <strong>Custom Sort:</strong> Click the sort button anytime to reverse the order.
-        </div>
-
-        <div class="control-panel">
-            <div class="select-group">
-                <label for="resistanceCategorySelect" id="resistanceCategoryLabel">1. Resistance Category:</label>
-                <select id="resistanceCategorySelect">
-                    <option value="weak">Weak Resistance (≥ 100%)</option>
-                    <option value="strong">Strong Resistance (< 100%)</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="weaknessDmgSelect" id="weaknessDmgLabel">2. Select Damage Type:</label>
-                <select id="weaknessDmgSelect">
-                    <option value="cutting">Cutting</option>
-                    <option value="blunt">Blunt</option>
-                    <option value="piercing">Piercing</option>
-                    <option value="explosive">Explosive</option>
-                    <option value="magical">Magical</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="weaknessUnitTypeSelect" id="weaknessUnitTypeLabel">3. Filter Unit Type:</label>
-                <select id="weaknessUnitTypeSelect">
-                    <option value="ALL">-- All Unit Types --</option>
-                    <option value="MELEE">Melee Only</option>
-                    <option value="MISSILE">Missile Only</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="weaknessDisplayClanSelect" id="weaknessDisplayClanLabel">4. Display List:</label>
-                <select id="weaknessDisplayClanSelect">
-                    <option value="ALL">-- All Clans --</option>
-                    <option value="Dragon">Dragon Clan</option>
-                    <option value="Serpent">Serpent Clan</option>
-                    <option value="Lotus">Lotus Clan</option>
-                    <option value="Wolf">Wolf Clan</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label for="weaknessSortBtn" id="weaknessSortLabel">5. Sort Order:</label>
-                <button type="button" id="weaknessSortBtn" class="sort-toggle-btn" onclick="toggleWeaknessSort()">⬇️ Descending (% High → Low)</button>
-            </div>
-        </div>
-
         <div id="weaknessOutput" class="result-container">
             <!-- Resistance results rendered here -->
         </div>
@@ -858,27 +1149,6 @@
 
     <!-- TAB 3: COMPARISON -->
     <div id="tabCompare" class="tab-content">
-        <div class="rules-info" id="compareRulesBox">
-            <strong>📖 How to Use 1v1 Comparison:</strong><br>
-            • <strong>Unit Selection:</strong> Select Unit A and Unit B to start comparing.<br>
-            • <strong>Two-Way Comparison:</strong> Compares the damage effectiveness of A against B and vice versa based on both units' resistances and damage types (including skills, if available).<br>
-            • <strong>Verdict:</strong> Evaluates which side holds the armor advantage (better resistance against the opponent's damage). This reflects defensive efficiency rather than the actual outcome of a 1v1 duel.
-        </div>
-
-        <div class="control-panel">
-            <div class="select-group">
-                <label for="unitASelect" id="unitALabel">Unit A:</label>
-                <select id="unitASelect"></select>
-            </div>
-
-            <div class="vs-badge">VS</div>
-
-            <div class="select-group">
-                <label for="unitBSelect" id="unitBLabel">Unit B:</label>
-                <select id="unitBSelect"></select>
-            </div>
-        </div>
-
         <div id="compareOutput">
             <!-- Comparison rendered here -->
         </div>
@@ -910,10 +1180,13 @@ const TRANSLATIONS = {
         weaknessSortLabel: "5. Sort Order:",
         weakOption: "Weak Resistance (≥ 100%)",
         strongOption: "Strong Resistance (< 100%)",
-        sortAscBtn: "⬆️ Ascending (% Low → High)",
-        sortDescBtn: "⬇️ Descending (% High → Low)",
+        sortAscBtn: "🛡️ Strongest on Top",
+        sortDescBtn: "🗡️ Weakest on Top",
+        lookupSortLabel: "5. Sort Order:",
+        lookupSortDefenseBtn: "🛡️ Priority: Defense First",
+        lookupSortDamageBtn: "🏹 Priority: Damage First",
         allUnitTypes: "-- All Unit Types --",
-        weaknessResultTitle: "🛡️ Units with Weak Resistance to",
+        weaknessResultTitle: "🗡️ Units with Weak Resistance to",
         strongResultTitle: "🛡️ Units with Strong Resistance to",
         damageTakenLabel: "Takes:",
         weaknessTooltip: "{unit} takes {mult}% {dmg} damage (Primary attack: {atkMode} - {primDmg}).",
@@ -941,7 +1214,7 @@ const TRANSLATIONS = {
         armorResTitle: "🛡️ Armor Multipliers & Weaknesses",
         armorMultTitle: "🛡️ Armor Multipliers & Weaknesses",
         combatExchangeTitle: "📊 Analysis Results:",
-        tier1Title: "🛡️ Tier 1: Safe & Dominant Counters",
+        tier1Title: "🏹 Tier 1: Safe & Dominant Counters",
         tier1Desc: "(High Damage Dealt, Low Counter-Risk)",
         tier2Title: "⚔️ Tier 2: Effective Counters",
         tier2Desc: "(100% Neutral Damage Dealt)",
@@ -967,7 +1240,13 @@ const TRANSLATIONS = {
         korilImmunityNote: " (Passive immunity to ranged attacks, except Musketeer)",
         primShort: "Prim",
         skillShort: "Skill",
-        leafDiscipleSkillNote: " (Skill is only active in melee combat)"
+        leafDiscipleSkillNote: " (Skill is only active in melee combat)",
+        stickyTitle: "⚙️ Quick Filters",
+        pillCounter: "🔍 Counter",
+        pillResistance: "🛡️ Resistance",
+        pillCompare: "⚔️ 1v1",
+        hintExpanded: "Click outside or scroll down to collapse",
+        hintCollapsed: "Click bar to expand filters"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -992,10 +1271,13 @@ const TRANSLATIONS = {
         weaknessSortLabel: "5. Thứ Tự Sắp Xếp:",
         weakOption: "Kháng yếu (≥ 100%)",
         strongOption: "Kháng mạnh (< 100%)",
-        sortAscBtn: "⬆️ Tăng dần (% Thấp → Cao)",
-        sortDescBtn: "⬇️ Giảm dần (% Cao → Thấp)",
+        sortAscBtn: "🛡️ Mạnh nhất trên cùng",
+        sortDescBtn: "🗡️ Yếu nhất trên cùng",
+        lookupSortLabel: "5. Thứ Tự Sắp Xếp:",
+        lookupSortDefenseBtn: "🛡️ Ưu tiên phòng thủ",
+        lookupSortDamageBtn: "🏹 Ưu tiên sát thương",
         allUnitTypes: "-- Tất cả loại đơn vị --",
-        weaknessResultTitle: "🛡️ Danh sách đơn vị Kháng yếu trước sát thương",
+        weaknessResultTitle: "🗡️ Danh sách đơn vị Kháng yếu trước sát thương",
         strongResultTitle: "🛡️ Danh sách đơn vị Kháng mạnh trước sát thương",
         damageTakenLabel: "Nhận:",
         weaknessTooltip: "{unit} nhận {mult}% sát thương {dmg} (Đòn đánh chính: {atkMode} - {primDmg}).",
@@ -1023,7 +1305,7 @@ const TRANSLATIONS = {
         armorResTitle: "🛡️ Hệ số giáp & Điểm yếu",
         armorMultTitle: "🛡️ Hệ số giáp & Điểm yếu",
         combatExchangeTitle: "📊 Kết quả phân tích:",
-        tier1Title: "🛡️ Tier 1: Khắc chế an toàn & áp đảo",
+        tier1Title: "🏹 Tier 1: Khắc chế an toàn & áp đảo",
         tier1Desc: "(Gây sát thương cao, Rủi ro thấp)",
         tier2Title: "⚔️ Tier 2: Khắc chế hiệu quả",
         tier2Desc: "(Gây sát thương chuẩn 100%)",
@@ -1049,11 +1331,173 @@ const TRANSLATIONS = {
         korilImmunityNote: " (Nội tại miễn nhiễm đòn đánh xa, ngoại trừ Xạ thủ Musketeer)",
         primShort: "Chính",
         skillShort: "Kỹ",
-        leafDiscipleSkillNote: " (Kỹ năng chỉ hiệu lực khi cận chiến)"
+        leafDiscipleSkillNote: " (Kỹ năng chỉ hiệu lực khi cận chiến)",
+        stickyTitle: "⚙️ Bộ Lọc Nhanh",
+        pillCounter: "🔍 Khắc chế",
+        pillResistance: "🛡️ Kháng",
+        pillCompare: "⚔️ 1v1",
+        hintExpanded: "Nhấp ngoài hoặc cuộn xuống để thu gọn",
+        hintCollapsed: "Nhấp vào thanh này để mở bộ lọc"
     }
 };
 
 let currentLang = 'en';
+let activeTabId = 'tabLookup';
+let isStickyCollapsed = false; // Mặc định mở thanh filter khi mới tải trang
+let lastScrollY = window.scrollY;
+let isMainTabNavVisible = true;
+let isBarPinned = false;
+
+function updateStickyBarUI() {
+    const bar = document.getElementById('stickyFilterBar');
+    const body = document.getElementById('stickyBarBody');
+    const hint = document.getElementById('stickyHintText');
+    const t = TRANSLATIONS[currentLang];
+
+    if (hint) hint.textContent = isStickyCollapsed ? t.hintCollapsed : t.hintExpanded;
+
+    bar.classList.toggle('hide-sticky-pills', isMainTabNavVisible);
+    bar.classList.toggle('is-pinned', isBarPinned);
+
+    document.querySelectorAll('.sticky-tab-pill').forEach(pill => {
+        const targetTab = pill.getAttribute('data-tab');
+        pill.classList.toggle('active', targetTab === activeTabId);
+        if (targetTab === 'tabLookup') pill.textContent = t.pillCounter;
+        else if (targetTab === 'tabWeakness') pill.textContent = t.pillResistance;
+        else if (targetTab === 'tabCompare') pill.textContent = t.pillCompare;
+    });
+
+    if (isStickyCollapsed) {
+        body.classList.add('collapsed');
+        bar.classList.add('is-collapsed');
+    } else {
+        body.classList.remove('collapsed');
+        bar.classList.remove('is-collapsed');
+    }
+}
+
+let expandedBarHeight = 0;
+function syncWrapperPlaceholderHeight() {
+    const wrapper = document.getElementById('stickyFilterWrapper');
+    const bar = document.getElementById('stickyFilterBar');
+    if (!wrapper || !bar) return;
+    if (!isStickyCollapsed) {
+        expandedBarHeight = bar.offsetHeight;
+        wrapper.style.minHeight = expandedBarHeight + 'px';
+    } else if (expandedBarHeight > 0) {
+        wrapper.style.minHeight = expandedBarHeight + 'px';
+    }
+}
+
+function setStickyCollapsed(collapsed) {
+    if (isStickyCollapsed === collapsed) return;
+    if (collapsed) {
+        syncWrapperPlaceholderHeight();
+    }
+    isStickyCollapsed = collapsed;
+    updateStickyBarUI();
+    if (!collapsed) {
+        requestAnimationFrame(syncWrapperPlaceholderHeight);
+    }
+}
+
+function updatePinStateFromAnchor() {
+    const anchor = document.getElementById('filterAnchor');
+    const anchorTop = anchor ? anchor.getBoundingClientRect().top : (200 - window.scrollY);
+    const shouldPin = anchorTop < 0;
+    if (shouldPin !== isBarPinned) {
+        if (shouldPin && !isStickyCollapsed) {
+            syncWrapperPlaceholderHeight();
+        }
+        isBarPinned = shouldPin;
+        updateStickyBarUI();
+    }
+    return anchorTop;
+}
+
+// Theo dõi khả năng hiển thị của thanh 3 nút tab chính trên trang
+const mainTabNavEl = document.getElementById('mainTabNav');
+if (mainTabNavEl && 'IntersectionObserver' in window) {
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            isMainTabNavVisible = entry.isIntersecting;
+            updateStickyBarUI();
+        });
+    }, { threshold: 0.05 });
+    navObserver.observe(mainTabNavEl);
+}
+
+let ignoreScrollCollapseUntil = 0;
+let downwardScrollAccum = 0;
+
+// Mở ra khi nhấp trực tiếp vào bar khi đang thu gọn
+document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
+    if (isStickyCollapsed) {
+        e.stopPropagation();
+        ignoreScrollCollapseUntil = Date.now() + 650;
+        downwardScrollAccum = 0;
+        lastScrollY = window.scrollY;
+        setStickyCollapsed(false);
+    }
+});
+
+// Tự thu gọn khi nhấp vào vùng bên ngoài bar (chỉ khi thanh đang ghim ở trên cùng)
+document.addEventListener('click', (e) => {
+    if (!e.target || !document.body.contains(e.target)) return;
+    const wrapper = document.getElementById('stickyFilterWrapper');
+    if (!isStickyCollapsed && isBarPinned && wrapper && !wrapper.contains(e.target)) {
+        setStickyCollapsed(true);
+    }
+});
+
+// Xử lý cuộn trang bằng requestAnimationFrame + ghim cố định (position: fixed) khi cuộn qua filterAnchor:
+// Hoạt động đồng nhất 100% trên cả 3 tab và mọi trình duyệt di động bất kể tốc độ cuộn
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+            const currentScrollY = window.scrollY;
+            const anchorTop = updatePinStateFromAnchor();
+            const deltaY = currentScrollY - lastScrollY;
+
+            if (deltaY > 0) {
+                downwardScrollAccum += deltaY;
+            } else if (deltaY < 0) {
+                downwardScrollAccum = 0;
+            }
+
+            // Khi cuộn lên sát vị trí gốc của thanh filter (anchorTop >= -5), tự động mở ra
+            if (anchorTop >= -5) {
+                downwardScrollAccum = 0;
+                if (isStickyCollapsed) {
+                    setStickyCollapsed(false);
+                } else {
+                    syncWrapperPlaceholderHeight();
+                }
+            } else if (
+                !isStickyCollapsed &&
+                Date.now() >= ignoreScrollCollapseUntil &&
+                downwardScrollAccum >= 30 &&
+                anchorTop < -25
+            ) {
+                // Chỉ thu gọn khi người dùng thực sự cuộn xuống >= 30px
+                downwardScrollAccum = 0;
+                setStickyCollapsed(true);
+            }
+
+            lastScrollY = currentScrollY;
+            scrollTicking = false;
+        });
+        scrollTicking = true;
+    }
+}, { passive: true });
+
+window.addEventListener('resize', () => {
+    updatePinStateFromAnchor();
+    if (!isStickyCollapsed) {
+        syncWrapperPlaceholderHeight();
+    }
+}, { passive: true });
 
 function setLanguage(lang) {
     currentLang = lang;
@@ -1063,36 +1507,41 @@ function setLanguage(lang) {
     
     document.querySelector('h1').textContent = t.title;
     document.querySelector('p.subtitle').textContent = t.subtitle;
+    document.getElementById('stickyBarTitle').textContent = t.stickyTitle;
+    updateStickyBarUI();
+
+    const labelMap = {
+        lblFilterClan: t.filterClanLabel,
+        lblSelectUnit: t.selectUnitLabel,
+        lblFilterCounterType: t.filterCounterTypeLabel,
+        lblDisplayClan: t.displayClanLabel,
+        lblLookupSort: t.lookupSortLabel,
+        lblResistanceCategory: t.resistanceCategoryLabel,
+        lblWeaknessDmg: t.weaknessDmgLabel,
+        lblWeaknessUnitType: t.weaknessUnitTypeSelect,
+        lblWeaknessDisplayClan: t.weaknessDisplayClanLabel,
+        lblWeaknessSort: t.weaknessSortLabel,
+        lblUnitA: t.unitALabel,
+        lblUnitB: t.unitBLabel
+    };
+    Object.entries(labelMap).forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    });
     
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns[0].textContent = t.tabLookup;
     tabBtns[1].textContent = t.tabWeakness;
     tabBtns[2].textContent = t.tabCompare;
     
-    document.getElementById('lookupRulesBox').innerHTML = t.lookupRules;
-    document.getElementById('weaknessRulesBox').innerHTML = t.weaknessRules;
-    document.getElementById('compareRulesBox').innerHTML = t.compareRules;
+    document.getElementById('rulesLookup').innerHTML = t.lookupRules;
+    document.getElementById('rulesWeakness').innerHTML = t.weaknessRules;
+    document.getElementById('rulesCompare').innerHTML = t.compareRules;
     
-    document.getElementById('filterClanLabel').textContent = t.filterClanLabel;
-    document.getElementById('selectUnitLabel').textContent = t.selectUnitLabel;
-    document.getElementById('filterCounterTypeLabel').textContent = t.filterCounterTypeLabel;
-    document.getElementById('resistanceCategoryLabel').textContent = t.resistanceCategoryLabel;
-    document.getElementById('weaknessDmgLabel').textContent = t.weaknessDmgLabel;
-    document.getElementById('weaknessUnitTypeSelect').previousElementSibling.textContent = t.weaknessUnitTypeSelect;
-    document.getElementById('weaknessDisplayClanLabel').textContent = t.weaknessDisplayClanLabel;
-    document.getElementById('weaknessSortLabel').textContent = t.weaknessSortLabel;
-    document.getElementById('unitALabel').textContent = t.unitALabel;
-    document.getElementById('unitBLabel').textContent = t.unitBLabel;
-    
-    const resCatSel = document.getElementById('resistanceCategorySelect');
-    if (resCatSel && resCatSel.options.length >= 2) {
-        resCatSel.options[0].textContent = t.weakOption;
-        resCatSel.options[1].textContent = t.strongOption;
-    }
-
+    updateLookupSortBtnLabel();
     updateWeaknessSortBtnLabel();
     
-    const weakDmgSel = document.getElementById('weaknessDmgSelect');
+    const weakDmgSel = document.getElementById('stickyWeaknessDmgSelect');
     if (weakDmgSel && weakDmgSel.options.length >= 5) {
         weakDmgSel.options[0].textContent = t.cutting;
         weakDmgSel.options[1].textContent = t.blunt;
@@ -1101,14 +1550,14 @@ function setLanguage(lang) {
         weakDmgSel.options[4].textContent = t.magical;
     }
 
-    const weakUnitSel = document.getElementById('weaknessUnitTypeSelect');
+    const weakUnitSel = document.getElementById('stickyWeaknessUnitTypeSelect');
     if (weakUnitSel && weakUnitSel.options.length >= 3) {
         weakUnitSel.options[0].textContent = t.allUnitTypes;
         weakUnitSel.options[1].textContent = t.meleeOnly;
         weakUnitSel.options[2].textContent = t.missileOnly;
     }
     
-    const typeSel = document.getElementById('counterTypeSelect');
+    const typeSel = document.getElementById('stickyCounterTypeSelect');
     if (typeSel && typeSel.options.length >= 4) {
         typeSel.options[0].textContent = t.allAttackTypes;
         typeSel.options[1].textContent = t.meleeOnly;
@@ -1116,9 +1565,7 @@ function setLanguage(lang) {
         typeSel.options[3].textContent = t.skillOnly;
     }
     
-    document.getElementById('displayClanLabel').textContent = t.displayClanLabel;
-
-    const clanSel = document.getElementById('clanSelect');
+    const clanSel = document.getElementById('stickyClanSelect');
     if (clanSel && clanSel.options.length >= 5) {
         clanSel.options[0].textContent = t.allClans;
         clanSel.options[1].textContent = t.dragonClan;
@@ -1127,16 +1574,22 @@ function setLanguage(lang) {
         clanSel.options[4].textContent = t.wolfClan;
     }
 
-    ['displayClanSelect', 'weaknessDisplayClanSelect'].forEach(selId => {
-        const dispClanSel = document.getElementById(selId);
-        if (dispClanSel && dispClanSel.options.length >= 5) {
-            dispClanSel.options[0].textContent = t.allClans;
-            dispClanSel.options[1].textContent = t.dragonClan;
-            dispClanSel.options[2].textContent = t.serpentClan;
-            dispClanSel.options[3].textContent = t.lotusClan;
-            dispClanSel.options[4].textContent = t.wolfClan;
+    ['stickyDisplayClanSelect', 'stickyWeaknessDisplayClanSelect'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (sel && sel.options.length >= 5) {
+            sel.options[0].textContent = t.allClans;
+            sel.options[1].textContent = t.dragonClan;
+            sel.options[2].textContent = t.serpentClan;
+            sel.options[3].textContent = t.lotusClan;
+            sel.options[4].textContent = t.wolfClan;
         }
     });
+
+    const resCatSel = document.getElementById('stickyResistanceCategorySelect');
+    if (resCatSel && resCatSel.options.length >= 2) {
+        resCatSel.options[0].textContent = t.weakOption;
+        resCatSel.options[1].textContent = t.strongOption;
+    }
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
@@ -1197,20 +1650,14 @@ const UNITS = RAW_UNITS.map(u => {
     };
 });
 
-const clanSelect = document.getElementById('clanSelect');
-const unitSelect = document.getElementById('unitSelect');
-const counterTypeSelect = document.getElementById('counterTypeSelect');
-const displayClanSelect = document.getElementById('displayClanSelect');
-const resultOutput = document.getElementById('resultOutput');
-const resistanceCategorySelect = document.getElementById('resistanceCategorySelect');
-const weaknessDmgSelect = document.getElementById('weaknessDmgSelect');
-const weaknessUnitTypeSelect = document.getElementById('weaknessUnitTypeSelect');
-const weaknessDisplayClanSelect = document.getElementById('weaknessDisplayClanSelect');
-const weaknessOutput = document.getElementById('weaknessOutput');
-const unitASelect = document.getElementById('unitASelect');
-const unitBSelect = document.getElementById('unitBSelect');
-const compareOutput = document.getElementById('compareOutput');
+function getVal(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+}
 
+const resultOutput = document.getElementById('resultOutput');
+const weaknessOutput = document.getElementById('weaknessOutput');
+const compareOutput = document.getElementById('compareOutput');
 
 function switchTierTab(btnEl, unitId, tierIdx) {
     const card = btnEl.closest('.target-card');
@@ -1223,45 +1670,63 @@ function switchTierTab(btnEl, unitId, tierIdx) {
 }
 
 function switchTab(tabId) {
+    activeTabId = tabId;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.tab-filter-group').forEach(group => group.style.display = 'none');
+    document.querySelectorAll('.tab-rule-box').forEach(rule => rule.style.display = 'none');
     
     if (tabId === 'tabLookup') {
         document.querySelectorAll('.tab-btn')[0].classList.add('active');
         document.getElementById('tabLookup').classList.add('active');
+        document.getElementById('rulesLookup').style.display = 'block';
+        document.querySelector('.tab-filter-group[data-tab="tabLookup"]').style.display = 'block';
     } else if (tabId === 'tabWeakness') {
         document.querySelectorAll('.tab-btn')[1].classList.add('active');
         document.getElementById('tabWeakness').classList.add('active');
+        document.getElementById('rulesWeakness').style.display = 'block';
+        document.querySelector('.tab-filter-group[data-tab="tabWeakness"]').style.display = 'block';
         renderWeaknessFilter();
     } else {
         document.querySelectorAll('.tab-btn')[2].classList.add('active');
         document.getElementById('tabCompare').classList.add('active');
+        document.getElementById('rulesCompare').style.display = 'block';
+        document.querySelector('.tab-filter-group[data-tab="tabCompare"]').style.display = 'block';
         renderComparison();
     }
+    updatePinStateFromAnchor();
+    updateStickyBarUI();
+    if (!isStickyCollapsed) requestAnimationFrame(syncWrapperPlaceholderHeight);
 }
 
 function populateLookupUnits() {
-    const selectedClan = clanSelect.value;
-    const prevVal = unitSelect.value;
-    unitSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].allUnits}</option>`;
+    const selectedClan = getVal('stickyClanSelect');
+    const unitSelectEl = document.getElementById('stickyUnitSelect');
+    if (!unitSelectEl) return;
+    const prevVal = unitSelectEl.value;
+    unitSelectEl.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].allUnits}</option>`;
     
     UNITS.forEach(u => {
         if (selectedClan === 'ALL' || u.clan === selectedClan) {
             const opt = document.createElement('option');
             opt.value = u.id;
             opt.textContent = `[${u.clan}] ${u.name}`;
-            unitSelect.appendChild(opt);
+            unitSelectEl.appendChild(opt);
         }
     });
 
-    if (prevVal && Array.from(unitSelect.options).some(o => o.value === prevVal)) {
-        unitSelect.value = prevVal;
+    if (prevVal && Array.from(unitSelectEl.options).some(o => o.value === prevVal)) {
+        unitSelectEl.value = prevVal;
     }
 }
 
 function populateCompareDropdowns() {
-    unitASelect.innerHTML = '';
-    unitBSelect.innerHTML = '';
+    const aSelect = document.getElementById('stickyUnitASelect');
+    const bSelect = document.getElementById('stickyUnitBSelect');
+    if (!aSelect || !bSelect) return;
+    
+    aSelect.innerHTML = '';
+    bSelect.innerHTML = '';
     
     UNITS.forEach((u) => {
         const optA = document.createElement('option');
@@ -1272,17 +1737,16 @@ function populateCompareDropdowns() {
         optB.value = u.id;
         optB.textContent = `[${u.clan}] ${u.name}`;
 
-        unitASelect.appendChild(optA);
-        unitBSelect.appendChild(optB);
+        aSelect.appendChild(optA);
+        bSelect.appendChild(optB);
     });
 
     const spearman = UNITS.find(u => u.name === 'Spearman');
     const bladeAcolyte = UNITS.find(u => u.name === 'Blade Acolyte');
 
-    if (spearman) unitASelect.value = spearman.id;
-    if (bladeAcolyte) unitBSelect.value = bladeAcolyte.id;
+    if (spearman) aSelect.value = spearman.id;
+    if (bladeAcolyte) bSelect.value = bladeAcolyte.id;
 }
-
 
 function getClanBadgeText(clan) {
     const t = TRANSLATIONS[currentLang];
@@ -1343,8 +1807,7 @@ function getIncomingThreats(targetUnit, attacker) {
 
 function getTwoWayCountersForUnit(targetUnit) {
     const HEALER_IDS = ['d_geisha', 's_fan_geisha'];
-
-    const attackTypeFilter = counterTypeSelect ? counterTypeSelect.value : 'ALL';
+    const attackTypeFilter = getVal('stickyCounterTypeSelect');
 
     const evaluated = [];
     UNITS.forEach(attacker => {
@@ -1393,17 +1856,34 @@ function getTwoWayCountersForUnit(targetUnit) {
     const sortCounterItems = (a, b) => {
         const primA = (a.incomingThreats.find(th => !th.isSkill) || a.incomingThreats[0]).mult;
         const primB = (b.incomingThreats.find(th => !th.isSkill) || b.incomingThreats[0]).mult;
-        if (primA !== primB) {
-            return primA - primB;
-        }
         const skillThA = a.incomingThreats.find(th => th.isSkill);
         const skillThB = b.incomingThreats.find(th => th.isSkill);
         const skillA = skillThA ? skillThA.mult : -1;
         const skillB = skillThB ? skillThB.mult : -1;
-        if (skillA !== skillB) {
-            return skillA - skillB;
+
+        if (lookupSortPriority === 'damage') {
+            if (b.dmgDealt !== a.dmgDealt) {
+                return b.dmgDealt - a.dmgDealt;
+            }
+            if (primA !== primB) {
+                return primA - primB;
+            }
+            if (skillA !== skillB) {
+                return skillA - skillB;
+            }
+            return a.attacker.name.localeCompare(b.attacker.name);
+        } else {
+            if (primA !== primB) {
+                return primA - primB;
+            }
+            if (skillA !== skillB) {
+                return skillA - skillB;
+            }
+            if (b.dmgDealt !== a.dmgDealt) {
+                return b.dmgDealt - a.dmgDealt;
+            }
+            return a.attacker.name.localeCompare(b.attacker.name);
         }
-        return b.dmgDealt - a.dmgDealt;
     };
 
     const tier1 = evaluated.filter(x => x.dmgDealt >= 1.25 && x.netScore >= 0.0);
@@ -1415,7 +1895,7 @@ function getTwoWayCountersForUnit(targetUnit) {
     const tier3 = evaluated.filter(x => x.dmgDealt >= 1.0 && x.netScore < 0.0);
     tier3.sort(sortCounterItems);
 
-    const selectedDisplayClan = displayClanSelect ? displayClanSelect.value : 'ALL';
+    const selectedDisplayClan = getVal('stickyDisplayClanSelect');
     const hasVisibleItems = (arr) => selectedDisplayClan === 'ALL' ? arr.length > 0 : arr.some(x => x.attacker.clan === selectedDisplayClan);
 
     const resultTiers = [];
@@ -1428,7 +1908,7 @@ function getTwoWayCountersForUnit(targetUnit) {
 }
 
 function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
-    const selectedDisplayClan = displayClanSelect ? displayClanSelect.value : 'ALL';
+    const selectedDisplayClan = getVal('stickyDisplayClanSelect');
     const clansToRender = selectedDisplayClan === 'ALL' ? CLANS : [selectedDisplayClan];
     const gridClass = clansToRender.length === 1 ? 'clan-grid cols-1' : 'clan-grid';
     let html = `<div class="${gridClass}">`;
@@ -1518,8 +1998,8 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
 }
 
 function renderResults() {
-    const selectedUnitId = unitSelect.value;
-    const selectedClan = clanSelect.value;
+    const selectedUnitId = getVal('stickyUnitSelect');
+    const selectedClan = getVal('stickyClanSelect');
     const t = TRANSLATIONS[currentLang];
 
     resultOutput.innerHTML = '';
@@ -1593,11 +2073,11 @@ function renderResults() {
             </h4>
         `;
 
-        const isSingleClanDisplay = displayClanSelect && displayClanSelect.value !== 'ALL';
+        const isSingleClanDisplay = getVal('stickyDisplayClanSelect') !== 'ALL';
 
         if (tiers.length > 0) {
             if (isSingleClanDisplay) {
-                html += `<div class="single-clan-tiers-grid">`;
+                html += `<div class="single-clan-tiers-grid cols-${tiers.length}">`;
                 tiers.forEach(tier => {
                     html += `
                         <div class="tier-group">
@@ -1641,7 +2121,6 @@ function renderResults() {
     });
 }
 
-
 function getAttackTerm(unit, capitalized = false) {
     const hasBoth = unit.melee !== '-' && unit.missile !== '-';
     const isException = MELEE_EXCEPTIONS.includes(unit.id);
@@ -1671,8 +2150,8 @@ function getOpponentAttackTerm(opponent, lang = 'vi') {
 }
 
 function renderComparison() {
-    const unitA = UNITS.find(u => u.id === unitASelect.value);
-    const unitB = UNITS.find(u => u.id === unitBSelect.value);
+    const unitA = UNITS.find(u => u.id === getVal('stickyUnitASelect'));
+    const unitB = UNITS.find(u => u.id === getVal('stickyUnitBSelect'));
 
     if (!unitA || !unitB) return;
     const t = TRANSLATIONS[currentLang];
@@ -1695,7 +2174,6 @@ function renderComparison() {
     const skillBToAPercent = hasSkillB ? (multSkillBToA * 100).toFixed(0) : null;
     const skillBDmgName = hasSkillB ? (t[unitB.skillDamageType] || unitB.skillDamageType) : '';
 
-    // Determine winner based on primary resistance (lower incoming damage = better resistance)
     let winner = null;
     if (multBToA < multAToB) {
         winner = 'A';
@@ -1718,12 +2196,10 @@ function renderComparison() {
         if (vTitle) vTitle.textContent = verdictTitleText;
     }, 0);
 
-    // Build conclusion according to the 3 rules
     let conclusionHtml = '';
     const attackTermB = getOpponentAttackTerm(unitB, currentLang);
     const attackTermA = getOpponentAttackTerm(unitA, currentLang);
 
-    // X is the unit with better primary resistance (or A if tied)
     const isATieOrBetter = multBToA <= multAToB;
     const X = isATieOrBetter ? unitA : unitB;
     const Y = isATieOrBetter ? unitB : unitA;
@@ -1758,7 +2234,6 @@ function renderComparison() {
                 `<strong>Koril</strong> is immune to ${opp.name}'s ranged attacks (takes <strong>0%</strong> vs <strong>${oppTakesKoril}%</strong>) due to the innate.`;
         }
     } else if (!hasSkillA && !hasSkillB) {
-        // Rule 1: Cả 2 không có skill
         if (xMultPrim === yMultPrim) {
             conclusionHtml = currentLang === 'vi' ?
                 `Hai đơn vị kháng sát thương ngang bằng (cùng nhận <strong>${xTakesPrim}%</strong>).` :
@@ -1769,7 +2244,6 @@ function renderComparison() {
                 `<strong>${X.name}</strong> has better damage resistance (takes <strong>${xTakesPrim}%</strong> vs <strong>${yTakesPrim}%</strong>).`;
         }
     } else if ((hasSkillA && !hasSkillB) || (!hasSkillA && hasSkillB)) {
-        // Rule 2: Chỉ 1 bên có skill
         const primStatusVi = xMultPrim === yMultPrim
             ? `kháng ngang bằng với ${yAttackTerm} (cùng nhận ${xTakesPrim}%)`
             : `kháng tốt hơn với ${yAttackTerm} (${xTakesPrim}% so với ${yTakesPrim}%)`;
@@ -1778,18 +2252,15 @@ function renderComparison() {
             : `has better resistance against the ${yAttackTerm} (${xTakesPrim}% vs ${yTakesPrim}%)`;
 
         if (yHasSkill) {
-            // Đối phương Y có skill -> X nhận thêm sát thương từ skill của Y
             conclusionHtml = currentLang === 'vi' ?
                 `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận <strong>${xTakesSkill}%</strong> sát thương từ skill của ${Y.name}.` :
                 `<strong>${X.name}</strong> ${primStatusEn}, but takes <strong>${xTakesSkill}%</strong> damage from ${Y.name}'s skill.`;
         } else {
-            // Chính X có skill -> X còn có thêm kỹ năng gây sát thương lên Y
             conclusionHtml = currentLang === 'vi' ?
                 `<strong>${X.name}</strong> ${primStatusVi}, đồng thời còn có thêm kỹ năng gây <strong>${yTakesSkill}%</strong> sát thương lên ${Y.name}.` :
                 `<strong>${X.name}</strong> ${primStatusEn}, while also having a skill that deals <strong>${yTakesSkill}%</strong> damage to ${Y.name}.`;
         }
     } else {
-        // Rule 3: Cả 2 đều có skill
         const primPartVi = xMultPrim === yMultPrim
             ? `<strong>${X.name}</strong> kháng ngang bằng với ${yAttackTerm} (cùng nhận ${xTakesPrim}%)`
             : `<strong>${X.name}</strong> kháng tốt hơn với ${yAttackTerm} (${xTakesPrim}% so với ${yTakesPrim}%)`;
@@ -1908,9 +2379,7 @@ function renderComparison() {
 
         <!-- VERDICT BANNER -->
         <div class="verdict-banner">
-            <div class="verdict-title" id="verdictTitleElem">
-                <!-- Dynamic Verdict Title -->
-            </div>
+            <div class="verdict-title" id="verdictTitleElem"></div>
             <div class="verdict-detail">
                 ${conclusionHtml}
             </div>
@@ -1919,28 +2388,26 @@ function renderComparison() {
 
     compareOutput.innerHTML = html;
 }
-clanSelect.addEventListener('change', () => {
-    populateLookupUnits();
-    renderResults();
-});
 
-unitSelect.addEventListener('change', () => {
-    renderResults();
-});
+let lookupSortPriority = 'defense';
 
-counterTypeSelect.addEventListener('change', () => {
-    renderResults();
-});
+function updateLookupSortBtnLabel() {
+    const btn = document.getElementById('stickyLookupSortBtn');
+    if (!btn) return;
+    const t = TRANSLATIONS[currentLang];
+    btn.textContent = (lookupSortPriority === 'defense') ? t.lookupSortDefenseBtn : t.lookupSortDamageBtn;
+}
 
-displayClanSelect.addEventListener('change', () => {
+function toggleLookupSort() {
+    lookupSortPriority = (lookupSortPriority === 'defense') ? 'damage' : 'defense';
+    updateLookupSortBtnLabel();
     renderResults();
-});
-
+}
 
 let weaknessSortAsc = false;
 
 function updateWeaknessSortBtnLabel() {
-    const btn = document.getElementById('weaknessSortBtn');
+    const btn = document.getElementById('stickyWeaknessSortBtn');
     if (!btn) return;
     const t = TRANSLATIONS[currentLang];
     btn.textContent = weaknessSortAsc ? t.sortAscBtn : t.sortDescBtn;
@@ -1951,17 +2418,6 @@ function toggleWeaknessSort() {
     updateWeaknessSortBtnLabel();
     renderWeaknessFilter();
 }
-
-resistanceCategorySelect.addEventListener('change', () => {
-    const cat = resistanceCategorySelect.value;
-    if (cat === 'strong') {
-        weaknessSortAsc = true;
-    } else {
-        weaknessSortAsc = false;
-    }
-    updateWeaknessSortBtnLabel();
-    renderWeaknessFilter();
-});
 
 function renderWeaknessUnitCard(u, dmgKey, dmgLabel, t) {
     const mult = u.armor[dmgKey];
@@ -2003,20 +2459,25 @@ function renderWeaknessUnitCard(u, dmgKey, dmgLabel, t) {
 }
 
 function renderWeaknessFilter() {
-    if (!weaknessDmgSelect || !weaknessUnitTypeSelect || !weaknessOutput || !resistanceCategorySelect) return;
+    const dmgSelect = document.getElementById('stickyWeaknessDmgSelect');
+    const unitTypeSelect = document.getElementById('stickyWeaknessUnitTypeSelect');
+    const catSelect = document.getElementById('stickyResistanceCategorySelect');
+    const dispClanSelect = document.getElementById('stickyWeaknessDisplayClanSelect');
+    
+    if (!dmgSelect || !unitTypeSelect || !catSelect || !weaknessOutput) return;
     updateWeaknessSortBtnLabel();
     
-    const cat = resistanceCategorySelect.value;
-    const dmgKey = weaknessDmgSelect.value;
-    const unitTypeFilter = weaknessUnitTypeSelect.value;
-    const selectedDisplayClan = weaknessDisplayClanSelect ? weaknessDisplayClanSelect.value : 'ALL';
+    const cat = catSelect.value;
+    const dmgKey = dmgSelect.value;
+    const unitTypeFilter = unitTypeSelect.value;
+    const selectedDisplayClan = dispClanSelect ? dispClanSelect.value : 'ALL';
     const t = TRANSLATIONS[currentLang];
     const titleText = (cat === 'weak') ? t.weaknessResultTitle : t.strongResultTitle;
 
     if (selectedDisplayClan !== 'ALL') {
-        weaknessDmgSelect.disabled = true;
-        weaknessDmgSelect.style.opacity = '0.5';
-        weaknessDmgSelect.style.cursor = 'not-allowed';
+        dmgSelect.disabled = true;
+        dmgSelect.style.opacity = '0.5';
+        dmgSelect.style.cursor = 'not-allowed';
 
         const ALL_DMG_TYPES = ['cutting', 'blunt', 'piercing', 'explosive', 'magical'];
         const clanUnitsBase = UNITS.filter(u => {
@@ -2080,9 +2541,9 @@ function renderWeaknessFilter() {
         return;
     }
 
-    weaknessDmgSelect.disabled = false;
-    weaknessDmgSelect.style.opacity = '1';
-    weaknessDmgSelect.style.cursor = 'pointer';
+    dmgSelect.disabled = false;
+    dmgSelect.style.opacity = '1';
+    dmgSelect.style.cursor = 'pointer';
 
     const dmgLabel = t[dmgKey] || dmgKey;
 
@@ -2150,20 +2611,38 @@ function renderWeaknessFilter() {
     weaknessOutput.innerHTML = html;
 }
 
-weaknessDmgSelect.addEventListener('change', renderWeaknessFilter);
-weaknessUnitTypeSelect.addEventListener('change', renderWeaknessFilter);
-if (weaknessDisplayClanSelect) {
-    weaknessDisplayClanSelect.addEventListener('change', renderWeaknessFilter);
-}
+// Event Listeners cho các bộ lọc trên Sticky Bar
+document.getElementById('stickyClanSelect').addEventListener('change', () => {
+    populateLookupUnits();
+    renderResults();
+});
 
-unitASelect.addEventListener('change', renderComparison);
-unitBSelect.addEventListener('change', renderComparison);
+document.getElementById('stickyUnitSelect').addEventListener('change', renderResults);
+document.getElementById('stickyCounterTypeSelect').addEventListener('change', renderResults);
+document.getElementById('stickyDisplayClanSelect').addEventListener('change', renderResults);
+
+document.getElementById('stickyResistanceCategorySelect').addEventListener('change', () => {
+    const cat = document.getElementById('stickyResistanceCategorySelect').value;
+    weaknessSortAsc = (cat === 'strong');
+    updateWeaknessSortBtnLabel();
+    renderWeaknessFilter();
+});
+
+document.getElementById('stickyWeaknessDmgSelect').addEventListener('change', renderWeaknessFilter);
+document.getElementById('stickyWeaknessUnitTypeSelect').addEventListener('change', renderWeaknessFilter);
+document.getElementById('stickyWeaknessDisplayClanSelect').addEventListener('change', renderWeaknessFilter);
+
+document.getElementById('stickyUnitASelect').addEventListener('change', renderComparison);
+document.getElementById('stickyUnitBSelect').addEventListener('change', renderComparison);
 
 // Init
+updateStickyBarUI();
+requestAnimationFrame(syncWrapperPlaceholderHeight);
+updateLookupSortBtnLabel();
 populateLookupUnits();
+populateCompareDropdowns();
 renderResults();
 renderWeaknessFilter();
-populateCompareDropdowns();
 </script>
 
 <footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
