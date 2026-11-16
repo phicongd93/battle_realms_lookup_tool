@@ -262,6 +262,28 @@
             background-color: rgba(42, 42, 52, 0.98);
         }
 
+        .sticky-filter-bar.is-collapsed .sticky-reset-btn {
+            display: none !important;
+        }
+
+        .sticky-reset-btn {
+            background-color: #2b2b36;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sticky-reset-btn:hover {
+            background-color: var(--accent-color);
+            color: #121214;
+        }
+
         .sticky-bar-header {
             display: flex;
             justify-content: space-between;
@@ -287,7 +309,7 @@
             margin-left: 10px;
         }
 
-        .sticky-filter-bar:not(.is-collapsed):not(.hide-sticky-pills) .sticky-tab-pills {
+        .sticky-filter-bar:not(.hide-sticky-pills) .sticky-tab-pills {
             display: inline-flex;
         }
 
@@ -415,6 +437,15 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             border-top: 4px solid var(--accent-color);
+            overflow: visible;
+        }
+
+        /* Thẻ nằm xa vùng nhìn thấy: bỏ qua layout/paint (JS bật/tắt class này).
+           Không dùng content-visibility:auto trực tiếp vì nó ép paint containment
+           và sẽ cắt mất tooltip (info-tooltip, counter-item-tooltip) tràn ra ngoài thẻ. */
+        .target-card.cv-off {
+            content-visibility: hidden;
+            contain-intrinsic-height: auto 1600px;
         }
 
         .target-header {
@@ -994,6 +1025,129 @@
             background-color: var(--accent-color);
             color: #121214;
         }
+
+        /* BACK TO TOP FLOATING BUTTON */
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #121214;
+            border: 2px solid #121214;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            font-size: 1.25em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease, background-color 0.2s ease;
+        }
+
+        .back-to-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top-btn.dimmed {
+            opacity: 0.25 !important;
+        }
+
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #121214;
+            border: 2px solid #121214;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            font-size: 1.25em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease, background-color 0.2s ease;
+        }
+
+        .back-to-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top-btn.dimmed {
+            opacity: 0.25 !important;
+        }
+
+        .btt-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            right: 125%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #2b2b36;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: normal;
+            white-space: nowrap;
+            z-index: 1051;
+            border: 1px solid #555;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+
+        .btt-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent transparent #2b2b36;
+        }
+
+        @media (hover: hover) {
+            .back-to-top-btn:hover {
+                background-color: #f3bc52;
+                transform: translateY(-2px);
+                opacity: 1 !important;
+            }
+            .back-to-top-btn:hover .btt-tooltip {
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .back-to-top-btn {
+                bottom: 16px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.15em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1045,12 +1199,15 @@
             <div class="sticky-bar-title">
                 <span id="stickyBarTitle">⚙️ Quick Filters</span>
                 <div class="sticky-tab-pills" id="stickyTabPills">
-                    <button type="button" class="sticky-tab-pill active" data-tab="tabLookup" onclick="event.stopPropagation(); switchTab('tabLookup')">🔍 Counter</button>
-                    <button type="button" class="sticky-tab-pill" data-tab="tabWeakness" onclick="event.stopPropagation(); switchTab('tabWeakness')">🛡️ Resistance</button>
-                    <button type="button" class="sticky-tab-pill" data-tab="tabCompare" onclick="event.stopPropagation(); switchTab('tabCompare')">⚔️ 1v1</button>
+                    <button type="button" class="sticky-tab-pill active" data-tab="tabLookup" onclick="event.stopPropagation(); switchTab('tabLookup', false)">🔍 Counter</button>
+                    <button type="button" class="sticky-tab-pill" data-tab="tabWeakness" onclick="event.stopPropagation(); switchTab('tabWeakness', false)">🛡️ Resistance</button>
+                    <button type="button" class="sticky-tab-pill" data-tab="tabCompare" onclick="event.stopPropagation(); switchTab('tabCompare', false)">⚔️ 1v1</button>
                 </div>
             </div>
-            <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button type="button" id="stickyResetBtn" class="sticky-reset-btn" onclick="event.stopPropagation(); resetCurrentTabFilters()" title="Reset filters to default">🔄 Reset</button>
+                <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
+            </div>
         </div>
         <div class="sticky-bar-body collapsed" id="stickyBarBody">
             <!-- Bộ lọc Tab 1 -->
@@ -1274,7 +1431,9 @@ const TRANSLATIONS = {
         pillResistance: "🛡️ Resistance",
         pillCompare: "⚔️ 1v1",
         hintExpanded: "Click outside or scroll to collapse",
-        hintCollapsed: "Click bar to expand filters"
+        hintCollapsed: "Click bar to expand filters",
+        backToTop: "Back to top",
+        resetBtn: "🔄 Reset"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -1365,7 +1524,9 @@ const TRANSLATIONS = {
         pillResistance: "🛡️ Kháng",
         pillCompare: "⚔️ 1v1",
         hintExpanded: "Nhấp ngoài hoặc cuộn để thu gọn",
-        hintCollapsed: "Nhấp vào thanh này để mở bộ lọc"
+        hintCollapsed: "Nhấp vào thanh này để mở bộ lọc",
+        backToTop: "Trở về đầu trang",
+        resetBtn: "🔄 Mặc định"
     }
 };
 
@@ -1382,7 +1543,8 @@ function updateStickyBarUI() {
     const hint = document.getElementById('stickyHintText');
     const t = TRANSLATIONS[currentLang];
 
-    if (hint) hint.textContent = isStickyCollapsed ? t.hintCollapsed : t.hintExpanded;
+    const hintText = isStickyCollapsed ? t.hintCollapsed : t.hintExpanded;
+    if (hint && hint.textContent !== hintText) hint.textContent = hintText;
 
     bar.classList.toggle('hide-sticky-pills', isMainTabNavVisible);
     bar.classList.toggle('is-pinned', isBarPinned);
@@ -1390,9 +1552,10 @@ function updateStickyBarUI() {
     document.querySelectorAll('.sticky-tab-pill').forEach(pill => {
         const targetTab = pill.getAttribute('data-tab');
         pill.classList.toggle('active', targetTab === activeTabId);
-        if (targetTab === 'tabLookup') pill.textContent = t.pillCounter;
-        else if (targetTab === 'tabWeakness') pill.textContent = t.pillResistance;
-        else if (targetTab === 'tabCompare') pill.textContent = t.pillCompare;
+        const pillLabel = targetTab === 'tabLookup' ? t.pillCounter
+            : targetTab === 'tabWeakness' ? t.pillResistance
+            : t.pillCompare;
+        if (pill.textContent !== pillLabel) pill.textContent = pillLabel;
     });
 
     if (isStickyCollapsed) {
@@ -1427,15 +1590,24 @@ function updatePinStateFromAnchor() {
 
 // Theo dõi khả năng hiển thị của thanh 3 nút tab chính trên trang
 const mainTabNavEl = document.getElementById('mainTabNav');
-if (mainTabNavEl && 'IntersectionObserver' in window) {
-    const navObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            isMainTabNavVisible = entry.isIntersecting;
-            updateStickyBarUI();
-        });
-    }, { threshold: 0.05 });
-    navObserver.observe(mainTabNavEl);
+const stickyBarEl = document.getElementById('stickyFilterBar');
+
+function checkTabNavVisibility() {
+    if (!mainTabNavEl || !stickyBarEl) return;
+    const navRect = mainTabNavEl.getBoundingClientRect();
+    const barBottom = stickyBarEl.getBoundingClientRect().bottom;
+
+    // Thanh tab chính bị thanh sticky che quá 1/2 chiều cao => coi như đã khuất
+    const coveredHeight = barBottom - navRect.top;
+    const nowVisible = !(navRect.top <= barBottom && coveredHeight >= navRect.height * 0.5);
+
+    if (nowVisible !== isMainTabNavVisible) {
+        isMainTabNavVisible = nowVisible;
+        updateStickyBarUI();
+    }
 }
+// Việc kiểm tra khi cuộn/resize được gộp vào handler rAF bên dưới (1 listener scroll duy nhất)
+checkTabNavVisibility();
 
 let ignoreScrollCollapseUntil = 0;
 
@@ -1452,6 +1624,7 @@ document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
 // Tự thu gọn khi nhấp vào vùng bên ngoài bar (chỉ khi thanh đang ghim ở trên cùng)
 document.addEventListener('click', (e) => {
     if (!e.target || !document.body.contains(e.target)) return;
+    if (e.target.closest('.tab-btn')) return;
     const wrapper = document.getElementById('stickyFilterWrapper');
     if (!isStickyCollapsed && isBarPinned && wrapper && !wrapper.contains(e.target)) {
         setStickyCollapsed(true);
@@ -1475,6 +1648,19 @@ window.addEventListener('scroll', () => {
                 setStickyCollapsed(true);
             }
 
+            checkTabNavVisibility();
+
+            const bttBtn = document.getElementById('backToTopBtn');
+            if (bttBtn) {
+                bttBtn.classList.toggle('visible', currentScrollY > 250);
+                bttBtn.classList.remove('dimmed');
+                clearTimeout(window.scrollStopTimer);
+                window.scrollStopTimer = setTimeout(() => {
+                    if (currentScrollY > 250) {
+                        bttBtn.classList.add('dimmed');
+                    }
+                }, 50);
+            }
             lastScrollY = currentScrollY;
             scrollTicking = false;
         });
@@ -1484,6 +1670,7 @@ window.addEventListener('scroll', () => {
 
 window.addEventListener('resize', () => {
     updatePinStateFromAnchor();
+    checkTabNavVisibility();
 }, { passive: true });
 
 function setLanguage(lang) {
@@ -1495,6 +1682,12 @@ function setLanguage(lang) {
     document.querySelector('h1').textContent = t.title;
     document.querySelector('p.subtitle').textContent = t.subtitle;
     document.getElementById('stickyBarTitle').textContent = t.stickyTitle;
+    const bttBtn = document.getElementById('backToTopBtn');
+    if (bttBtn) { bttBtn.setAttribute('aria-label', t.backToTop); }
+    const bttTooltip = document.getElementById('bttTooltip');
+    if (bttTooltip) { bttTooltip.textContent = t.backToTop; }
+    const resetBtnEl = document.getElementById('stickyResetBtn');
+    if (resetBtnEl) { resetBtnEl.textContent = t.resetBtn; }
     updateStickyBarUI();
 
     const labelMap = {
@@ -1656,8 +1849,13 @@ function switchTierTab(btnEl, unitId, tierIdx) {
     });
 }
 
-function switchTab(tabId) {
+function switchTab(tabId, scrollToTop = true) {
+    if (scrollToTop) {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    }
     activeTabId = tabId;
+    ignoreScrollCollapseUntil = Date.now() + 650;
+    setStickyCollapsed(false);
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     document.querySelectorAll('.tab-filter-group').forEach(group => group.style.display = 'none');
@@ -1984,6 +2182,51 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
     return html;
 }
 
+let cardObserver = null;
+let cardLastWidth = window.innerWidth;
+
+function setupCardVirtualization() {
+    if (cardObserver) { cardObserver.disconnect(); cardObserver = null; }
+    const cards = resultOutput.querySelectorAll('.target-card');
+    if (cards.length <= 3 || !('IntersectionObserver' in window) ||
+        !(window.CSS && CSS.supports && CSS.supports('content-visibility', 'hidden'))) return;
+
+    cardObserver = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+            const r = en.boundingClientRect;
+            if (r.width === 0 && r.height === 0) return; // tab đang ẩn (display:none) -> giữ nguyên trạng thái
+            const card = en.target;
+            const isOff = card.classList.contains('cv-off');
+
+            if (en.isIntersecting && isOff) {
+                // Dựng lại thẻ. Nếu thẻ nằm hoàn toàn phía trên màn hình thì bù scroll để nội dung không bị trôi.
+                const oldH = card.offsetHeight;
+                const oldBottom = card.getBoundingClientRect().top + oldH;
+                card.classList.remove('cv-off');
+                const newH = card.offsetHeight;
+                if (!window.cardScrollLock && oldBottom <= 0 && newH !== oldH) window.scrollBy(0, newH - oldH);
+            } else if (!en.isIntersecting && !isOff) {
+                // Ẩn thẻ: khóa chiều cao placeholder đúng bằng chiều cao thật để layout không bị xê dịch (tránh vòng lặp nháy)
+                const h = card.offsetHeight;
+                if (h > 0) card.style.containIntrinsicHeight = h + 'px';
+                card.classList.add('cv-off');
+            }
+        });
+    }, { rootMargin: '1500px 0px' });
+
+    cards.forEach((card, i) => {
+        if (i >= 3) card.classList.add('cv-off'); // 3 thẻ đầu luôn dựng sẵn
+        cardObserver.observe(card);
+    });
+}
+
+// Chiều cao đã khóa chỉ đúng với bề rộng hiện tại: khi bề rộng đổi thì xóa để dùng lại giá trị ước lượng
+window.addEventListener('resize', () => {
+    if (window.innerWidth === cardLastWidth) return;
+    cardLastWidth = window.innerWidth;
+    document.querySelectorAll('.target-card.cv-off').forEach(c => { c.style.containIntrinsicHeight = ''; });
+}, { passive: true });
+
 function renderResults() {
     const selectedUnitId = getVal('stickyUnitSelect');
     const selectedClan = getVal('stickyClanSelect');
@@ -1998,6 +2241,7 @@ function renderResults() {
         targetUnits = UNITS.filter(u => u.clan === selectedClan);
     }
 
+    const fragment = document.createDocumentFragment();
     targetUnits.forEach(unit => {
         const tiers = getTwoWayCountersForUnit(unit);
         const card = document.createElement('div');
@@ -2104,8 +2348,10 @@ function renderResults() {
         }
 
         card.innerHTML = html;
-        resultOutput.appendChild(card);
+        fragment.appendChild(card);
     });
+    resultOutput.appendChild(fragment);
+    setupCardVirtualization();
 }
 
 function getAttackTerm(unit, capitalized = false) {
@@ -2598,6 +2844,43 @@ function renderWeaknessFilter() {
     weaknessOutput.innerHTML = html;
 }
 
+function resetCurrentTabFilters() {
+    if (activeTabId === 'tabLookup') {
+        const clanSel = document.getElementById('stickyClanSelect');
+        const unitSel = document.getElementById('stickyUnitSelect');
+        const typeSel = document.getElementById('stickyCounterTypeSelect');
+        const dispSel = document.getElementById('stickyDisplayClanSelect');
+        if (clanSel) clanSel.value = 'ALL';
+        populateLookupUnits();
+        if (unitSel) unitSel.value = 'ALL';
+        if (typeSel) typeSel.value = 'ALL';
+        if (dispSel) dispSel.value = 'ALL';
+        lookupSortPriority = 'defense';
+        updateLookupSortBtnLabel();
+        renderResults();
+    } else if (activeTabId === 'tabWeakness') {
+        const catSel = document.getElementById('stickyResistanceCategorySelect');
+        const dmgSel = document.getElementById('stickyWeaknessDmgSelect');
+        const unitTypeSel = document.getElementById('stickyWeaknessUnitTypeSelect');
+        const dispClanSel = document.getElementById('stickyWeaknessDisplayClanSelect');
+        if (catSel) catSel.value = 'weak';
+        if (dmgSel) dmgSel.value = 'cutting';
+        if (unitTypeSel) unitTypeSel.value = 'ALL';
+        if (dispClanSel) dispClanSel.value = 'ALL';
+        weaknessSortAsc = false;
+        updateWeaknessSortBtnLabel();
+        renderWeaknessFilter();
+    } else if (activeTabId === 'tabCompare') {
+        const aSelect = document.getElementById('stickyUnitASelect');
+        const bSelect = document.getElementById('stickyUnitBSelect');
+        const spearman = UNITS.find(u => u.name === 'Spearman');
+        const bladeAcolyte = UNITS.find(u => u.name === 'Blade Acolyte');
+        if (aSelect && spearman) aSelect.value = spearman.id;
+        if (bSelect && bladeAcolyte) bSelect.value = bladeAcolyte.id;
+        renderComparison();
+    }
+}
+
 // Event Listeners cho các bộ lọc trên Sticky Bar
 document.getElementById('stickyClanSelect').addEventListener('change', () => {
     populateLookupUnits();
@@ -2637,5 +2920,16 @@ renderWeaknessFilter();
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
 
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" aria-label="Back to top">↑<span class="btt-tooltip" id="bttTooltip">Back to top</span></button>
+<script>
+function scrollToTop() {
+    // Trong lúc cuộn mượt về đầu trang, tạm tắt bù scroll (scrollBy sẽ làm hủy cuộn mượt đang chạy)
+    window.cardScrollLock = true;
+    const unlock = () => { window.cardScrollLock = false; };
+    window.addEventListener('scrollend', unlock, { once: true });
+    setTimeout(unlock, 3000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
