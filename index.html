@@ -3,18 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <script>(function(){try{var t=localStorage.getItem("brTheme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();</script>
     <title>Unit Counter & 1v1 Comparison - Battle Realms (Zen Edition)</title>
     <style>
         :root {
+            color-scheme: dark;
             --bg-color: #121214;
             --card-bg: #1e1e24;
             --accent-color: #e5a93b;
+            --accent-hover: #f3bc52;
+            --on-accent: #121214;
             --text-main: #e0e0e0;
             --text-sub: #a0a0a0;
+            --text-strong: #ffffff;
+            --text-ccc: #cccccc;
+            --text-aaa: #aaaaaa;
+            --text-777: #777777;
             --dragon-color: #d85427;
             --serpent-color: #b32424;
             --lotus-color: #9235a8;
             --wolf-color: #279646;
+            --surface-2: #2b2b36;
+            --surface-3: #1a1a22;
+            --panel: #17171d;
+            --item-bg: #242430;
+            --rules-bg: #18181c;
+            --th-bg: #262630;
+            --verdict-bg: #252532;
+            --badge-bg: #333333;
+            --border-1: #333333;
+            --border-2: #444444;
+            --border-3: #555555;
+            --border-panel: #2d2d38;
+            --sticky-bg: rgba(30, 30, 36, 0.96);
+            --sticky-bg-hover: rgba(42, 42, 52, 0.98);
+            --shadow-rgb: 0, 0, 0;
+            --green: #5cb85c;
+            --amber: #f0ad4e;
+            --red: #ff6b6b;
+            --red-strong: #d9534f;
+            --purple-text: #d18ce0;
+        }
+
+        /* LIGHT THEME */
+        :root[data-theme="light"] {
+            color-scheme: light;
+            --bg-color: #eceef4;
+            --card-bg: #ffffff;
+            --accent-color: #a86400;
+            --accent-hover: #c27508;
+            --on-accent: #ffffff;
+            --text-main: #23252e;
+            --text-sub: #5d6270;
+            --text-strong: #14161c;
+            --text-ccc: #3a3e4a;
+            --text-aaa: #6a6e7a;
+            --text-777: #7b7f8b;
+            --surface-2: #f3f4f9;
+            --surface-3: #eff1f6;
+            --panel: #f5f6fa;
+            --item-bg: #ffffff;
+            --rules-bg: #f7f4ec;
+            --th-bg: #e8eaf1;
+            --verdict-bg: #f1f3f9;
+            --badge-bg: #e6e8ef;
+            --border-1: #d6d9e1;
+            --border-2: #c4c8d3;
+            --border-3: #aab0bf;
+            --border-panel: #dcdfe7;
+            --sticky-bg: rgba(255, 255, 255, 0.96);
+            --sticky-bg-hover: rgba(243, 244, 249, 0.98);
+            --shadow-rgb: 90, 100, 130;
+            --green: #2f8f3f;
+            --amber: #b36b00;
+            --red: #d12f2f;
+            --red-strong: #c9302c;
+            --purple-text: #a21fc4;
         }
 
         body {
@@ -41,7 +106,7 @@
         .lang-btn {
             background-color: var(--card-bg);
             color: var(--text-sub);
-            border: 1px solid #444;
+            border: 1px solid var(--border-2);
             padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
@@ -51,11 +116,11 @@
         }
         .lang-btn:hover {
             border-color: var(--accent-color);
-            color: #fff;
+            color: var(--text-strong);
         }
         .lang-btn.active {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
             border-color: var(--accent-color);
         }
 
@@ -79,15 +144,95 @@
         .tab-nav {
             display: flex;
             justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
+        }
+
+        /* NÚT MENU (danh sách toàn bộ tab) */
+        .menu-btn {
+            padding: 12px 18px;
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .menu-btn:hover,
+        .menu-btn[aria-expanded="true"] {
+            background-color: var(--accent-color);
+            color: var(--on-accent);
+        }
+        .sticky-menu-btn {
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border-radius: 6px;
+            background-color: var(--surface-2);
+            flex: 0 0 auto;
+        }
+
+        .tab-menu-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            display: none;
+            min-width: 220px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background-color: var(--surface-2);
+            border: 1px solid var(--border-3);
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(var(--shadow-rgb), 0.6);
+            padding: 6px;
+        }
+        .tab-menu-popup.open {
+            display: block;
+        }
+        .tab-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 9px 12px;
+            margin: 0;
+            font-size: 0.92em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tab-menu-item + .tab-menu-item {
+            margin-top: 2px;
+        }
+        .tab-menu-item:hover {
+            background-color: var(--item-bg);
+            border-color: var(--accent-color);
+            color: var(--text-strong);
+        }
+        .tab-menu-item.active {
+            background-color: var(--accent-color);
+            color: var(--on-accent);
+            border-color: var(--accent-color);
         }
 
         .tab-btn {
             padding: 12px 24px;
             background-color: var(--card-bg);
             color: var(--text-sub);
-            border: 1px solid #333;
+            border: 1px solid var(--border-1);
             border-radius: 8px;
             font-size: 1em;
             font-weight: bold;
@@ -97,12 +242,12 @@
 
         .tab-btn:hover {
             border-color: var(--accent-color);
-            color: #fff;
+            color: var(--text-strong);
         }
 
         .tab-btn.active {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
             border-color: var(--accent-color);
         }
 
@@ -119,7 +264,7 @@
             background-color: var(--card-bg);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.5);
             margin-bottom: 25px;
             display: flex;
             flex-wrap: wrap;
@@ -136,12 +281,12 @@
         }
 
         .sticky-filter-bar {
-            background-color: rgba(30, 30, 36, 0.96);
+            background-color: var(--sticky-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--accent-color);
             padding: 12px 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+            box-shadow: 0 6px 20px rgba(var(--shadow-rgb), 0.7);
             border-radius: 8px;
             box-sizing: border-box;
             width: 100%;
@@ -167,6 +312,7 @@
             }
             .sticky-filter-bar .sticky-bar-title {
                 flex-wrap: nowrap !important;
+                flex: 0 0 auto !important;
                 justify-content: space-between;
                 align-items: center;
                 width: 100%;
@@ -187,6 +333,16 @@
                 padding: 4px 7px;
                 font-size: 0.84em;
                 white-space: nowrap;
+            }
+            .sticky-filter-bar .sticky-menu-btn {
+                padding: 4px 8px;
+                font-size: 0.9em;
+            }
+            .sticky-filter-bar .sticky-menu-btn .menu-btn-label {
+                display: none;
+            }
+            .menu-btn {
+                padding: 10px 14px;
             }
             .sticky-filter-bar .sticky-hint-text {
                 width: 100%;
@@ -259,7 +415,7 @@
         }
 
         .sticky-filter-bar.is-collapsed:hover {
-            background-color: rgba(42, 42, 52, 0.98);
+            background-color: var(--sticky-bg-hover);
         }
 
         .sticky-filter-bar.is-collapsed .sticky-reset-btn {
@@ -267,7 +423,7 @@
         }
 
         .sticky-reset-btn {
-            background-color: #2b2b36;
+            background-color: var(--surface-2);
             color: var(--accent-color);
             border: 1px solid var(--accent-color);
             padding: 4px 10px;
@@ -281,7 +437,7 @@
 
         .sticky-reset-btn:hover {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
         }
 
         .sticky-bar-header {
@@ -299,7 +455,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        #stickyBarTitle {
+            white-space: nowrap;
+            flex: 0 0 auto;
         }
 
         .sticky-tab-pills {
@@ -307,32 +470,51 @@
             gap: 6px;
             align-items: center;
             margin-left: 10px;
+            flex: 1 1 0;
+            min-width: 0;
         }
 
         .sticky-filter-bar:not(.hide-sticky-pills) .sticky-tab-pills {
-            display: inline-flex;
+            display: flex;
+        }
+
+        .sticky-recent-pills {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1 1 0;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .sticky-recent-pills .sticky-tab-pill:first-child {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .sticky-tab-pill {
-            background-color: #2b2b36;
+            background-color: var(--surface-2);
             color: var(--text-sub);
-            border: 1px solid #444;
+            border: 1px solid var(--border-2);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.8em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex: 0 0 auto;
+            white-space: nowrap;
         }
 
         .sticky-tab-pill:hover {
             border-color: var(--accent-color);
-            color: #fff;
+            color: var(--text-strong);
         }
 
         .sticky-tab-pill.active {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
             border-color: var(--accent-color);
         }
 
@@ -349,7 +531,7 @@
             gap: 14px;
             align-items: flex-end;
             justify-content: center;
-            border-top: 1px solid #333;
+            border-top: 1px solid var(--border-1);
             padding-top: 12px;
             max-height: 600px;
             opacity: 1;
@@ -402,9 +584,9 @@
         select {
             padding: 10px 15px;
             border-radius: 6px;
-            border: 1px solid #444;
-            background-color: #2b2b36;
-            color: #fff;
+            border: 1px solid var(--border-2);
+            background-color: var(--surface-2);
+            color: var(--text-strong);
             font-size: 1em;
             min-width: 240px;
             outline: none;
@@ -416,7 +598,7 @@
         }
 
         .rules-info {
-            background-color: #18181c;
+            background-color: var(--rules-bg);
             border-left: 4px solid var(--accent-color);
             padding: 12px 15px;
             border-radius: 0 6px 6px 0;
@@ -435,7 +617,7 @@
             background-color: var(--card-bg);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(var(--shadow-rgb), 0.3);
             border-top: 4px solid var(--accent-color);
             overflow: visible;
         }
@@ -452,7 +634,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-1);
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
@@ -460,7 +642,7 @@
         .target-name {
             font-size: 1.4em;
             font-weight: bold;
-            color: #fff;
+            color: var(--text-strong);
         }
 
         .clan-badge {
@@ -468,7 +650,7 @@
             border-radius: 12px;
             font-size: 0.8em;
             font-weight: bold;
-            color: #fff;
+            color: #ffffff;
             text-transform: uppercase;
         }
 
@@ -496,7 +678,7 @@
             user-select: none;
             opacity: 0.55;
             border: 1px solid transparent;
-            background-color: #18181f;
+            background-color: var(--rules-bg);
         }
 
         .tier-tab-btn:hover {
@@ -505,17 +687,17 @@
 
         .tier-tab-btn.active {
             opacity: 1;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 10px rgba(var(--shadow-rgb), 0.4);
         }
 
-        .tier-tab-btn.tier-1 { color: #5cb85c; border-color: rgba(92, 184, 92, 0.4); }
-        .tier-tab-btn.tier-1.active { background-color: rgba(92, 184, 92, 0.22); border-color: #5cb85c; }
+        .tier-tab-btn.tier-1 { color: var(--green); border-color: rgba(92, 184, 92, 0.4); }
+        .tier-tab-btn.tier-1.active { background-color: rgba(92, 184, 92, 0.22); border-color: var(--green); }
 
-        .tier-tab-btn.tier-2 { color: #f0ad4e; border-color: rgba(240, 173, 78, 0.4); }
-        .tier-tab-btn.tier-2.active { background-color: rgba(240, 173, 78, 0.22); border-color: #f0ad4e; }
+        .tier-tab-btn.tier-2 { color: var(--amber); border-color: rgba(240, 173, 78, 0.4); }
+        .tier-tab-btn.tier-2.active { background-color: rgba(240, 173, 78, 0.22); border-color: var(--amber); }
 
-        .tier-tab-btn.tier-3 { color: #ff6b6b; border-color: rgba(217, 83, 79, 0.4); }
-        .tier-tab-btn.tier-3.active { background-color: rgba(217, 83, 79, 0.22); border-color: #d9534f; }
+        .tier-tab-btn.tier-3 { color: var(--red); border-color: rgba(217, 83, 79, 0.4); }
+        .tier-tab-btn.tier-3.active { background-color: rgba(217, 83, 79, 0.22); border-color: var(--red-strong); }
 
         .tier-tab-tooltip {
             visibility: hidden;
@@ -524,16 +706,16 @@
             bottom: 125%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #2b2b36;
-            color: #fff;
+            background-color: var(--surface-2);
+            color: var(--text-strong);
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 0.85em;
             font-weight: normal;
             white-space: nowrap;
             z-index: 50;
-            border: 1px solid #555;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-3);
+            box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.6);
             pointer-events: none;
             transition: opacity 0.15s ease;
         }
@@ -546,7 +728,7 @@
             margin-left: -5px;
             border-width: 5px;
             border-style: solid;
-            border-color: #2b2b36 transparent transparent transparent;
+            border-color: var(--surface-2) transparent transparent transparent;
         }
 
         .tier-tab-btn:hover .tier-tab-tooltip {
@@ -598,28 +780,28 @@
             border: 1px solid transparent;
         }
         .tier-title.tier-1 {
-            color: #5cb85c;
+            color: var(--green);
             background-color: rgba(92, 184, 92, 0.18);
             border-color: rgba(92, 184, 92, 0.45);
         }
         .tier-title.tier-2 {
-            color: #f0ad4e;
+            color: var(--amber);
             background-color: rgba(240, 173, 78, 0.18);
             border-color: rgba(240, 173, 78, 0.45);
         }
         .tier-title.tier-3 {
-            color: #ff6b6b;
+            color: var(--red);
             background-color: rgba(217, 83, 79, 0.18);
             border-color: rgba(217, 83, 79, 0.45);
         }
 
         .tier-group {
             margin-bottom: 20px;
-            background-color: #17171d !important;
+            background-color: var(--panel) !important;
             border-radius: 8px;
             padding: 12px;
-            border: 1px solid #2d2d38 !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-panel) !important;
+            box-shadow: 0 4px 10px rgba(var(--shadow-rgb), 0.4);
         }
 
         .single-clan-tiers-grid {
@@ -688,10 +870,10 @@
         }
 
         .clan-column {
-            background-color: #17171d;
+            background-color: var(--panel);
             border-radius: 8px;
             padding: 10px;
-            border: 1px solid #2d2d38;
+            border: 1px solid var(--border-panel);
         }
 
         .clan-column-header {
@@ -702,18 +884,18 @@
             border-radius: 5px;
             margin-bottom: 10px;
             text-align: center;
-            color: #fff;
+            color: #ffffff;
         }
 
         .counter-item {
-            background-color: #242430;
+            background-color: var(--item-bg);
             padding: 8px 10px;
             border-radius: 6px;
             margin-bottom: 8px;
             display: flex;
             flex-direction: column;
             gap: 4px;
-            border-left: 3px solid #555;
+            border-left: 3px solid var(--border-3);
             position: relative;
             cursor: pointer;
         }
@@ -725,16 +907,16 @@
             bottom: 120%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #2b2b36;
-            color: #fff;
+            background-color: var(--surface-2);
+            color: var(--text-strong);
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.82em;
             font-weight: normal;
             width: 280px;
             z-index: 100;
-            border: 1px solid #555;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+            border: 1px solid var(--border-3);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.7);
             pointer-events: none;
             transition: opacity 0.15s ease;
             line-height: 1.4;
@@ -750,7 +932,7 @@
             margin-left: -5px;
             border-width: 5px;
             border-style: solid;
-            border-color: #2b2b36 transparent transparent transparent;
+            border-color: var(--surface-2) transparent transparent transparent;
         }
 
         .counter-item:hover .counter-item-tooltip {
@@ -758,9 +940,9 @@
             opacity: 1;
         }
 
-        .counter-item.safe { border-left-color: #5cb85c; }
-        .counter-item.risky { border-left-color: #f0ad4e; }
-        .counter-item.mutual { border-left-color: #d9534f; }
+        .counter-item.safe { border-left-color: var(--green); }
+        .counter-item.risky { border-left-color: var(--amber); }
+        .counter-item.mutual { border-left-color: var(--red-strong); }
 
         .counter-item:last-child {
             margin-bottom: 0;
@@ -774,7 +956,7 @@
 
         .counter-unit-name {
             font-weight: bold;
-            color: #fff;
+            color: var(--text-strong);
             font-size: 0.88em;
         }
 
@@ -787,10 +969,10 @@
             font-size: 0.72em;
             display: flex;
             justify-content: space-between;
-            background-color: #1a1a22;
+            background-color: var(--surface-3);
             padding: 3px 6px;
             border-radius: 4px;
-            color: #ccc;
+            color: var(--text-ccc);
         }
 
         .damage-badge {
@@ -798,7 +980,7 @@
             font-weight: bold;
             padding: 2px 6px;
             border-radius: 4px;
-            background-color: #333;
+            background-color: var(--badge-bg);
             color: var(--accent-color);
             white-space: nowrap;
         }
@@ -813,21 +995,21 @@
         .stats-table th, .stats-table td {
             padding: 8px;
             text-align: center;
-            border: 1px solid #333;
+            border: 1px solid var(--border-1);
         }
 
         .stats-table th {
-            background-color: #262630;
+            background-color: var(--th-bg);
             color: var(--accent-color);
         }
 
-        .weakness { color: #ff6b6b; font-weight: bold; }
-        .resistance { color: #5cb85c; font-weight: bold; }
-        .neutral { color: #aaa; }
+        .weakness { color: var(--red); font-weight: bold; }
+        .resistance { color: var(--green); font-weight: bold; }
+        .neutral { color: var(--text-aaa); }
 
         .no-attacker-msg {
             font-size: 0.8em;
-            color: #777;
+            color: var(--text-777);
             text-align: center;
             padding: 10px 0;
             font-style: italic;
@@ -836,7 +1018,7 @@
         /* COMPARISON STYLES */
         .vs-badge {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
             font-weight: bold;
             padding: 10px 18px;
             border-radius: 50%;
@@ -859,28 +1041,28 @@
         }
 
         .unit-card-comp {
-            background-color: #1a1a22;
+            background-color: var(--surface-3);
             border-radius: 10px;
             padding: 18px;
-            border: 2px solid #333;
+            border: 2px solid var(--border-1);
         }
 
         .unit-card-comp.winner {
-            border-color: #5cb85c;
+            border-color: var(--green);
             box-shadow: 0 0 15px rgba(92, 184, 92, 0.3);
         }
 
         .unit-card-comp.loser {
-            border-color: #d9534f;
+            border-color: var(--red-strong);
             box-shadow: 0 0 15px rgba(217, 83, 79, 0.2);
         }
 
         .unit-card-comp.tie {
-            border-color: #f0ad4e;
+            border-color: var(--amber);
         }
 
         .verdict-banner {
-            background-color: #252532;
+            background-color: var(--verdict-bg);
             border-radius: 10px;
             padding: 20px;
             border-left: 6px solid var(--accent-color);
@@ -917,13 +1099,13 @@
             font-size: 0.85em;
             margin-top: 6px;
             background-color: rgba(146, 53, 168, 0.2);
-            color: #d18ce0;
+            color: var(--purple-text);
             border: 1px solid #9235a8;
         }
 
-        .adv-strong { background-color: rgba(92, 184, 92, 0.2); color: #5cb85c; border: 1px solid #5cb85c; }
-        .adv-weak { background-color: rgba(217, 83, 79, 0.2); color: #ff6b6b; border: 1px solid #d9534f; }
-        .adv-equal { background-color: rgba(240, 173, 78, 0.2); color: #f0ad4e; border: 1px solid #f0ad4e; }
+        .adv-strong { background-color: rgba(92, 184, 92, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .adv-weak { background-color: rgba(217, 83, 79, 0.2); color: var(--red); border: 1px solid var(--red-strong); }
+        .adv-equal { background-color: rgba(240, 173, 78, 0.2); color: var(--amber); border: 1px solid var(--amber); }
     
         /* INFO BUTTON & TOOLTIP STYLES */
         .info-btn {
@@ -934,7 +1116,7 @@
             height: 22px;
             border-radius: 50%;
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
             font-size: 0.9em;
             font-weight: bold;
             cursor: pointer;
@@ -952,8 +1134,8 @@
         .info-tooltip {
             visibility: hidden;
             width: 360px;
-            background-color: #2b2b36;
-            color: #fff;
+            background-color: var(--surface-2);
+            color: var(--text-strong);
             text-align: left;
             border-radius: 10px;
             padding: 14px 16px;
@@ -962,8 +1144,8 @@
             bottom: 130%;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
-            border: 1px solid #555;
+            box-shadow: 0 6px 20px rgba(var(--shadow-rgb), 0.7);
+            border: 1px solid var(--border-3);
             font-size: 0.95em;
             font-weight: normal;
             line-height: 1.6;
@@ -978,7 +1160,7 @@
             margin-left: -6px;
             border-width: 6px;
             border-style: solid;
-            border-color: #2b2b36 transparent transparent transparent;
+            border-color: var(--surface-2) transparent transparent transparent;
         }
 
         .info-btn:hover .info-tooltip, .info-btn:focus .info-tooltip {
@@ -1006,7 +1188,7 @@
             padding: 10px 16px;
             border-radius: 6px;
             border: 1px solid var(--accent-color);
-            background-color: #2b2b36;
+            background-color: var(--surface-2);
             color: var(--accent-color);
             font-size: 0.95em;
             font-weight: bold;
@@ -1023,7 +1205,7 @@
 
         .sort-toggle-btn:hover {
             background-color: var(--accent-color);
-            color: #121214;
+            color: var(--on-accent);
         }
 
         /* BACK TO TOP FLOATING BUTTON */
@@ -1035,9 +1217,9 @@
             height: 44px;
             border-radius: 50%;
             background-color: var(--accent-color);
-            color: #121214;
-            border: 2px solid #121214;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            color: var(--on-accent);
+            border: 2px solid var(--on-accent);
+            box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.65);
             font-size: 1.25em;
             font-weight: bold;
             cursor: pointer;
@@ -1069,9 +1251,9 @@
             height: 44px;
             border-radius: 50%;
             background-color: var(--accent-color);
-            color: #121214;
-            border: 2px solid #121214;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            color: var(--on-accent);
+            border: 2px solid var(--on-accent);
+            box-shadow: 0 4px 14px rgba(var(--shadow-rgb), 0.65);
             font-size: 1.25em;
             font-weight: bold;
             cursor: pointer;
@@ -1102,16 +1284,16 @@
             right: 125%;
             top: 50%;
             transform: translateY(-50%);
-            background-color: #2b2b36;
-            color: #fff;
+            background-color: var(--surface-2);
+            color: var(--text-strong);
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 0.8em;
             font-weight: normal;
             white-space: nowrap;
             z-index: 1051;
-            border: 1px solid #555;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-3);
+            box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.6);
             pointer-events: none;
             transition: opacity 0.15s ease;
         }
@@ -1124,12 +1306,12 @@
             margin-top: -5px;
             border-width: 5px;
             border-style: solid;
-            border-color: transparent transparent transparent #2b2b36;
+            border-color: transparent transparent transparent var(--surface-2);
         }
 
         @media (hover: hover) {
             .back-to-top-btn:hover {
-                background-color: #f3bc52;
+                background-color: var(--accent-hover);
                 transform: translateY(-2px);
                 opacity: 1 !important;
             }
@@ -1154,6 +1336,7 @@
 
 <div class="container">
     <div class="lang-container">
+        <button id="themeToggleBtn" class="lang-btn" onclick="toggleTheme()">☀️ Light</button>
         <button id="langEnBtn" class="lang-btn active" onclick="setLanguage('en')">🌐 English</button>
         <button id="langViBtn" class="lang-btn" onclick="setLanguage('vi')">🇻🇳 Tiếng Việt</button>
     </div>
@@ -1163,6 +1346,7 @@
 
     <!-- TAB NAVIGATION -->
     <div class="tab-nav" id="mainTabNav">
+        <button type="button" class="menu-btn" id="mainMenuBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleTabMenu(event, this)">☰<span class="menu-btn-label">Menu</span></button>
         <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
         <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Resistance Filter</button>
         <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Comparison</button>
@@ -1199,12 +1383,11 @@
             <div class="sticky-bar-title">
                 <span id="stickyBarTitle">⚙️ Quick Filters</span>
                 <div class="sticky-tab-pills" id="stickyTabPills">
-                    <button type="button" class="sticky-tab-pill active" data-tab="tabLookup" onclick="event.stopPropagation(); switchTab('tabLookup', false)">🔍 Counter</button>
-                    <button type="button" class="sticky-tab-pill" data-tab="tabWeakness" onclick="event.stopPropagation(); switchTab('tabWeakness', false)">🛡️ Resistance</button>
-                    <button type="button" class="sticky-tab-pill" data-tab="tabCompare" onclick="event.stopPropagation(); switchTab('tabCompare', false)">⚔️ 1v1</button>
+                    <button type="button" class="menu-btn sticky-menu-btn" id="stickyMenuBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleTabMenu(event, this)">☰<span class="menu-btn-label">Menu</span></button>
+                    <div class="sticky-recent-pills" id="stickyRecentPills"></div>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex: 0 0 auto;">
                 <button type="button" id="stickyResetBtn" class="sticky-reset-btn" onclick="event.stopPropagation(); resetCurrentTabFilters()" title="Reset filters to default">🔄 Reset</button>
                 <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
             </div>
@@ -1433,7 +1616,13 @@ const TRANSLATIONS = {
         hintExpanded: "Click outside or scroll to collapse",
         hintCollapsed: "Click bar to expand filters",
         backToTop: "Back to top",
-        resetBtn: "🔄 Reset"
+        resetBtn: "🔄 Reset",
+        themeToLight: "☀️ Light",
+        themeToDark: "🌙 Dark",
+        themeToLightTip: "Switch to light theme",
+        themeToDarkTip: "Switch to dark theme",
+        menuBtn: "Menu",
+        menuTip: "Open tab menu"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -1498,7 +1687,7 @@ const TRANSLATIONS = {
         tier2Desc: "(Gây sát thương chuẩn 100%)",
         tier3Title: "⚠️ Tier 3: Khắc chế rủi ro cao",
         tier3Desc: "(Sát thương nhận lại cao - Gây < Nhận)",
-        noUnits: "Không có đơn vị",
+        noUnits: "Không có đơn vị khả dụng",
         melee: "Cận chiến",
         missile: "Tầm xa",
         skill: "Kỹ năng",
@@ -1526,12 +1715,184 @@ const TRANSLATIONS = {
         hintExpanded: "Nhấp ngoài hoặc cuộn để thu gọn",
         hintCollapsed: "Nhấp vào thanh này để mở bộ lọc",
         backToTop: "Trở về đầu trang",
-        resetBtn: "🔄 Mặc định"
+        resetBtn: "🔄 Mặc định",
+        themeToLight: "☀️ Sáng",
+        themeToDark: "🌙 Tối",
+        themeToLightTip: "Chuyển sang giao diện Sáng",
+        themeToDarkTip: "Chuyển sang giao diện Tối",
+        menuBtn: "Menu",
+        menuTip: "Mở menu các tab"
     }
 };
 
 let currentLang = 'en';
+
+// ===== THEME (Sáng / Tối) =====
+const THEME_STORAGE_KEY = 'brTheme';
+function getTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+function updateThemeBtn() {
+    const btn = document.getElementById('themeToggleBtn');
+    if (!btn) return;
+    const t = TRANSLATIONS[currentLang];
+    const isLight = getTheme() === 'light';
+    btn.textContent = isLight ? t.themeToDark : t.themeToLight;
+    const tip = isLight ? t.themeToDarkTip : t.themeToLightTip;
+    btn.title = tip;
+    btn.setAttribute('aria-label', tip);
+}
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+    updateThemeBtn();
+}
+function toggleTheme() {
+    const next = getTheme() === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch (e) {}
+}
+
 let activeTabId = 'tabLookup';
+
+// ===== DANH SÁCH TAB + MENU + TAB MỞ GẦN ĐÂY =====
+// Muốn thêm tab mới: thêm 1 mục vào TAB_DEFS (pillKey = nhãn ngắn ở sticky bar, fullKey = nhãn đầy đủ trong Menu).
+const TAB_DEFS = [
+    { id: 'tabLookup',   pillKey: 'pillCounter',    fullKey: 'tabLookup' },
+    { id: 'tabWeakness', pillKey: 'pillResistance', fullKey: 'tabWeakness' },
+    { id: 'tabCompare',  pillKey: 'pillCompare',    fullKey: 'tabCompare' }
+];
+let recentTabs = TAB_DEFS.map(d => d.id); // Thứ tự dùng gần nhất (đầu mảng = vừa dùng); không lưu sau khi tải lại trang
+let tabMenuAnchor = null;
+
+function renderRecentPills() {
+    const wrap = document.getElementById('stickyRecentPills');
+    if (!wrap) return;
+    const t = TRANSLATIONS[currentLang];
+    wrap.innerHTML = '';
+    recentTabs.forEach(id => {
+        const def = TAB_DEFS.find(d => d.id === id);
+        if (!def) return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sticky-tab-pill' + (id === activeTabId ? ' active' : '');
+        btn.setAttribute('data-tab', id);
+        btn.textContent = t[def.pillKey];
+        btn.title = t[def.fullKey];
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            switchTab(id, false);
+        });
+        wrap.appendChild(btn);
+    });
+}
+
+// Ẩn bớt các tab gần đây không còn đủ chỗ (tab đang mở luôn đứng đầu nên luôn được hiển thị)
+function fitRecentPills() {
+    const wrap = document.getElementById('stickyRecentPills');
+    if (!wrap || !wrap.children.length) return;
+    const pills = Array.from(wrap.children);
+    pills.forEach(p => { p.style.display = ''; });
+    const avail = wrap.clientWidth;
+    if (!avail) return; // đang ẩn (display:none)
+    const gap = parseFloat(getComputedStyle(wrap).columnGap) || 0;
+    let used = 0;
+    let full = false;
+    pills.forEach((p, i) => {
+        if (full) { p.style.display = 'none'; return; }
+        const need = used + (i ? gap : 0) + p.offsetWidth;
+        if (i === 0 || need <= avail) {
+            used = need;
+        } else {
+            full = true;
+            p.style.display = 'none';
+        }
+    });
+}
+
+function updateMenuLabels() {
+    const t = TRANSLATIONS[currentLang];
+    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        const label = btn.querySelector('.menu-btn-label');
+        if (label) label.textContent = t.menuBtn;
+        btn.title = t.menuTip;
+        btn.setAttribute('aria-label', t.menuTip);
+    });
+    if (tabMenuAnchor) buildTabMenu();
+}
+
+function buildTabMenu() {
+    const pop = document.getElementById('tabMenuPopup');
+    if (!pop) return;
+    const t = TRANSLATIONS[currentLang];
+    pop.innerHTML = '';
+    TAB_DEFS.forEach(def => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'tab-menu-item' + (def.id === activeTabId ? ' active' : '');
+        item.setAttribute('role', 'menuitem');
+        const label = document.createElement('span');
+        label.textContent = t[def.fullKey];
+        item.appendChild(label);
+        if (def.id === activeTabId) {
+            const check = document.createElement('span');
+            check.textContent = '✓';
+            item.appendChild(check);
+        }
+        item.addEventListener('click', () => {
+            const fromMain = tabMenuAnchor && tabMenuAnchor.id === 'mainMenuBtn';
+            closeTabMenu();
+            switchTab(def.id, !!fromMain);
+        });
+        pop.appendChild(item);
+    });
+}
+
+function positionTabMenu() {
+    const pop = document.getElementById('tabMenuPopup');
+    if (!pop || !tabMenuAnchor) return;
+    const r = tabMenuAnchor.getBoundingClientRect();
+    pop.style.left = '0px';
+    pop.style.top = '0px';
+    const pw = pop.offsetWidth;
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - pw - 8));
+    pop.style.left = left + 'px';
+    pop.style.top = (r.bottom + 6) + 'px';
+}
+
+function openTabMenu(anchor) {
+    const pop = document.getElementById('tabMenuPopup');
+    if (!pop) return;
+    tabMenuAnchor = anchor;
+    buildTabMenu();
+    pop.classList.add('open');
+    positionTabMenu();
+    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.setAttribute('aria-expanded', b === anchor ? 'true' : 'false');
+    });
+}
+
+function closeTabMenu() {
+    const pop = document.getElementById('tabMenuPopup');
+    if (pop) pop.classList.remove('open');
+    tabMenuAnchor = null;
+    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.setAttribute('aria-expanded', 'false');
+    });
+}
+
+function toggleTabMenu(ev, btn) {
+    if (ev) ev.stopPropagation();
+    if (tabMenuAnchor === btn) closeTabMenu();
+    else openTabMenu(btn);
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && tabMenuAnchor) closeTabMenu();
+});
 let isStickyCollapsed = true; // Mặc định thu gọn khi mới tải trang
 let lastScrollY = window.scrollY;
 let isMainTabNavVisible = true;
@@ -1565,6 +1926,7 @@ function updateStickyBarUI() {
         body.classList.remove('collapsed');
         bar.classList.remove('is-collapsed');
     }
+    fitRecentPills();
 }
 
 function syncWrapperPlaceholderHeight() {
@@ -1624,6 +1986,8 @@ document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
 // Tự thu gọn khi nhấp vào vùng bên ngoài bar (chỉ khi thanh đang ghim ở trên cùng)
 document.addEventListener('click', (e) => {
     if (!e.target || !document.body.contains(e.target)) return;
+    if (tabMenuAnchor && !e.target.closest('.tab-menu-popup')) closeTabMenu();
+    if (e.target.closest('.tab-menu-popup, .menu-btn')) return;
     if (e.target.closest('.tab-btn')) return;
     const wrapper = document.getElementById('stickyFilterWrapper');
     if (!isStickyCollapsed && isBarPinned && wrapper && !wrapper.contains(e.target)) {
@@ -1637,6 +2001,7 @@ window.addEventListener('scroll', () => {
     if (!scrollTicking) {
         window.requestAnimationFrame(() => {
             const currentScrollY = window.scrollY;
+            if (tabMenuAnchor) closeTabMenu();
             updatePinStateFromAnchor();
             const deltaY = currentScrollY - lastScrollY;
 
@@ -1669,8 +2034,10 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 window.addEventListener('resize', () => {
+    if (tabMenuAnchor) closeTabMenu();
     updatePinStateFromAnchor();
     checkTabNavVisibility();
+    fitRecentPills();
 }, { passive: true });
 
 function setLanguage(lang) {
@@ -1688,6 +2055,9 @@ function setLanguage(lang) {
     if (bttTooltip) { bttTooltip.textContent = t.backToTop; }
     const resetBtnEl = document.getElementById('stickyResetBtn');
     if (resetBtnEl) { resetBtnEl.textContent = t.resetBtn; }
+    updateThemeBtn();
+    renderRecentPills();
+    updateMenuLabels();
     updateStickyBarUI();
 
     const labelMap = {
@@ -1850,6 +2220,9 @@ function switchTierTab(btnEl, unitId, tierIdx) {
 }
 
 function switchTab(tabId, scrollToTop = true) {
+    closeTabMenu();
+    recentTabs = [tabId].concat(recentTabs.filter(id => id !== tabId));
+    renderRecentPills();
     if (scrollToTop) {
         window.scrollTo({ top: 0, behavior: 'auto' });
     }
@@ -2128,7 +2501,7 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                 if (skillThreat) {
                     const skillTakesVal = (skillThreat.mult * 100).toFixed(0);
                     const skillDmgName = t[skillThreat.dmgType] || skillThreat.dmgType;
-                    takesDisplayHtml = `<strong style="color:#d18ce0;">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:#d18ce0;">(${t.skillShort})</span> | <strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
+                    takesDisplayHtml = `<strong style="color:var(--purple-text);">${skillTakesVal}%</strong> <span style="font-size:0.85em; color:var(--purple-text);">(${t.skillShort})</span> | <strong style="color:var(--red);">${primTakesVal}%</strong> <span style="font-size:0.85em; color:var(--text-aaa);">(${t.primShort})</span>`;
                     
                     tooltipText = t.counterTooltipTwoWay
                         .replace('{attacker}', atk.name)
@@ -2141,7 +2514,7 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                         .replace('{skillTakes}', skillTakesVal)
                         .replace('{skillDmg}', skillDmgName);
                 } else {
-                    takesDisplayHtml = `<strong style="color:#ff6b6b;">${primTakesVal}%</strong> <span style="font-size:0.85em; color:#aaa;">(${t.primShort})</span>`;
+                    takesDisplayHtml = `<strong style="color:var(--red);">${primTakesVal}%</strong> <span style="font-size:0.85em; color:var(--text-aaa);">(${t.primShort})</span>`;
                     const targetSourceLabel = isMissileAttacker(targetUnit) ? t.missile : t.melee;
                     tooltipText = t.counterTooltipOneWay
                         .replace('{attacker}', atk.name)
@@ -2166,7 +2539,7 @@ function renderClanColumnsForTwoWay(evaluatedItems, targetUnit) {
                         </div>
                         <div class="counter-detail">${attackMode}</div>
                         <div class="exchange-stats">
-                            <span>${t.deals} <strong style="color:#5cb85c;">${(item.dmgDealt * 100).toFixed(0)}%</strong></span>
+                            <span>${t.deals} <strong style="color:var(--green);">${(item.dmgDealt * 100).toFixed(0)}%</strong></span>
                             <span>${t.takes} ${takesDisplayHtml}</span>
                         </div>
                         <span class="counter-item-tooltip">${tooltipText}</span>
@@ -2266,8 +2639,8 @@ function renderResults() {
         const missileText = formatRawDmg(unit.missile);
         const skillText = formatRawDmg(unit.skill);
         const primDmgName = unit.damageType ? (t[unit.damageType] || unit.damageType) : 'N/A';
-        const korilNote = (unit.id === 'l_koril') ? `<br><span style="color:#5cb85c; font-style:italic;">${t.korilImmunityNote}</span>` : '';
-        const leafNote = (unit.id === 'l_leaf_disciple') ? `<br><span style="color:#f0ad4e; font-style:italic;">${t.leafDiscipleSkillNote}</span>` : '';
+        const korilNote = (unit.id === 'l_koril') ? `<br><span style="color:var(--green); font-style:italic;">${t.korilImmunityNote}</span>` : '';
+        const leafNote = (unit.id === 'l_leaf_disciple') ? `<br><span style="color:var(--amber); font-style:italic;">${t.leafDiscipleSkillNote}</span>` : '';
 
         let html = `
             <div class="target-header">
@@ -2277,15 +2650,15 @@ function renderResults() {
                 </div>
                 <div class="counter-detail" style="text-align: right;">
                     ${currentLang === 'vi' ? 'Cận chiến' : 'Melee'}: <strong>${meleeText}</strong> | ${currentLang === 'vi' ? 'Tầm xa' : 'Missile'}: <strong>${missileText}</strong> | ${currentLang === 'vi' ? 'Kỹ' : 'Skill'}: <strong>${skillText}</strong><br>
-                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:#ff6b6b;">${t.meleeException}</span>` : ''}${korilNote}${leafNote}
+                    ${t.primaryAttack} <strong style="text-transform: capitalize;">${primDmgName}</strong> ${MELEE_EXCEPTIONS.includes(unit.id) ? `<span style="color:var(--red);">${t.meleeException}</span>` : ''}${korilNote}${leafNote}
                 </div>
             </div>
 
             <div style="margin-top: 10px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorMultTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
     <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
-    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--green);"></span> <span><strong style="color:var(--green);">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--text-aaa);"></span> <span><strong style="color:var(--text-aaa);">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--red);"></span> <span><strong style="color:var(--red);">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
 </span></span></div>
             <table class="stats-table" style="margin-top: 5px;">
                 <tr>
@@ -2491,7 +2864,7 @@ function renderComparison() {
 
         if (yHasSkill) {
             conclusionHtml = currentLang === 'vi' ?
-                `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận <strong>${xTakesSkill}%</strong> sát thương từ skill của ${Y.name}.` :
+                `<strong>${X.name}</strong> ${primStatusVi}, nhưng nhận <strong>${xTakesSkill}%</strong> sát thương từ kỹ năng của ${Y.name}.` :
                 `<strong>${X.name}</strong> ${primStatusEn}, but takes <strong>${xTakesSkill}%</strong> damage from ${Y.name}'s skill.`;
         } else {
             conclusionHtml = currentLang === 'vi' ?
@@ -2548,9 +2921,9 @@ function renderComparison() {
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
     <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
-    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--green);"></span> <span><strong style="color:var(--green);">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--text-aaa);"></span> <span><strong style="color:var(--text-aaa);">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--red);"></span> <span><strong style="color:var(--red);">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
 </span></span></div>
                 <table class="stats-table" style="margin-bottom: 15px;">
                     <tr><th>${currentLang === 'vi' ? 'Cắt' : 'Cutting'}</th><th>${currentLang === 'vi' ? 'Cùn' : 'Blunt'}</th><th>${currentLang === 'vi' ? 'Xuyên' : 'Piercing'}</th><th>${currentLang === 'vi' ? 'Nổ' : 'Explosive'}</th><th>${currentLang === 'vi' ? 'Phép' : 'Magical'}</th></tr>
@@ -2588,9 +2961,9 @@ function renderComparison() {
 
                 <div style="margin-bottom: 5px; font-size: 0.85em; font-weight: bold; color: var(--accent-color); display: flex; align-items: center;">${t.armorResTitle} <span class="info-btn" tabindex="0">i<span class="info-tooltip">
     <strong style="color:var(--accent-color); display:block; margin-bottom:8px; font-size:1.05em;">${t.armorLegendTitle}</strong>
-    <div class="legend-item"><span class="legend-color" style="background-color:#5cb85c;"></span> <span><strong style="color:#5cb85c;">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#aaa;"></span> <span><strong style="color:#aaa;">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#ff6b6b;"></span> <span><strong style="color:#ff6b6b;">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--green);"></span> <span><strong style="color:var(--green);">&lt; 100% (Green):</strong> ${t.highResDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--text-aaa);"></span> <span><strong style="color:var(--text-aaa);">= 100% (Grey):</strong> ${t.neutralDesc}</span></div>
+    <div class="legend-item"><span class="legend-color" style="background-color:var(--red);"></span> <span><strong style="color:var(--red);">&gt; 100% (Red):</strong> ${t.weaknessDesc}</span></div>
 </span></span></div>
                 <table class="stats-table" style="margin-bottom: 15px;">
                     <tr><th>${currentLang === 'vi' ? 'Cắt' : 'Cutting'}</th><th>${currentLang === 'vi' ? 'Cùn' : 'Blunt'}</th><th>${currentLang === 'vi' ? 'Xuyên' : 'Piercing'}</th><th>${currentLang === 'vi' ? 'Nổ' : 'Explosive'}</th><th>${currentLang === 'vi' ? 'Phép' : 'Magical'}</th></tr>
@@ -2664,13 +3037,13 @@ function renderWeaknessUnitCard(u, dmgKey, dmgLabel, t) {
     const primDmgName = u.damageType ? (t[u.damageType] || u.damageType) : 'N/A';
 
     let riskClass = 'risky';
-    let multColor = '#f0ad4e';
+    let multColor = 'var(--amber)';
     if (mult > 1.0) {
         riskClass = 'mutual';
-        multColor = '#ff6b6b';
+        multColor = 'var(--red)';
     } else if (mult < 1.0) {
         riskClass = 'safe';
-        multColor = '#5cb85c';
+        multColor = 'var(--green)';
     }
 
     const tooltipText = t.weaknessTooltip
@@ -2689,7 +3062,7 @@ function renderWeaknessUnitCard(u, dmgKey, dmgLabel, t) {
             <div class="counter-detail">${atkMode} • <span style="text-transform: capitalize;">${primDmgName}</span></div>
             <div class="exchange-stats">
                 <span>${t.damageTakenLabel} <strong style="color: ${multColor};">${multPercent}%</strong></span>
-                <span style="text-transform: capitalize; color: #aaa;">${dmgLabel}</span>
+                <span style="text-transform: capitalize; color: var(--text-aaa);">${dmgLabel}</span>
             </div>
             <span class="counter-item-tooltip">${tooltipText}</span>
         </div>
@@ -2911,7 +3284,11 @@ document.getElementById('stickyUnitASelect').addEventListener('change', renderCo
 document.getElementById('stickyUnitBSelect').addEventListener('change', renderComparison);
 
 // Init
+updateThemeBtn();
+renderRecentPills();
+updateMenuLabels();
 updateStickyBarUI();
+window.addEventListener('load', fitRecentPills);
 requestAnimationFrame(syncWrapperPlaceholderHeight);
 updateLookupSortBtnLabel();
 populateLookupUnits();
@@ -2920,10 +3297,12 @@ renderResults();
 renderWeaknessFilter();
 </script>
 
-<footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid #333; font-size: 0.85em;">
+<footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--border-1); font-size: 0.85em;">
     <div>Last update: 15/11/2026</div>
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
+
+<div id="tabMenuPopup" class="tab-menu-popup" role="menu"></div>
 
 <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" aria-label="Back to top">↑<span class="btt-tooltip" id="bttTooltip">Back to top</span></button>
 <script>
