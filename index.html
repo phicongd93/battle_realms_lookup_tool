@@ -144,91 +144,13 @@
         .tab-nav {
             display: flex;
             justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
 
-        /* NÚT MENU (danh sách toàn bộ tab) */
-        .menu-btn {
-            padding: 12px 18px;
-            background-color: var(--card-bg);
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        .menu-btn:hover,
-        .menu-btn[aria-expanded="true"] {
-            background-color: var(--accent-color);
-            color: var(--on-accent);
-        }
-        .sticky-menu-btn {
-            padding: 4px 10px;
-            font-size: 0.8em;
-            border-radius: 6px;
-            background-color: var(--surface-2);
-            flex: 0 0 auto;
-        }
-
-        .tab-menu-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1100;
-            display: none;
-            min-width: 220px;
-            max-width: calc(100vw - 16px);
-            box-sizing: border-box;
-            background-color: var(--surface-2);
-            border: 1px solid var(--border-3);
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(var(--shadow-rgb), 0.6);
-            padding: 6px;
-        }
-        .tab-menu-popup.open {
-            display: block;
-        }
-        .tab-menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            width: 100%;
-            text-align: left;
-            background-color: transparent;
-            color: var(--text-main);
-            border: 1px solid transparent;
-            border-radius: 6px;
-            padding: 9px 12px;
-            margin: 0;
-            font-size: 0.92em;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .tab-menu-item + .tab-menu-item {
-            margin-top: 2px;
-        }
-        .tab-menu-item:hover {
-            background-color: var(--item-bg);
-            border-color: var(--accent-color);
-            color: var(--text-strong);
-        }
-        .tab-menu-item.active {
-            background-color: var(--accent-color);
-            color: var(--on-accent);
-            border-color: var(--accent-color);
-        }
-
         .tab-btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
             padding: 12px 24px;
             background-color: var(--card-bg);
             color: var(--text-sub);
@@ -311,8 +233,8 @@
                 gap: 6px;
             }
             .sticky-filter-bar .sticky-bar-title {
+                flex: 0 0 auto;
                 flex-wrap: nowrap !important;
-                flex: 0 0 auto !important;
                 justify-content: space-between;
                 align-items: center;
                 width: 100%;
@@ -333,16 +255,6 @@
                 padding: 4px 7px;
                 font-size: 0.84em;
                 white-space: nowrap;
-            }
-            .sticky-filter-bar .sticky-menu-btn {
-                padding: 4px 8px;
-                font-size: 0.9em;
-            }
-            .sticky-filter-bar .sticky-menu-btn .menu-btn-label {
-                display: none;
-            }
-            .menu-btn {
-                padding: 10px 14px;
             }
             .sticky-filter-bar .sticky-hint-text {
                 width: 100%;
@@ -460,40 +372,22 @@
             min-width: 0;
         }
 
-        #stickyBarTitle {
-            white-space: nowrap;
-            flex: 0 0 auto;
-        }
-
         .sticky-tab-pills {
             display: none;
+            flex: 1 1 0;
+            min-width: 0;
             gap: 6px;
             align-items: center;
             margin-left: 10px;
-            flex: 1 1 0;
-            min-width: 0;
         }
 
         .sticky-filter-bar:not(.hide-sticky-pills) .sticky-tab-pills {
             display: flex;
         }
 
-        .sticky-recent-pills {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex: 1 1 0;
-            min-width: 0;
-            overflow: hidden;
-        }
-
-        .sticky-recent-pills .sticky-tab-pill:first-child {
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .sticky-tab-pill {
+            flex: 0 0 auto;
+            white-space: nowrap;
             background-color: var(--surface-2);
             color: var(--text-sub);
             border: 1px solid var(--border-2);
@@ -503,8 +397,6 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
-            flex: 0 0 auto;
-            white-space: nowrap;
         }
 
         .sticky-tab-pill:hover {
@@ -1330,6 +1222,116 @@
                 font-size: 1.15em;
             }
         }
+
+        /* ===== MENU + CỤM TAB GẦN ĐÂY (v6.6.5) ===== */
+        #stickyBarTitle { white-space: nowrap; flex: 0 0 auto; }
+        .sticky-bar-actions { flex: 0 0 auto; }
+
+        .tab-menu-wrap { position: relative; display: flex; flex: 0 0 auto; }
+        .tab-menu-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 18px;
+            background-color: var(--card-bg);
+            color: var(--text-sub);
+            border: 1px solid var(--border-1);
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .tab-menu-btn .menu-icon { font-size: 1.1em; line-height: 1; }
+        .tab-menu-btn:hover, .tab-menu-btn.open { border-color: var(--accent-color); color: var(--text-strong); }
+        .tab-menu-btn.open { background-color: var(--surface-2); }
+
+        .sticky-tab-pills .tab-menu-btn {
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border-radius: 6px;
+            background-color: var(--surface-2);
+            border-color: var(--border-2);
+        }
+        .sticky-tab-pills .tab-menu-btn:hover, .sticky-tab-pills .tab-menu-btn.open { border-color: var(--accent-color); }
+
+        .recent-tabs-viewport {
+            flex: 0 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sticky-tab-pills .recent-tabs-viewport { gap: 0; }
+        .recent-tabs-viewport .tab-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .tab-nav.multi-row { flex-wrap: wrap; justify-content: flex-start; row-gap: 8px; }
+        .tab-row-extra { display: flex; flex-wrap: nowrap; overflow: hidden; min-width: 0; flex: 0 0 100%; }
+
+        .tab-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 230px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-3);
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(var(--shadow-rgb), 0.7);
+            padding: 6px;
+            z-index: 1200;
+            text-align: left;
+            font-size: 14px;
+            font-weight: normal;
+            text-transform: none;
+            color: var(--text-main);
+        }
+        .tab-menu-dropdown.open { display: block; }
+        .tab-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 9px 12px;
+            margin: 0;
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            text-align: left;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .tab-menu-item + .tab-menu-item { margin-top: 2px; }
+        .tab-menu-item:hover { background-color: var(--surface-2); color: var(--text-strong); }
+        .tab-menu-item.active { background-color: var(--accent-color); color: var(--on-accent); }
+        .tab-menu-item-check { visibility: hidden; }
+        .tab-menu-item.active .tab-menu-item-check { visibility: visible; }
+
+        .tab-btn:focus-visible, .sticky-tab-pill:focus-visible, .tab-menu-btn:focus-visible, .tab-menu-item:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: -2px;
+        }
+
+        @media (max-width: 640px) {
+            .tab-btn, .tab-menu-btn { padding: 9px 14px; font-size: 0.92em; }
+            .sticky-filter-bar .tab-menu-btn { padding: 4px 9px; font-size: 0.84em; }
+            .sticky-filter-bar .tab-menu-btn .menu-label { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -1346,10 +1348,11 @@
 
     <!-- TAB NAVIGATION -->
     <div class="tab-nav" id="mainTabNav">
-        <button type="button" class="menu-btn" id="mainMenuBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleTabMenu(event, this)">☰<span class="menu-btn-label">Menu</span></button>
-        <button class="tab-btn active" onclick="switchTab('tabLookup')">🔍 Unit Counter Lookup</button>
-        <button class="tab-btn" onclick="switchTab('tabWeakness')">🛡️ Resistance Filter</button>
-        <button class="tab-btn" onclick="switchTab('tabCompare')">⚔️ 1v1 Comparison</button>
+        <div class="tab-menu-wrap" id="mainMenuWrap">
+            <button type="button" class="tab-menu-btn" id="mainMenuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="mainMenuDropdown"><span class="menu-icon" aria-hidden="true">☰</span><span class="menu-label">Menu</span></button>
+            <div class="tab-menu-dropdown" id="mainMenuDropdown" role="menu"></div>
+        </div>
+        <div class="recent-tabs-viewport" id="mainTabViewport"></div>
     </div>
 
     <!-- RULES INFO SECTION FOR ACTIVE TAB -->
@@ -1383,11 +1386,14 @@
             <div class="sticky-bar-title">
                 <span id="stickyBarTitle">⚙️ Quick Filters</span>
                 <div class="sticky-tab-pills" id="stickyTabPills">
-                    <button type="button" class="menu-btn sticky-menu-btn" id="stickyMenuBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleTabMenu(event, this)">☰<span class="menu-btn-label">Menu</span></button>
-                    <div class="sticky-recent-pills" id="stickyRecentPills"></div>
+                    <div class="tab-menu-wrap" id="stickyMenuWrap">
+                        <button type="button" class="tab-menu-btn" id="stickyMenuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="stickyMenuDropdown"><span class="menu-icon" aria-hidden="true">☰</span><span class="menu-label">Menu</span></button>
+                        <div class="tab-menu-dropdown" id="stickyMenuDropdown" role="menu"></div>
+                    </div>
+                    <div class="recent-tabs-viewport" id="stickyTabViewport"></div>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px; flex: 0 0 auto;">
+            <div class="sticky-bar-actions" style="display: flex; align-items: center; gap: 10px;">
                 <button type="button" id="stickyResetBtn" class="sticky-reset-btn" onclick="event.stopPropagation(); resetCurrentTabFilters()" title="Reset filters to default">🔄 Reset</button>
                 <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
             </div>
@@ -1621,8 +1627,8 @@ const TRANSLATIONS = {
         themeToDark: "🌙 Dark",
         themeToLightTip: "Switch to light theme",
         themeToDarkTip: "Switch to dark theme",
-        menuBtn: "Menu",
-        menuTip: "Open tab menu"
+        menuLabel: "Menu",
+        menuTip: "All tabs"
     },
     vi: {
         title: "Công Cụ Tra Cứu & So Sánh Battle Realms",
@@ -1720,8 +1726,8 @@ const TRANSLATIONS = {
         themeToDark: "🌙 Tối",
         themeToLightTip: "Chuyển sang giao diện Sáng",
         themeToDarkTip: "Chuyển sang giao diện Tối",
-        menuBtn: "Menu",
-        menuTip: "Mở menu các tab"
+        menuLabel: "Menu",
+        menuTip: "Tất cả các tab"
     }
 };
 
@@ -1754,145 +1760,18 @@ function toggleTheme() {
 
 let activeTabId = 'tabLookup';
 
-// ===== DANH SÁCH TAB + MENU + TAB MỞ GẦN ĐÂY =====
-// Muốn thêm tab mới: thêm 1 mục vào TAB_DEFS (pillKey = nhãn ngắn ở sticky bar, fullKey = nhãn đầy đủ trong Menu).
-const TAB_DEFS = [
-    { id: 'tabLookup',   pillKey: 'pillCounter',    fullKey: 'tabLookup' },
-    { id: 'tabWeakness', pillKey: 'pillResistance', fullKey: 'tabWeakness' },
-    { id: 'tabCompare',  pillKey: 'pillCompare',    fullKey: 'tabCompare' }
+// ===== MENU + CỤM TAB GẦN ĐÂY =====
+// Thêm tab mới: chỉ cần thêm 1 dòng vào TAB_REGISTRY (+ khối nội dung, bộ lọc, hộp hướng dẫn và chuỗi dịch tương ứng).
+const TAB_REGISTRY = [
+    { id: 'tabLookup',   labelKey: 'tabLookup',   pillKey: 'pillCounter',    ruleId: 'rulesLookup',   onShow: null },
+    { id: 'tabWeakness', labelKey: 'tabWeakness', pillKey: 'pillResistance', ruleId: 'rulesWeakness', onShow: () => renderWeaknessFilter() },
+    { id: 'tabCompare',  labelKey: 'tabCompare',  pillKey: 'pillCompare',    ruleId: 'rulesCompare',  onShow: () => renderComparison() }
 ];
-let recentTabs = TAB_DEFS.map(d => d.id); // Thứ tự dùng gần nhất (đầu mảng = vừa dùng); không lưu sau khi tải lại trang
-let tabMenuAnchor = null;
-
-function renderRecentPills() {
-    const wrap = document.getElementById('stickyRecentPills');
-    if (!wrap) return;
-    const t = TRANSLATIONS[currentLang];
-    wrap.innerHTML = '';
-    recentTabs.forEach(id => {
-        const def = TAB_DEFS.find(d => d.id === id);
-        if (!def) return;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'sticky-tab-pill' + (id === activeTabId ? ' active' : '');
-        btn.setAttribute('data-tab', id);
-        btn.textContent = t[def.pillKey];
-        btn.title = t[def.fullKey];
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            switchTab(id, false);
-        });
-        wrap.appendChild(btn);
-    });
-}
-
-// Ẩn bớt các tab gần đây không còn đủ chỗ (tab đang mở luôn đứng đầu nên luôn được hiển thị)
-function fitRecentPills() {
-    const wrap = document.getElementById('stickyRecentPills');
-    if (!wrap || !wrap.children.length) return;
-    const pills = Array.from(wrap.children);
-    pills.forEach(p => { p.style.display = ''; });
-    const avail = wrap.clientWidth;
-    if (!avail) return; // đang ẩn (display:none)
-    const gap = parseFloat(getComputedStyle(wrap).columnGap) || 0;
-    let used = 0;
-    let full = false;
-    pills.forEach((p, i) => {
-        if (full) { p.style.display = 'none'; return; }
-        const need = used + (i ? gap : 0) + p.offsetWidth;
-        if (i === 0 || need <= avail) {
-            used = need;
-        } else {
-            full = true;
-            p.style.display = 'none';
-        }
-    });
-}
-
-function updateMenuLabels() {
-    const t = TRANSLATIONS[currentLang];
-    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (!btn) return;
-        const label = btn.querySelector('.menu-btn-label');
-        if (label) label.textContent = t.menuBtn;
-        btn.title = t.menuTip;
-        btn.setAttribute('aria-label', t.menuTip);
-    });
-    if (tabMenuAnchor) buildTabMenu();
-}
-
-function buildTabMenu() {
-    const pop = document.getElementById('tabMenuPopup');
-    if (!pop) return;
-    const t = TRANSLATIONS[currentLang];
-    pop.innerHTML = '';
-    TAB_DEFS.forEach(def => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'tab-menu-item' + (def.id === activeTabId ? ' active' : '');
-        item.setAttribute('role', 'menuitem');
-        const label = document.createElement('span');
-        label.textContent = t[def.fullKey];
-        item.appendChild(label);
-        if (def.id === activeTabId) {
-            const check = document.createElement('span');
-            check.textContent = '✓';
-            item.appendChild(check);
-        }
-        item.addEventListener('click', () => {
-            const fromMain = tabMenuAnchor && tabMenuAnchor.id === 'mainMenuBtn';
-            closeTabMenu();
-            switchTab(def.id, !!fromMain);
-        });
-        pop.appendChild(item);
-    });
-}
-
-function positionTabMenu() {
-    const pop = document.getElementById('tabMenuPopup');
-    if (!pop || !tabMenuAnchor) return;
-    const r = tabMenuAnchor.getBoundingClientRect();
-    pop.style.left = '0px';
-    pop.style.top = '0px';
-    const pw = pop.offsetWidth;
-    const left = Math.max(8, Math.min(r.left, window.innerWidth - pw - 8));
-    pop.style.left = left + 'px';
-    pop.style.top = (r.bottom + 6) + 'px';
-}
-
-function openTabMenu(anchor) {
-    const pop = document.getElementById('tabMenuPopup');
-    if (!pop) return;
-    tabMenuAnchor = anchor;
-    buildTabMenu();
-    pop.classList.add('open');
-    positionTabMenu();
-    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
-        const b = document.getElementById(id);
-        if (b) b.setAttribute('aria-expanded', b === anchor ? 'true' : 'false');
-    });
-}
-
-function closeTabMenu() {
-    const pop = document.getElementById('tabMenuPopup');
-    if (pop) pop.classList.remove('open');
-    tabMenuAnchor = null;
-    ['mainMenuBtn', 'stickyMenuBtn'].forEach(id => {
-        const b = document.getElementById(id);
-        if (b) b.setAttribute('aria-expanded', 'false');
-    });
-}
-
-function toggleTabMenu(ev, btn) {
-    if (ev) ev.stopPropagation();
-    if (tabMenuAnchor === btn) closeTabMenu();
-    else openTabMenu(btn);
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && tabMenuAnchor) closeTabMenu();
-});
+let recentTabs = TAB_REGISTRY.map(d => d.id); // thứ tự gần nhất (tab vừa dùng đứng đầu), không lưu qua lần tải lại
+const tabClusters = [];
+const MIN_PARTIAL_TAB_PX = 12; // tab cuối chỉ hiện khi phần nhìn thấy >= ngưỡng này (tránh vệt mảnh vô nghĩa)
+let clusterLayoutQueued = false;
+let lastPillsHidden = true;
 let isStickyCollapsed = true; // Mặc định thu gọn khi mới tải trang
 let lastScrollY = window.scrollY;
 let isMainTabNavVisible = true;
@@ -1910,14 +1789,11 @@ function updateStickyBarUI() {
     bar.classList.toggle('hide-sticky-pills', isMainTabNavVisible);
     bar.classList.toggle('is-pinned', isBarPinned);
 
-    document.querySelectorAll('.sticky-tab-pill').forEach(pill => {
-        const targetTab = pill.getAttribute('data-tab');
-        pill.classList.toggle('active', targetTab === activeTabId);
-        const pillLabel = targetTab === 'tabLookup' ? t.pillCounter
-            : targetTab === 'tabWeakness' ? t.pillResistance
-            : t.pillCompare;
-        if (pill.textContent !== pillLabel) pill.textContent = pillLabel;
-    });
+    const pillsHidden = bar.classList.contains('hide-sticky-pills');
+    if (pillsHidden !== lastPillsHidden) {
+        lastPillsHidden = pillsHidden;
+        if (!pillsHidden) tabClusters.forEach(c => { if (c.kind === 'pill') layoutTabCluster(c); });
+    }
 
     if (isStickyCollapsed) {
         body.classList.add('collapsed');
@@ -1926,7 +1802,6 @@ function updateStickyBarUI() {
         body.classList.remove('collapsed');
         bar.classList.remove('is-collapsed');
     }
-    fitRecentPills();
 }
 
 function syncWrapperPlaceholderHeight() {
@@ -1965,6 +1840,7 @@ function checkTabNavVisibility() {
 
     if (nowVisible !== isMainTabNavVisible) {
         isMainTabNavVisible = nowVisible;
+        closeAllTabMenus();
         updateStickyBarUI();
     }
 }
@@ -1986,8 +1862,6 @@ document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
 // Tự thu gọn khi nhấp vào vùng bên ngoài bar (chỉ khi thanh đang ghim ở trên cùng)
 document.addEventListener('click', (e) => {
     if (!e.target || !document.body.contains(e.target)) return;
-    if (tabMenuAnchor && !e.target.closest('.tab-menu-popup')) closeTabMenu();
-    if (e.target.closest('.tab-menu-popup, .menu-btn')) return;
     if (e.target.closest('.tab-btn')) return;
     const wrapper = document.getElementById('stickyFilterWrapper');
     if (!isStickyCollapsed && isBarPinned && wrapper && !wrapper.contains(e.target)) {
@@ -2001,9 +1875,9 @@ window.addEventListener('scroll', () => {
     if (!scrollTicking) {
         window.requestAnimationFrame(() => {
             const currentScrollY = window.scrollY;
-            if (tabMenuAnchor) closeTabMenu();
             updatePinStateFromAnchor();
             const deltaY = currentScrollY - lastScrollY;
+            if (Math.abs(deltaY) >= 5) closeAllTabMenus();
 
             if (
                 !isStickyCollapsed &&
@@ -2034,10 +1908,8 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 window.addEventListener('resize', () => {
-    if (tabMenuAnchor) closeTabMenu();
     updatePinStateFromAnchor();
     checkTabNavVisibility();
-    fitRecentPills();
 }, { passive: true });
 
 function setLanguage(lang) {
@@ -2056,8 +1928,6 @@ function setLanguage(lang) {
     const resetBtnEl = document.getElementById('stickyResetBtn');
     if (resetBtnEl) { resetBtnEl.textContent = t.resetBtn; }
     updateThemeBtn();
-    renderRecentPills();
-    updateMenuLabels();
     updateStickyBarUI();
 
     const labelMap = {
@@ -2079,10 +1949,7 @@ function setLanguage(lang) {
         if (el) el.textContent = text;
     });
     
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns[0].textContent = t.tabLookup;
-    tabBtns[1].textContent = t.tabWeakness;
-    tabBtns[2].textContent = t.tabCompare;
+    renderTabClusters();
     
     document.getElementById('rulesLookup').innerHTML = t.lookupRules;
     document.getElementById('rulesWeakness').innerHTML = t.weaknessRules;
@@ -2143,7 +2010,7 @@ function setLanguage(lang) {
     
     const footerDiv = document.querySelector('footer div:first-child');
     if (footerDiv) {
-        footerDiv.textContent = `${t.lastUpdate} 15/11/2026`;
+        footerDiv.textContent = `${t.lastUpdate} 18/11/2026`;
     }
     
     populateLookupUnits();
@@ -2220,41 +2087,222 @@ function switchTierTab(btnEl, unitId, tierIdx) {
 }
 
 function switchTab(tabId, scrollToTop = true) {
-    closeTabMenu();
-    recentTabs = [tabId].concat(recentTabs.filter(id => id !== tabId));
-    renderRecentPills();
+    const def = TAB_REGISTRY.find(d => d.id === tabId);
+    if (!def) return;
     if (scrollToTop) {
         window.scrollTo({ top: 0, behavior: 'auto' });
     }
     activeTabId = tabId;
+    touchRecentTab(tabId);
     ignoreScrollCollapseUntil = Date.now() + 650;
     setStickyCollapsed(false);
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.querySelectorAll('.tab-filter-group').forEach(group => group.style.display = 'none');
-    document.querySelectorAll('.tab-rule-box').forEach(rule => rule.style.display = 'none');
-    
-    if (tabId === 'tabLookup') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('tabLookup').classList.add('active');
-        document.getElementById('rulesLookup').style.display = 'block';
-        document.querySelector('.tab-filter-group[data-tab="tabLookup"]').style.display = 'block';
-    } else if (tabId === 'tabWeakness') {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('tabWeakness').classList.add('active');
-        document.getElementById('rulesWeakness').style.display = 'block';
-        document.querySelector('.tab-filter-group[data-tab="tabWeakness"]').style.display = 'block';
-        renderWeaknessFilter();
-    } else {
-        document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        document.getElementById('tabCompare').classList.add('active');
-        document.getElementById('rulesCompare').style.display = 'block';
-        document.querySelector('.tab-filter-group[data-tab="tabCompare"]').style.display = 'block';
-        renderComparison();
-    }
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.toggle('active', el.id === tabId));
+    document.querySelectorAll('.tab-filter-group').forEach(g => {
+        g.style.display = (g.getAttribute('data-tab') === tabId) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab-rule-box').forEach(r => {
+        r.style.display = (r.id === def.ruleId) ? 'block' : 'none';
+    });
+    if (def.onShow) def.onShow();
+    closeAllTabMenus();
+    renderTabClusters();
     updatePinStateFromAnchor();
     updateStickyBarUI();
     if (!isStickyCollapsed) requestAnimationFrame(syncWrapperPlaceholderHeight);
+}
+
+// ===== MENU + CỤM TAB GẦN ĐÂY: logic =====
+function isMobileView() {
+    return window.matchMedia('(max-width: 640px)').matches;
+}
+
+function touchRecentTab(tabId) {
+    recentTabs = [tabId].concat(recentTabs.filter(id => id !== tabId));
+}
+
+function closeAllTabMenus() {
+    tabClusters.forEach(c => {
+        c.menuDropdown.classList.remove('open');
+        c.menuBtn.classList.remove('open');
+        c.menuBtn.setAttribute('aria-expanded', 'false');
+    });
+}
+
+function positionTabMenu(c) {
+    const dd = c.menuDropdown;
+    dd.style.left = '0px';
+    const r = dd.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    const pad = 8;
+    let shift = 0;
+    if (r.right > vw - pad) shift = (vw - pad) - r.right;
+    if (r.left + shift < pad) shift = pad - r.left;
+    dd.style.left = shift + 'px';
+}
+
+function toggleTabMenu(c) {
+    const willOpen = !c.menuDropdown.classList.contains('open');
+    closeAllTabMenus();
+    if (willOpen) {
+        c.menuDropdown.classList.add('open');
+        c.menuBtn.classList.add('open');
+        c.menuBtn.setAttribute('aria-expanded', 'true');
+        positionTabMenu(c);
+    }
+}
+
+// Sắp xếp các tab (theo thứ tự gần nhất) vào tối đa maxRows hàng; tab cuối ở hàng cuối được phép hiện một phần.
+function layoutTabCluster(c) {
+    const cw = c.container.getBoundingClientRect().width;
+    if (!cw) return; // cụm đang ẩn
+    const gap = parseFloat(getComputedStyle(c.container).columnGap) || 0;
+    const avail = cw - c.menuWrap.getBoundingClientRect().width - gap;
+    const maxRows = Math.max(1, c.maxRows());
+    const focused = c.viewport.contains(document.activeElement) ? document.activeElement : null;
+
+    // 1. Đo bề rộng tự nhiên của từng nút
+    const probe = document.createElement('div');
+    probe.className = 'tab-row';
+    probe.style.cssText = 'width:max-content;overflow:visible;gap:' + gap + 'px;';
+    c.container.querySelectorAll('.tab-row-extra').forEach(el => el.remove());
+    c.viewport.textContent = '';
+    c.viewport.appendChild(probe);
+    TAB_REGISTRY.forEach(def => probe.appendChild(c.buttons[def.id]));
+    const widths = {};
+    TAB_REGISTRY.forEach(def => { widths[def.id] = c.buttons[def.id].getBoundingClientRect().width; });
+
+    // 2. Chia hàng (hàng đầu nằm cạnh nút Menu; các hàng sau dùng toàn bộ bề rộng)
+    const rows = [[]];
+    let r = 0, used = 0;
+    const rowAvail = (i) => (i === 0 ? avail : cw);
+    for (const id of recentTabs) {
+        const w = widths[id];
+        const row = rows[r];
+        const cap = rowAvail(r);
+        const need = (row.length ? gap : 0) + w;
+        if (used + need <= cap + 0.5) { row.push(id); used += need; }
+        else if (row.length === 0) { row.push(id); used = cap; }
+        else if (r < maxRows - 1) { rows.push([id]); r++; used = w; }
+        else {
+            if (cap - used - gap >= MIN_PARTIAL_TAB_PX) row.push(id); // hiện một phần, hàng sẽ cắt phần thừa
+            break;
+        }
+    }
+
+    // 3. Dựng DOM (tab không vừa không được gắn vào, vẫn truy cập được qua Menu)
+    c.viewport.textContent = '';
+    rows.forEach((ids, i) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = i === 0 ? 'tab-row' : 'tab-row tab-row-extra';
+        rowEl.style.gap = gap + 'px';
+        ids.forEach(id => rowEl.appendChild(c.buttons[id]));
+        (i === 0 ? c.viewport : c.container).appendChild(rowEl);
+    });
+    c.container.classList.toggle('multi-row', rows.length > 1);
+    if (focused && document.body.contains(focused)) focused.focus({ preventScroll: true });
+}
+
+function renderTabClusters() {
+    const t = TRANSLATIONS[currentLang];
+    tabClusters.forEach(c => {
+        const lbl = c.menuBtn.querySelector('.menu-label');
+        if (lbl && lbl.textContent !== t.menuLabel) lbl.textContent = t.menuLabel;
+        c.menuBtn.title = t.menuTip;
+        c.menuBtn.setAttribute('aria-label', t.menuTip);
+        TAB_REGISTRY.forEach(def => {
+            const isActive = def.id === activeTabId;
+            const b = c.buttons[def.id];
+            const text = t[def[c.labelKey]];
+            if (b.textContent !== text) b.textContent = text;
+            b.classList.toggle('active', isActive);
+            const it = c.menuItems[def.id];
+            const itLbl = it.querySelector('.tab-menu-item-label');
+            if (itLbl.textContent !== t[def.labelKey]) itLbl.textContent = t[def.labelKey];
+            it.classList.toggle('active', isActive);
+        });
+        layoutTabCluster(c);
+    });
+}
+
+function initTabClusters() {
+    const defs = [
+        { kind: 'main', containerId: 'mainTabNav', menuWrapId: 'mainMenuWrap', menuBtnId: 'mainMenuBtn', menuDdId: 'mainMenuDropdown', viewportId: 'mainTabViewport', btnClass: 'tab-btn', labelKey: 'labelKey', scrollTop: true, maxRows: () => isMobileView() ? 2 : 1 },
+        { kind: 'pill', containerId: 'stickyTabPills', menuWrapId: 'stickyMenuWrap', menuBtnId: 'stickyMenuBtn', menuDdId: 'stickyMenuDropdown', viewportId: 'stickyTabViewport', btnClass: 'sticky-tab-pill', labelKey: 'pillKey', scrollTop: false, maxRows: () => 1 }
+    ];
+    defs.forEach(d => {
+        const c = {
+            kind: d.kind, btnClass: d.btnClass, labelKey: d.labelKey, scrollTop: d.scrollTop, maxRows: d.maxRows,
+            container: document.getElementById(d.containerId),
+            menuWrap: document.getElementById(d.menuWrapId),
+            menuBtn: document.getElementById(d.menuBtnId),
+            menuDropdown: document.getElementById(d.menuDdId),
+            viewport: document.getElementById(d.viewportId),
+            buttons: {}, menuItems: {}, lastW: -1
+        };
+        if (!c.container || !c.menuWrap || !c.menuBtn || !c.menuDropdown || !c.viewport) return;
+
+        TAB_REGISTRY.forEach(def => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = c.btnClass;
+            b.setAttribute('data-tab', def.id);
+            b.addEventListener('click', (e) => {
+                if (c.kind === 'pill') e.stopPropagation();
+                switchTab(def.id, c.scrollTop);
+            });
+            c.buttons[def.id] = b;
+
+            const it = document.createElement('button');
+            it.type = 'button';
+            it.className = 'tab-menu-item';
+            it.setAttribute('role', 'menuitem');
+            it.innerHTML = '<span class="tab-menu-item-label"></span><span class="tab-menu-item-check" aria-hidden="true">✓</span>';
+            it.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switchTab(def.id, c.scrollTop);
+            });
+            c.menuDropdown.appendChild(it);
+            c.menuItems[def.id] = it;
+        });
+
+        c.menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleTabMenu(c);
+        });
+        tabClusters.push(c);
+    });
+
+    const queueLayout = () => {
+        if (clusterLayoutQueued) return;
+        clusterLayoutQueued = true;
+        requestAnimationFrame(() => {
+            clusterLayoutQueued = false;
+            tabClusters.forEach(layoutTabCluster);
+        });
+    };
+    if ('ResizeObserver' in window) {
+        const ro = new ResizeObserver(entries => {
+            let need = false;
+            entries.forEach(en => {
+                const c = tabClusters.find(x => x.container === en.target);
+                if (!c) return;
+                const w = en.contentRect.width;
+                if (Math.abs(w - c.lastW) > 0.5) { c.lastW = w; need = true; }
+            });
+            if (need) queueLayout();
+        });
+        tabClusters.forEach(c => ro.observe(c.container));
+    }
+    window.addEventListener('resize', queueLayout, { passive: true });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest || !e.target.closest('.tab-menu-wrap')) closeAllTabMenus();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllTabMenus();
+    });
+
+    renderTabClusters();
 }
 
 function populateLookupUnits() {
@@ -3284,11 +3332,9 @@ document.getElementById('stickyUnitASelect').addEventListener('change', renderCo
 document.getElementById('stickyUnitBSelect').addEventListener('change', renderComparison);
 
 // Init
+initTabClusters();
 updateThemeBtn();
-renderRecentPills();
-updateMenuLabels();
 updateStickyBarUI();
-window.addEventListener('load', fitRecentPills);
 requestAnimationFrame(syncWrapperPlaceholderHeight);
 updateLookupSortBtnLabel();
 populateLookupUnits();
@@ -3298,11 +3344,9 @@ renderWeaknessFilter();
 </script>
 
 <footer style="text-align: center; color: var(--text-sub); margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--border-1); font-size: 0.85em;">
-    <div>Last update: 15/11/2026</div>
+    <div>Last update: 18/11/2026</div>
     <div style="margin-top: 5px; color: var(--accent-color); font-weight: bold;">@phicongd93</div>
 </footer>
-
-<div id="tabMenuPopup" class="tab-menu-popup" role="menu"></div>
 
 <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" aria-label="Back to top">↑<span class="btt-tooltip" id="bttTooltip">Back to top</span></button>
 <script>
