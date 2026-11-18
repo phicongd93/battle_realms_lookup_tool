@@ -1849,6 +1849,35 @@ checkTabNavVisibility();
 
 let ignoreScrollCollapseUntil = 0;
 
+// Đổi bộ lọc làm nội dung bên dưới co/giãn -> trình duyệt tự chỉnh vị trí cuộn và phát sinh sự kiện scroll
+// không phải do người dùng. Tạm bỏ qua việc tự thu gọn thanh trong khoảng thời gian này.
+function suppressScrollCollapse(ms = 1000) {
+    ignoreScrollCollapseUntil = Math.max(ignoreScrollCollapseUntil, Date.now() + ms);
+    lastScrollY = window.scrollY;
+}
+['change', 'input', 'click'].forEach(ev => {
+    stickyBarEl.addEventListener(ev, () => { if (!isStickyCollapsed) suppressScrollCollapse(); }, true);
+});
+
+// Sau khi đổi bộ lọc: nếu đầu vùng kết quả đang nằm khuất phía trên thanh, cuộn ngay về đầu vùng kết quả.
+function alignToResultsTop() {
+    const area = document.getElementById(activeTabId);
+    if (!area || window.scrollY <= 0) return;
+    const barBottom = stickyBarEl.getBoundingClientRect().bottom;
+    const top = area.getBoundingClientRect().top;
+    if (top >= barBottom) return;
+    window.cardScrollLock = true;
+    setTimeout(() => { window.cardScrollLock = false; }, 400);
+    suppressScrollCollapse();
+    window.scrollTo({ top: Math.max(0, window.scrollY + top - barBottom - 8), behavior: 'auto' });
+}
+stickyBarEl.addEventListener('change', (e) => {
+    if (e.target && e.target.matches && e.target.matches('select')) requestAnimationFrame(alignToResultsTop);
+}, true);
+stickyBarEl.addEventListener('click', (e) => {
+    if (e.target && e.target.closest && e.target.closest('.sort-toggle-btn, .sticky-reset-btn')) requestAnimationFrame(alignToResultsTop);
+}, true);
+
 // Mở ra khi nhấp trực tiếp vào bar khi đang thu gọn
 document.getElementById('stickyFilterBar').addEventListener('click', (e) => {
     if (isStickyCollapsed) {
@@ -2626,7 +2655,7 @@ function setupCardVirtualization() {
                 const oldBottom = oldRect.bottom;
                 card.classList.remove('cv-off');
                 const newH = card.getBoundingClientRect().height;
-                if (!window.cardScrollLock && oldBottom <= 0 && Math.abs(newH - oldH) > 0.5) window.scrollBy(0, newH - oldH);
+                if (!window.cardScrollLock && oldBottom <= 0 && Math.abs(newH - oldH) > 0.5) { suppressScrollCollapse(); window.scrollBy(0, newH - oldH); }
             } else if (!en.isIntersecting && !isOff) {
                 // Ẩn thẻ: khóa chiều cao placeholder đúng bằng chiều cao thật để layout không bị xê dịch (tránh vòng lặp nháy)
                 // contain-intrinsic-height áp dụng cho content-box => phải trừ padding + border của thẻ, nếu không thẻ sẽ cao hơn ~44px khi ẩn
