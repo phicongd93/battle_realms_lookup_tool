@@ -2138,6 +2138,8 @@ function switchTab(tabId, scrollToTop = true) {
     updatePinStateFromAnchor();
     updateStickyBarUI();
     if (!isStickyCollapsed) requestAnimationFrame(syncWrapperPlaceholderHeight);
+    // Đổi tab từ Sticky bar (không tự cuộn lên đầu trang): đưa đầu vùng kết quả về ngay dưới thanh
+    if (!scrollToTop) requestAnimationFrame(alignToResultsTop);
 }
 
 // ===== MENU + CỤM TAB GẦN ĐÂY: logic =====
