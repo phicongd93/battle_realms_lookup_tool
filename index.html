@@ -352,17 +352,6 @@
             color: var(--on-accent);
         }
 
-        .sticky-guide-btn {
-            padding: 4px 8px;
-            line-height: 1.2;
-        }
-
-        .sticky-guide-btn.is-off {
-            background-color: var(--accent-color);
-            color: var(--on-accent);
-            opacity: 0.75;
-        }
-
         .sticky-bar-header {
             display: flex;
             justify-content: space-between;
@@ -1567,75 +1556,6 @@
             }
         }
 
-        /* ===== TOOLTIP CHUNG (v6.9.9) =====
-           Cách dùng: gắn data-tip="nội dung" lên phần tử (KHÔNG dùng thuộc tính title; giữ aria-label cho trình đọc màn hình).
-           Tùy chọn: data-tip-end (căn mép phải, dùng cho nút sát lề phải), data-tip-top (hiện phía trên thay vì phía dưới).
-           Chỉ dùng biến CSS của css_10 nên tự đổi theo theme Sáng/Tối. Đổi chữ bằng JS: el.setAttribute('data-tip', ...). */
-        [data-tip] { position: relative; }
-
-        [data-tip]::after,
-        [data-tip]::before {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-            position: absolute;
-            z-index: 1100;
-            transition: opacity 0.15s ease, visibility 0.15s ease;
-        }
-
-        [data-tip]::after {
-            content: attr(data-tip);
-            top: calc(100% + 9px);
-            left: 50%;
-            transform: translateX(-50%);
-            width: max-content;
-            max-width: min(260px, calc(100vw - 32px));
-            box-sizing: border-box;
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-3);
-            background-color: var(--surface-2);
-            color: var(--text-strong);
-            box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.6);
-            font-size: 12px;
-            font-weight: normal;
-            line-height: 1.4;
-            text-align: left;
-            text-transform: none;
-            white-space: normal;
-        }
-
-        /* Mũi tên: hình vuông xoay 45 độ, có viền cùng màu khung */
-        [data-tip]::before {
-            content: "";
-            top: calc(100% + 4px);
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            margin-left: -4px;
-            box-sizing: border-box;
-            background-color: var(--surface-2);
-            border-top: 1px solid var(--border-3);
-            border-left: 1px solid var(--border-3);
-            transform: rotate(45deg);
-        }
-
-        [data-tip][data-tip-end]::after { left: auto; right: 0; transform: none; }
-        [data-tip][data-tip-end]::before { left: auto; right: 14px; margin-left: 0; }
-
-        [data-tip][data-tip-top]::after { top: auto; bottom: calc(100% + 9px); }
-        [data-tip][data-tip-top]::before { top: auto; bottom: calc(100% + 4px); transform: rotate(225deg); }
-
-        @media (hover: hover) {
-            [data-tip]:hover::after, [data-tip]:hover::before { visibility: visible; opacity: 1; }
-        }
-        [data-tip]:focus-visible::after, [data-tip]:focus-visible::before { visibility: visible; opacity: 1; }
-
-        /* Mobile (<= 640px): cụm nút của Sticky bar nằm sát lề TRÁI nên tooltip căn mép trái (nếu không sẽ tràn ra ngoài màn hình) */
-        @media (max-width: 640px) {
-            .sticky-bar-actions [data-tip][data-tip-end]::after { right: auto; left: 0; }
-            .sticky-bar-actions [data-tip][data-tip-end]::before { right: auto; left: 10px; }
-        }
         /* ===== MENU + CỤM TAB GẦN ĐÂY (v6.6.5) ===== */
         #stickyBarTitle { white-space: nowrap; flex: 0 0 auto; }
         .sticky-bar-actions { flex: 0 0 auto; }
@@ -1823,7 +1743,7 @@
         <strong>📖 How to Use Database Changes:</strong><br>
         • <strong>Load files:</strong> Choose the OLD and the NEW game database (.xlsx), then click Compare. Every sheet is compared. The optional rules file adds readable names next to numeric codes and marks player-relevant sheets.<br>
         • <strong>Matching:</strong> Rows are matched by their first column (usually Type); Enum_* sheets are matched by Description. Differences are cell value changes, added / removed rows, added / removed columns and added / removed sheets.<br>
-        • <strong>Filters:</strong> Use the Quick Filters bar to narrow the list by sheet, change type, field, keyword, numeric change size or direction. Click a summary chip or a sheet row to filter instantly. Results can be exported to CSV.
+        • <strong>Filters:</strong> Use the Quick Filters bar to narrow the list by sheet, change type, field, keyword, numeric change size or direction. Open the summary panel, then click a sheet row to filter instantly. Results can be exported to CSV.
     </div>
 
     <!-- STICKY FILTER BAR (SHARED ACROSS ALL TABS) -->
@@ -1843,8 +1763,7 @@
                 </div>
             </div>
             <div class="sticky-bar-actions" style="display: flex; align-items: center; gap: 10px;">
-                <button type="button" id="stickyGuideBtn" class="sticky-reset-btn sticky-guide-btn" onclick="event.stopPropagation(); toggleGuideVisibility()" data-tip="Hide the guide on all tabs" data-tip-end aria-label="Hide the guide on all tabs" aria-pressed="false">📖</button>
-                <button type="button" id="stickyResetBtn" class="sticky-reset-btn" onclick="event.stopPropagation(); resetCurrentTabFilters()" data-tip="Reset filters to default" data-tip-end aria-label="Reset filters to default">🔄 Reset</button>
+                <button type="button" id="stickyResetBtn" class="sticky-reset-btn" onclick="event.stopPropagation(); resetCurrentTabFilters()" title="Reset filters to default">🔄 Reset</button>
                 <span class="sticky-hint-text" id="stickyHintText">Click bar to expand filters</span>
             </div>
         </div>
@@ -2710,7 +2629,7 @@ const TRANSLATIONS = {
         tabCompare: "⚔️ 1v1 Comparison",
         tabDbDiff: "🧾 Database Changes",
         lookupRules: "<strong>📖 How to Use Counter Lookup:</strong><br>• <strong>Target Selection:</strong> Select a target unit to inspect its armor multipliers and damage types. Counter units are grouped into Tier 1, 2, and 3 tabs by effectiveness. Click each available tab to view the full unit list.<br>• <strong>Safe & Dominant Counters (Tier 1):</strong> Deals high damage (≥125%) to the target while taking equal or lower in return (Deals ≥ Takes).<br>• <strong>Effective Counters (Tier 2):</strong> Deals standard damage (100%) to the target while taking equal or lower in return.<br>• <strong>High-Risk Counters (Tier 3):</strong> Deals effective damage (≥100%) to the target while taking heavier damage in return (Deals < Takes).",
-        dbDiffRules: "<strong>📖 How to Use Database Changes:</strong><br>• <strong>Load files:</strong> Choose the OLD and the NEW game database (.xlsx), then click Compare. Every sheet is compared. The optional rules file adds readable names next to numeric codes and marks player-relevant sheets.<br>• <strong>Matching:</strong> Rows are matched by their first column (usually Type); Enum_* sheets are matched by Description. Differences are cell value changes, added / removed rows, added / removed columns and added / removed sheets.<br>• <strong>Filters:</strong> Use the Quick Filters bar to narrow the list by sheet, change type, field, keyword, numeric change size or direction. Click a summary chip or a sheet row to filter instantly. Results can be exported to CSV.",
+        dbDiffRules: "<strong>📖 How to Use Database Changes:</strong><br>• <strong>Load files:</strong> Choose the OLD and the NEW game database (.xlsx), then click Compare. Every sheet is compared. The optional rules file adds readable names next to numeric codes and marks player-relevant sheets.<br>• <strong>Matching:</strong> Rows are matched by their first column (usually Type); Enum_* sheets are matched by Description. Differences are cell value changes, added / removed rows, added / removed columns and added / removed sheets.<br>• <strong>Filters:</strong> Use the Quick Filters bar to narrow the list by sheet, change type, field, keyword, numeric change size or direction. Open the summary panel, then click a sheet row to filter instantly. Results can be exported to CSV.",
         weaknessRules: "<strong>📖 How to Use Resistance Filter:</strong><br>• <strong>Resistance Category:</strong> Choose between Weak Resistance (units taking ≥ 100% damage, sorted high → low) or Strong Resistance (units taking < 100% damage, sorted low → high).<br>• <strong>Damage & Unit Type:</strong> Select an attack damage type and filter by melee or missile units.<br>• <strong>Custom Sort:</strong> Click the sort button anytime to reverse the order.",
         resistanceCategoryLabel: "1. Resistance Category:",
         weaknessDmgLabel: "2. Damage Type:",
@@ -2796,8 +2715,6 @@ const TRANSLATIONS = {
         backToTop: "Back to top",
         resetBtn: "🔄 Reset",
         resetTip: "Reset filters to default",
-        guideHideTip: "Hide the guide on all tabs",
-        guideShowTip: "Show the guide on all tabs",
         closeLbl: "Close",
         pageTitle: "Unit Counter & 1v1 Comparison - Battle Realms (Zen Edition)",
         themeToLight: "☀️ Light",
@@ -2823,7 +2740,7 @@ const TRANSLATIONS = {
         tabCompare: "⚔️ So Sánh 1v1",
         tabDbDiff: "🧾 So Sánh Database",
         lookupRules: "<strong>📖 Hướng dẫn Tra cứu Khắc chế:</strong><br>• <strong>Lựa chọn Mục tiêu:</strong> Chọn một đơn vị mục tiêu để xem hệ số giáp và loại sát thương của đơn vị đó. Các đơn vị khắc chế được nhóm thành các thẻ Tier 1, 2 và 3 theo mức độ hiệu quả. Nhấp vào từng thẻ khả dụng để xem danh sách đơn vị đầy đủ.<br>• <strong>Khắc chế An toàn & Áp đảo (Tier 1):</strong> Gây sát thương cao (≥125%) lên mục tiêu trong khi nhận lại thấp hơn hoặc bằng (Gây ≥ Nhận).<br>• <strong>Khắc chế Hiệu quả (Tier 2):</strong> Gây sát thương chuẩn (100%) lên mục tiêu trong khi nhận lại thấp hơn hoặc bằng.<br>• <strong>Khắc chế Rủi ro cao (Tier 3):</strong> Gây sát thương hiệu quả (≥100%) lên mục tiêu trong khi chịu tổn thương nặng hơn ở chiều ngược lại (Gây < Nhận).",
-        dbDiffRules: "<strong>📖 Hướng dẫn So sánh Database:</strong><br>• <strong>Nạp file:</strong> Chọn file database game CŨ và MỚI (.xlsx) rồi bấm So sánh. Mọi sheet đều được so sánh. File quy tắc (tùy chọn) giúp hiện tên dễ đọc cạnh mã số và đánh dấu các sheet quan trọng với người chơi.<br>• <strong>Cách ghép:</strong> Hàng được ghép theo cột đầu tiên (thường là Type); sheet Enum_* ghép theo Description. Khác biệt gồm: đổi giá trị ô, thêm / bỏ hàng, thêm / bỏ cột và thêm / bỏ sheet.<br>• <strong>Bộ lọc:</strong> Dùng thanh Bộ Lọc Nhanh để thu hẹp danh sách theo sheet, loại thay đổi, trường, từ khóa, mức lệch số hoặc chiều thay đổi. Nhấp vào thẻ tóm tắt hoặc dòng sheet để lọc ngay. Có thể xuất kết quả ra CSV.",
+        dbDiffRules: "<strong>📖 Hướng dẫn So sánh Database:</strong><br>• <strong>Nạp file:</strong> Chọn file database game CŨ và MỚI (.xlsx) rồi bấm So sánh. Mọi sheet đều được so sánh. File quy tắc (tùy chọn) giúp hiện tên dễ đọc cạnh mã số và đánh dấu các sheet quan trọng với người chơi.<br>• <strong>Cách ghép:</strong> Hàng được ghép theo cột đầu tiên (thường là Type); sheet Enum_* ghép theo Description. Khác biệt gồm: đổi giá trị ô, thêm / bỏ hàng, thêm / bỏ cột và thêm / bỏ sheet.<br>• <strong>Bộ lọc:</strong> Dùng thanh Bộ Lọc Nhanh để thu hẹp danh sách theo sheet, loại thay đổi, trường, từ khóa, mức lệch số hoặc chiều thay đổi. Mở bảng tóm tắt và nhấp vào một hàng để lọc ngay. Có thể xuất kết quả ra CSV.",
         weaknessRules: "<strong>📖 Hướng dẫn sử dụng Bộ lọc Kháng:</strong><br>• <strong>Danh mục Kháng:</strong> Chọn giữa Kháng yếu (các đơn vị nhận ≥ 100% sát thương, xếp từ cao → thấp) hoặc Kháng mạnh (các đơn vị nhận < 100% sát thương, xếp từ thấp → cao).<br>• <strong>Loại Sát thương & Đơn vị:</strong> Chọn loại sát thương và lọc theo đơn vị cận chiến hoặc tầm xa.<br>• <strong>Sắp xếp Tùy chỉnh:</strong> Nhấp vào nút sắp xếp để đảo ngược thứ tự tùy ý.",
         resistanceCategoryLabel: "1. Danh mục Kháng:",
         weaknessDmgLabel: "2. Loại Sát Thương:",
@@ -2909,8 +2826,6 @@ const TRANSLATIONS = {
         backToTop: "Trở về đầu trang",
         resetBtn: "🔄 Mặc định",
         resetTip: "Đặt lại bộ lọc về mặc định",
-        guideHideTip: "Ẩn phần hướng dẫn của tất cả các tab",
-        guideShowTip: "Hiện phần hướng dẫn của tất cả các tab",
         closeLbl: "Đóng",
         pageTitle: "Tra cứu khắc chế & So sánh 1v1 - Battle Realms (Bản Zen)",
         themeToLight: "☀️ Sáng",
@@ -2950,7 +2865,6 @@ function toggleTheme() {
 }
 
 let activeTabId = 'tabLookup';
-let guideHidden = false; // true = ẩn hộp hướng dẫn của mọi tab (nút 📖 trên Sticky bar; không lưu qua lần tải lại)
 
 // ===== MENU + CỤM TAB GẦN ĐÂY =====
 // Thêm tab mới: chỉ cần thêm 1 dòng vào TAB_REGISTRY (+ khối nội dung, bộ lọc, hộp hướng dẫn và chuỗi dịch tương ứng).
@@ -3379,8 +3293,7 @@ function setLanguage(lang) {
     const bttTooltip = document.getElementById('bttTooltip');
     if (bttTooltip) { bttTooltip.textContent = t.backToTop; }
     const resetBtnEl = document.getElementById('stickyResetBtn');
-    if (resetBtnEl) { resetBtnEl.textContent = t.resetBtn; resetBtnEl.setAttribute('data-tip', t.resetTip); resetBtnEl.setAttribute('aria-label', t.resetTip); }
-    updateGuideBtn();
+    if (resetBtnEl) { resetBtnEl.textContent = t.resetBtn; resetBtnEl.title = t.resetTip; }
     const dmCloseEl = document.getElementById('dmClose');
     if (dmCloseEl) dmCloseEl.setAttribute('aria-label', t.closeLbl);
     document.title = t.pageTitle;
@@ -3561,7 +3474,7 @@ function switchTab(tabId, scrollToTop = true) {
         g.style.display = (g.getAttribute('data-tab') === tabId) ? 'block' : 'none';
     });
     document.querySelectorAll('.tab-rule-box').forEach(r => {
-        r.style.display = (!guideHidden && r.id === def.ruleId) ? 'block' : 'none';
+        r.style.display = (r.id === def.ruleId) ? 'block' : 'none';
     });
     if (def.onShow) def.onShow();
     closeAllTabMenus();
@@ -4885,31 +4798,6 @@ function initDbDiff() {
 }
 let lookupSortPriority = 'defense';
 
-// Nút 📖 trên Sticky bar: ẩn/hiện hộp hướng dẫn của TẤT CẢ các tab (hộp của tab đang mở theo TAB_REGISTRY.ruleId)
-function updateGuideBtn() {
-    const btn = document.getElementById('stickyGuideBtn');
-    if (!btn) return;
-    const t = TRANSLATIONS[currentLang];
-    const tip = guideHidden ? t.guideShowTip : t.guideHideTip;
-    btn.setAttribute('data-tip', tip);
-    btn.setAttribute('aria-label', tip);
-    btn.setAttribute('aria-pressed', guideHidden ? 'true' : 'false');
-    btn.classList.toggle('is-off', guideHidden);
-}
-
-function applyGuideVisibility() {
-    const def = TAB_REGISTRY.find(d => d.id === activeTabId);
-    document.querySelectorAll('.tab-rule-box').forEach(r => {
-        r.style.display = (!guideHidden && def && r.id === def.ruleId) ? 'block' : 'none';
-    });
-    updateGuideBtn();
-}
-
-function toggleGuideVisibility() {
-    guideHidden = !guideHidden;
-    applyGuideVisibility();
-}
-
 function updateLookupSortBtnLabel() {
     const btn = document.getElementById('stickyLookupSortBtn');
     if (!btn) return;
@@ -5422,7 +5310,6 @@ function bootApp() {
     initMultiSelects();
     initTabClusters();
     updateThemeBtn();
-    updateGuideBtn();
     updateStickyBarUI();
     requestAnimationFrame(syncWrapperPlaceholderHeight);
     updateLookupSortBtnLabel();
